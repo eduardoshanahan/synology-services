@@ -22,6 +22,7 @@
           shellcheck
           shfmt
           prek
+          sops
         ];
       };
     });

@@ -35,6 +35,10 @@ nix develop --no-write-lock-file
 - `hhnas4/ghost-mysql/.env.example`
 - `hhnas4/ghost-mysql/deploy.sh`
 - `hhnas4/ghost-mysql/README.md`
+- `hhnas4/outline/compose.yaml`
+- `hhnas4/outline/.env.example`
+- `hhnas4/outline/deploy.sh`
+- `hhnas4/outline/README.md`
 - `hhnas4/gitea/.env.example`
 - `hhnas4/promtail/compose.yaml`
 - `hhnas4/promtail/config.yml`
