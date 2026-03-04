@@ -1,0 +1,15 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "plaintext-secret-assignment"
+description = "Detect plaintext secret-style assignments outside SOPS-managed files."
+regex = '''(?i)(password|passwd|passphrase|secret|token|api[_-]?key|auth[_-]?key|client[_-]?secret|smtp[_-]?password|web[_-]?password|db[_-]?password)[A-Za-z0-9_.-]{0,40}\s*[:=]\s*["']?[A-Za-z0-9_./~!@#$%^&*+=:-]{8,}["']?'''
+path = '''(?i)\.(env|ini|cfg|conf|json|jsonc|toml|ya?ml|sh|bash|zsh)$'''
+secretGroup = 0
+
+[[rules]]
+id = "age-private-key"
+description = "Age private keys must never be committed."
+regex = '''AGE-SECRET-KEY-1[0-9A-Z]+'''
+secretGroup = 0
