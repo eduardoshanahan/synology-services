@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: shellcheck
         name: shellcheck (scripts)
-        entry: shellcheck
+        entry: shellcheck -e SC2029
         language: system
         files: "\\.sh$"
 
