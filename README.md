@@ -5,9 +5,19 @@ Sanitized, reproducible deployment artifacts for Synology hosts.
 This repository is intended to live as a sibling of `nix-services` and
 `nix-pi` in the shared workspace.
 
-It is intentionally a plain shell-and-Compose repository. There is no Nix
-flake, no `direnv` dependency, and no Nix-specific local tooling required to
-work in this directory.
+It is intentionally a plain shell-and-Compose repository.
+
+- No `direnv` dependency.
+- No generated `.direnv` cache tracked in Git.
+- Optional local tooling shell via `nix develop`.
+
+If you want the repo-provided toolchain (`prek`, `gitleaks`, `markdownlint-cli2`,
+`shellcheck`, `shfmt`) without installing those tools into your user profile,
+run:
+
+```bash
+nix develop --no-write-lock-file
+```
 
 ## Scope
 
