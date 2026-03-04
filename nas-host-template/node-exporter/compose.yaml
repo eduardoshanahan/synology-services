@@ -1,0 +1,17 @@
+services:
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:v1.8.2
+    container_name: node-exporter
+    restart: unless-stopped
+    command:
+      - "--path.rootfs=/host"
+      - "--collector.systemd"
+      - "--collector.filesystem"
+      - "--collector.meminfo"
+      - "--collector.netdev"
+      - "--collector.loadavg"
+      - "--collector.hwmon"
+    ports:
+      - "${NODE_EXPORTER_BIND:-0.0.0.0}:${NODE_EXPORTER_PORT:-9100}:9100"
+    volumes:
+      - "/:/host:ro,rslave"
