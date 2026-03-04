@@ -52,6 +52,7 @@ resume without rediscovery.
   - `--admin-email`
   - `--admin-password`
 - runs Gitea admin CLI as container user `git` (not root).
+- no longer deploys `promtail`; use `nas-host/promtail-deploy.sh` for log shipping.
 
 ## Non-UI setup defaults
 
