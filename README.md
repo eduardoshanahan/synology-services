@@ -5,6 +5,10 @@ Sanitized, reproducible deployment artifacts for Synology hosts.
 This repository is intended to live as a sibling of `nix-services` and
 `nix-pi` in the shared workspace.
 
+It is intentionally a plain shell-and-Compose repository. There is no Nix
+flake, no `direnv` dependency, and no Nix-specific local tooling required to
+work in this directory.
+
 ## Scope
 
 - This directory intentionally contains no credentials, certificates, or host-private secrets.

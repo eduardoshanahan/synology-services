@@ -29,9 +29,3 @@ repos:
         entry: shfmt -w
         language: system
         files: "\\.sh$"
-
-  - repo: https://github.com/astro/deadnix
-    rev: v1.2.1
-    hooks:
-      - id: deadnix
-        name: deadnix (nix unused code)
