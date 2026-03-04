@@ -66,7 +66,7 @@ Host gitea-hhlab
 ## 8) Upgrade process
 
 - [ ] Update image tag in `gitea/compose.yaml`.
-- [ ] Deploy with `./deploy.sh`.
+- [ ] Deploy with `./gitea-deploy.sh`.
 - [ ] Re-run health checks and SSH/registry smoke tests.
 
 ## Daily commands (copy/paste)

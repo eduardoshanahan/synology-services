@@ -25,7 +25,7 @@ This repository is intended to live as a sibling of `nix-services` and
 - `nas-host/promtail/compose.yaml`
 - `nas-host/promtail/config.yml`
 - `nas-host/promtail/.env.example`
-- `nas-host/deploy.sh`
+- `nas-host/gitea-deploy.sh`
 - `nas-host/README.md`
 
 ## Reproducibility Contract

@@ -41,7 +41,7 @@ resume without rediscovery.
 
 ## Deploy script behavior (current)
 
-`nas-host/deploy.sh` now:
+`nas-host/gitea-deploy.sh` now:
 
 - avoids `scp` and uses SSH stream copy for files,
 - auto-detects docker binary path on target host,
