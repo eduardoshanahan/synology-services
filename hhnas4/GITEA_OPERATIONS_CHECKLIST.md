@@ -67,6 +67,7 @@ Host gitea-hhlab
 
 - [ ] Update image tag in `gitea/compose.yaml`.
 - [ ] Deploy with `./gitea-deploy.sh`.
+- [ ] If needed, deploy log shipping with `./promtail-deploy.sh`.
 - [ ] Re-run health checks and SSH/registry smoke tests.
 
 ## Daily commands (copy/paste)

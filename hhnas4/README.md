@@ -40,10 +40,19 @@ Create (or ensure) an admin user at deploy time:
 
 If the admin user already exists, the script keeps it and continues.
 
-Note:
+## Promtail
 
-- `gitea-deploy.sh` also deploys `promtail` by default.
-- Use `--without-promtail` if you intentionally want the Gitea stack only.
+Deploy log shipping separately:
+
+```bash
+./promtail-deploy.sh hhnas4.internal.example
+```
+
+Optional target directory override:
+
+```bash
+./promtail-deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4
+```
 
 ## Registry behavior
 
