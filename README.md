@@ -25,7 +25,7 @@ This repository is intended to live as a sibling of `nix-services` and
 - `hhnas4/promtail/compose.yaml`
 - `hhnas4/promtail/config.yml`
 - `hhnas4/promtail/.env.example`
-- `hhnas4/deploy.sh`
+- `hhnas4/gitea-deploy.sh`
 - `hhnas4/README.md`
 
 ## Reproducibility Contract

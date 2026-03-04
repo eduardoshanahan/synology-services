@@ -4,12 +4,12 @@ set -euo pipefail
 usage() {
 	cat <<'USAGE'
 Usage:
-  deploy.sh [target-host] [target-base] [--admin-user USER --admin-email EMAIL --admin-password PASSWORD] [--without-promtail]
+  gitea-deploy.sh [target-host] [target-base] [--admin-user USER --admin-email EMAIL --admin-password PASSWORD] [--without-promtail]
 
 Examples:
-  ./deploy.sh hhnas4
-  ./deploy.sh hhnas4 /volume1/docker/homelab/hhnas4
-  ./deploy.sh hhnas4 --admin-user gitea-admin --admin-email admin@example.com --admin-password 'change-me'
+  ./gitea-deploy.sh hhnas4
+  ./gitea-deploy.sh hhnas4 /volume1/docker/homelab/hhnas4
+  ./gitea-deploy.sh hhnas4 --admin-user gitea-admin --admin-email admin@example.com --admin-password 'change-me'
 USAGE
 }
 

@@ -15,13 +15,13 @@ From this repository:
 
 ```bash
 cd hhnas4
-./deploy.sh hhnas4.internal.example
+./gitea-deploy.sh hhnas4.internal.example
 ```
 
 Optional target directory override:
 
 ```bash
-./deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4
+./gitea-deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4
 ```
 
 ## Non-UI bootstrap (recommended)
@@ -32,13 +32,18 @@ bootstrap without opening the install wizard.
 Create (or ensure) an admin user at deploy time:
 
 ```bash
-./deploy.sh hhnas4.internal.example \
+./gitea-deploy.sh hhnas4.internal.example \
   --admin-user gitea-admin \
   --admin-email admin@example.com \
   --admin-password 'change-me-now'
 ```
 
 If the admin user already exists, the script keeps it and continues.
+
+Note:
+
+- `gitea-deploy.sh` also deploys `promtail` by default.
+- Use `--without-promtail` if you intentionally want the Gitea stack only.
 
 ## Registry behavior
 
