@@ -1,0 +1,10 @@
+# SOPS config for this repo.
+#
+# Public age recipients only. This mirrors the current homelab age recipient
+# used in neighboring repos so encrypted deployment inputs can be committed
+# safely while plaintext `.env` files stay local-only.
+
+creation_rules:
+  - path_regex: .*\.env\.sops$
+    age:
+      - age1flh8zg3474qwhg50gnmaagavdpgneq7rwk7rc4l9pmatkt45qf4su4ztfs

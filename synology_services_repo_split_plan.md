@@ -68,6 +68,11 @@ synology-services/
       README.md
       compose.yaml
       deploy.sh
+    outline/
+      .env.example
+      README.md
+      compose.yaml
+      deploy.sh
     gitea/
       .env.example
       compose.yaml

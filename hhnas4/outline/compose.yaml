@@ -1,0 +1,79 @@
+services:
+  outline:
+    image: docker.getoutline.com/outlinewiki/outline:1.4.0
+    container_name: outline
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env
+    volumes:
+      - "outline_storage_data:/var/lib/outline/data"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'node -e ''require("http").get("http://127.0.0.1:${PORT:-3010}/", (r) => process.exit(r.statusCode < 500 ? 0 : 1)).on("error", () => process.exit(1))'''
+      interval: 30s
+      timeout: 10s
+      retries: 6
+      start_period: 60s
+
+  postgres:
+    image: postgres:17
+    container_name: outline-postgres
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-outline}
+      - POSTGRES_USER=${POSTGRES_USER:-outline}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?set in .env}
+    command:
+      - -c
+      - "port=${POSTGRES_PORT:-5432}"
+      - -c
+      - "listen_addresses=127.0.0.1"
+    volumes:
+      - "outline_postgres_data:/var/lib/postgresql/data"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -h 127.0.0.1 -p ${POSTGRES_PORT:-5432} -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}" || exit 1'
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  redis:
+    image: redis:7.4.2-alpine
+    container_name: outline-redis
+    restart: unless-stopped
+    network_mode: host
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --bind
+      - "127.0.0.1"
+      - --port
+      - "${REDIS_PORT:-6379}"
+    volumes:
+      - "outline_redis_data:/data"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'redis-cli -h 127.0.0.1 -p ${REDIS_PORT:-6379} ping'
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+volumes:
+  outline_storage_data:
+  outline_postgres_data:
+  outline_redis_data:

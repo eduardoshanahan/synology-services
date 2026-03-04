@@ -35,6 +35,10 @@ nix develop --no-write-lock-file
 - `nas-host/ghost-mysql/.env.example`
 - `nas-host/ghost-mysql/deploy.sh`
 - `nas-host/ghost-mysql/README.md`
+- `nas-host/outline/compose.yaml`
+- `nas-host/outline/.env.example`
+- `nas-host/outline/deploy.sh`
+- `nas-host/outline/README.md`
 - `nas-host/gitea/.env.example`
 - `nas-host/promtail/compose.yaml`
 - `nas-host/promtail/config.yml`
