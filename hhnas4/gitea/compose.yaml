@@ -1,0 +1,29 @@
+services:
+  gitea:
+    image: docker.gitea.com/gitea:1.24.6
+    container_name: gitea
+    restart: unless-stopped
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=${GITEA_DB_TYPE:-sqlite3}
+      - GITEA__database__PATH=${GITEA_DB_PATH:-/data/gitea/gitea.db}
+      - GITEA__security__INSTALL_LOCK=${GITEA_SECURITY_INSTALL_LOCK:-true}
+      - GITEA__metrics__ENABLED=${GITEA_METRICS_ENABLED:-true}
+      - GITEA__server__PROTOCOL=${GITEA_SERVER_PROTOCOL:-http}
+      - GITEA__server__DOMAIN=${GITEA_SERVER_DOMAIN:-gitea.internal.example}
+      - GITEA__server__ROOT_URL=${GITEA_SERVER_ROOT_URL:-https://gitea.internal.example/}
+      - GITEA__server__SSH_DOMAIN=${GITEA_SERVER_SSH_DOMAIN:-gitea.internal.example}
+      - GITEA__server__SSH_PORT=${GITEA_SERVER_SSH_PORT:-2222}
+      - GITEA__server__START_SSH_SERVER=${GITEA_SERVER_START_SSH_SERVER:-false}
+      - GITEA__packages__ENABLED=true
+      - GITEA__packages__CONTAINER__ENABLED=true
+      - GITEA__packages__CONTAINER__REGISTRY_HOST=${GITEA_REGISTRY_HOST:-gitea.internal.example}
+      - GITEA__packages__CONTAINER__REGISTRY_EXTERNAL_URL=${GITEA_REGISTRY_EXTERNAL_URL:-https://gitea.internal.example}
+      - GITEA__packages__CONTAINER__REGISTRY_INSECURE=${GITEA_REGISTRY_INSECURE:-false}
+      - GITEA__service__DISABLE_REGISTRATION=${GITEA_DISABLE_REGISTRATION:-true}
+    ports:
+      - "${GITEA_HTTP_BIND:-0.0.0.0}:${GITEA_HTTP_PORT:-3000}:3000"
+      - "${GITEA_SSH_BIND:-0.0.0.0}:${GITEA_SSH_PORT:-2222}:22"
+    volumes:
+      - "${GITEA_DATA_DIR:-./data}:/data"
