@@ -11,7 +11,8 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - 'node -e ''require("http").get("http://127.0.0.1:${PORT:-3010}/", (r) => process.exit(r.statusCode < 500 ? 0 : 1)).on("error", () => process.exit(1))'''
+        - >-
+          node -e 'const http=require("http");const port=process.env.PORT||3010;const hostHeader=new URL(process.env.URL||"http://localhost").host;const hosts=["127.0.0.1","::1"];const probe=(i)=>{if(i>=hosts.length){process.exit(1);return;}const req=http.get({host:hosts[i],port,path:"/_health",headers:{Host:hostHeader,"X-Forwarded-Proto":"https"}},(res)=>{if(res.statusCode===200){process.exit(0);}else{probe(i+1);}});req.on("error",()=>probe(i+1));};probe(0);'
       interval: 30s
       timeout: 10s
       retries: 6
