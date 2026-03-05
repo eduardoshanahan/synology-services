@@ -15,6 +15,10 @@ services:
       - postgres
       - -c
       - "listen_addresses=${POSTGRES_LISTEN_ADDRESSES:-*}"
+    networks:
+      shared-db:
+        aliases:
+          - postgres-shared
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
     healthcheck:
@@ -28,3 +32,8 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  shared-db:
+    external: true
+    name: ${SHARED_DB_NETWORK:-hhlab-shared-db}

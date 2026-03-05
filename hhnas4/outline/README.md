@@ -5,7 +5,8 @@ Internal wiki / knowledge base stack for `nas-host`.
 ## Purpose
 
 - Runs Outline behind the Synology DSM reverse proxy.
-- Keeps Outline application storage, PostgreSQL, and Redis local to the NAS.
+- Keeps Outline application storage and PostgreSQL local to the NAS.
+- Uses shared Redis endpoint `redis.internal.example` for cache/queue state.
 - Uses a single Compose project that matches the other `nas-host` stacks.
 - Uses Synology host networking, like `archivebox`, so the stack uses the NAS
   resolver directly instead of the default Docker bridge DNS path.
@@ -30,7 +31,6 @@ Docker-managed persistent volumes:
 ```text
 outline_storage_data
 outline_postgres_data
-outline_redis_data
 ```
 
 ## Deploy
@@ -69,7 +69,10 @@ Optional target directory override:
 - This stack binds Outline to loopback by default:
   - Outline listens directly on `127.0.0.1:3010`
   - Postgres listens directly on `127.0.0.1:15432`
-  - Redis listens directly on `127.0.0.1:16379`
+- Shared Redis endpoint must be reachable:
+  - `redis.internal.example:6379`
+  - `REDIS_URL` should include password auth:
+    - `redis://:<password>@redis.internal.example:6379`
 - If `.env.sops` exists, `sops` must be available locally. This repo's
   `nix develop` shell now includes it.
 
@@ -85,7 +88,7 @@ on loopback only.
 
 ## Validation goals
 
-- `docker compose ps` shows all three containers healthy / running.
+- `docker compose ps` shows `outline` and `postgres` healthy / running.
 - `curl -sSI http://127.0.0.1:3010/` returns a page or redirect from the NAS.
 - `curl -skI https://outline.internal.example/` returns a page or redirect
   through the DSM reverse proxy.

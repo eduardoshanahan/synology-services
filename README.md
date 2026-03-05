@@ -39,6 +39,10 @@ nix develop --no-write-lock-file
 - `nas-host/outline/.env.example`
 - `nas-host/outline/deploy.sh`
 - `nas-host/outline/README.md`
+- `nas-host/redis/compose.yaml`
+- `nas-host/redis/.env.example`
+- `nas-host/redis/deploy.sh`
+- `nas-host/redis/README.md`
 - `nas-host/gitea/.env.example`
 - `nas-host/promtail/compose.yaml`
 - `nas-host/promtail/config.yml`

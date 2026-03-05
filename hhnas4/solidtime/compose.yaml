@@ -7,8 +7,7 @@ services:
       - "${APP_BIND:-127.0.0.1}:${APP_PORT:-3800}:8000"
     networks:
       - internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - shared-db
     volumes:
       - "solidtime_app_storage:/var/www/html/storage"
       - "./logs:/var/www/html/storage/logs"
@@ -18,8 +17,6 @@ services:
     env_file:
       - laravel.env
     depends_on:
-      outline-pg-proxy:
-        condition: service_started
       gotenberg:
         condition: service_healthy
     healthcheck:
@@ -39,8 +36,7 @@ services:
     restart: unless-stopped
     networks:
       - internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - shared-db
     volumes:
       - "solidtime_app_storage:/var/www/html/storage"
       - "./logs:/var/www/html/storage/logs"
@@ -49,9 +45,6 @@ services:
       CONTAINER_MODE: scheduler
     env_file:
       - laravel.env
-    depends_on:
-      outline-pg-proxy:
-        condition: service_started
     healthcheck:
       test:
         - CMD
@@ -67,8 +60,7 @@ services:
     restart: unless-stopped
     networks:
       - internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - shared-db
     volumes:
       - "solidtime_app_storage:/var/www/html/storage"
       - "./logs:/var/www/html/storage/logs"
@@ -78,9 +70,6 @@ services:
       WORKER_COMMAND: php /var/www/html/artisan queue:work
     env_file:
       - laravel.env
-    depends_on:
-      outline-pg-proxy:
-        condition: service_started
     healthcheck:
       test:
         - CMD
@@ -90,14 +79,6 @@ services:
       retries: 6
       start_period: 60s
 
-  outline-pg-proxy:
-    image: alpine/socat:latest
-    container_name: solidtime-outline-pg-proxy
-    restart: unless-stopped
-    network_mode: host
-    command:
-      - "TCP-LISTEN:${OUTLINE_PG_PROXY_PORT:-15434},bind=0.0.0.0,fork,reuseaddr"
-      - "TCP:127.0.0.1:${OUTLINE_POSTGRES_PORT:-15432}"
   gotenberg:
     image: gotenberg/gotenberg:8.15
     container_name: solidtime-gotenberg
@@ -118,6 +99,9 @@ services:
 
 networks:
   internal:
+  shared-db:
+    external: true
+    name: ${SHARED_DB_NETWORK:-hhlab-shared-db}
 
 volumes:
   solidtime_app_storage:
