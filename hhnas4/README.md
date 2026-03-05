@@ -57,6 +57,18 @@ Optional target directory override:
 ./promtail-deploy.sh nas-host.internal.example /volume1/docker/homelab/nas-host
 ```
 
+## Shared Infra Backups
+
+Centralized backup orchestration for shared Postgres/MySQL/Redis state:
+
+```bash
+./backup-shared-infra.sh nas-host
+```
+
+Runbook:
+
+- `SHARED_INFRA_BACKUP_RUNBOOK.md`
+
 ## Registry behavior
 
 Container registry is enabled through Gitea settings in compose env vars:
@@ -82,6 +94,7 @@ Example image path:
 - ArchiveBox stack: `archivebox/README.md`
 - Shared PostgreSQL stack: `postgres/README.md`
 - Shared Redis stack: `redis/README.md`
+- Shared infra backup runbook: `SHARED_INFRA_BACKUP_RUNBOOK.md`
 - Session continuity notes: `SESSION_NOTES.md`
 - Post-deploy operations checklist: `GITEA_OPERATIONS_CHECKLIST.md`
 - Promtail settings live at `promtail/.env` on the NAS. Set `LOKI_PUSH_URL` to
