@@ -8,6 +8,8 @@ Reproducible, sanitized deployment artifacts for host `nas-host`.
 - `gitea` with built-in container registry enabled.
 - `outline` for an internal wiki / knowledge base.
 - `archivebox` for large local web archive storage.
+- `solidtime` for team time tracking.
+- `postgres` as shared database server for internal services.
 - `promtail` shipping `gitea` container logs to Loki.
 
 ## Deploy
@@ -78,6 +80,8 @@ Example image path:
 - Ghost database stack: `ghost-mysql/README.md`
 - Outline stack: `outline/README.md`
 - ArchiveBox stack: `archivebox/README.md`
+- Solidtime stack: `solidtime/README.md`
+- Shared PostgreSQL stack: `postgres/README.md`
 - Session continuity notes: `SESSION_NOTES.md`
 - Post-deploy operations checklist: `GITEA_OPERATIONS_CHECKLIST.md`
 - Promtail settings live at `promtail/.env` on the NAS. Set `LOKI_PUSH_URL` to
