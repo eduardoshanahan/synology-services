@@ -2,14 +2,15 @@
 
 Self-hosted Solidtime stack for `hhnas4`.
 
+> Status: deprecated for active deployment after the Pi pivot.
+> Keep this directory as historical reference only.
+
 ## Purpose
 
 - Runs Solidtime behind the Synology DSM reverse proxy.
-- Reuses the existing `outline-postgres` deployment with a dedicated Solidtime
-  database/user/schema.
+- Uses shared PostgreSQL endpoint `postgres.internal.example:5433` with a
+  dedicated Solidtime database/user/schema.
 - Follows the same deploy pattern as other `hhnas4` stacks.
-- Runs a local TCP proxy (`outline-pg-proxy`) so Solidtime containers can reach
-  Outline PostgreSQL without exposing PostgreSQL on LAN interfaces.
 
 ## Layout
 
@@ -65,14 +66,17 @@ If you keep local `.env` and/or `laravel.env` (or encrypted `.env.sops` / `larav
 - Keep this stack behind DSM reverse proxy.
 - Default host-loopback ports:
   - Solidtime app: `127.0.0.1:3800`
-  - Outline PostgreSQL: `127.0.0.1:15432`
-  - Outline PG proxy listener: `172.17.0.1:15434` (Docker bridge gateway)
+- Local shared PostgreSQL proxy listener: `172.17.0.1:15434` (Docker bridge gateway)
 - `deploy.sh` automatically fixes ownership on `logs/` and `app-storage/` for
   Solidtime's runtime user (`uid:gid 1000:1000`).
 - Set DB settings in `laravel.env` for the dedicated Solidtime DB/user created
-  in Outline PostgreSQL:
+  on shared PostgreSQL:
   - `DB_HOST=host.docker.internal`
   - `DB_PORT=15434`
+- Stack includes `shared-pg-proxy` sidecar that forwards to
+  `127.0.0.1:5433` (shared PostgreSQL on the NAS host). This keeps Solidtime
+  decoupled from Outline while staying compatible with Synology bridge
+  networking limits.
 - Set `APP_URL` in `laravel.env` to the final public HTTPS URL.
 - Generate required app keys once, then copy values into `laravel.env`:
 
@@ -92,15 +96,13 @@ docker compose up -d
 docker compose exec scheduler php artisan migrate --force
 ```
 
-- Provision fresh DB/user/schema in `outline-postgres` before first migration:
+- Provision fresh DB/user/schema in shared PostgreSQL before first migration:
 
 ```bash
-sudo docker exec outline-postgres psql -U outline -d postgres -c "DROP DATABASE IF EXISTS solidtime;"
-sudo docker exec outline-postgres psql -U outline -d postgres -c "DROP ROLE IF EXISTS solidtime;"
-sudo docker exec outline-postgres psql -U outline -d postgres -c "CREATE ROLE solidtime LOGIN PASSWORD '<new-password>';"
-sudo docker exec outline-postgres psql -U outline -d postgres -c "CREATE DATABASE solidtime OWNER solidtime;"
-sudo docker exec outline-postgres psql -U outline -d solidtime -c "CREATE SCHEMA IF NOT EXISTS solidtime AUTHORIZATION solidtime;"
-sudo docker exec outline-postgres psql -U outline -d postgres -c "ALTER ROLE solidtime IN DATABASE solidtime SET search_path TO solidtime,public;"
+sudo docker exec hhnas4-postgres psql -U postgres -d postgres -c "CREATE ROLE solidtime LOGIN PASSWORD '<new-password>';"
+sudo docker exec hhnas4-postgres psql -U postgres -d postgres -c "CREATE DATABASE solidtime OWNER solidtime;"
+sudo docker exec hhnas4-postgres psql -U postgres -d solidtime -c "CREATE SCHEMA IF NOT EXISTS solidtime AUTHORIZATION solidtime;"
+sudo docker exec hhnas4-postgres psql -U postgres -d postgres -c "ALTER ROLE solidtime IN DATABASE solidtime SET search_path TO solidtime,public;"
 ```
 
 ## Reverse Proxy (DSM)
@@ -115,7 +117,7 @@ Keep TLS termination in DSM. Solidtime should continue serving HTTP on loopback 
 ## Validation goals
 
 - `docker compose ps` shows healthy `app`, `scheduler`, `queue`,
-  `outline-pg-proxy`, `gotenberg`.
+  `shared-pg-proxy`, `gotenberg`.
 - `curl -sSI http://127.0.0.1:3800/` returns a page or redirect from the NAS.
 - `curl -skI https://solidtime.internal.example/` returns a page or redirect through DSM.
 - First admin user can be created via:
@@ -126,6 +128,6 @@ docker compose exec scheduler php artisan admin:user:create "Your Name" "you@exa
 
 ## Backup note
 
-- Outline PostgreSQL stores Solidtime DB state; include it in DB backups.
+- Shared PostgreSQL stores Solidtime DB state; include it in DB backups.
 - Include app storage volume (`solidtime_app_storage`) and `app-storage/` in backups.
 - Keep `laravel.env` backed up securely; it contains cryptographic keys required for the instance.

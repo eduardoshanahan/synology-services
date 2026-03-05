@@ -8,14 +8,13 @@ Usage:
 
 Examples:
   ./deploy.sh hhnas4
-  ./deploy.sh hhnas4 /volume1/docker/homelab/hhnas4/postgres
+  ./deploy.sh hhnas4 /volume1/docker/homelab/hhnas4/redis
   ./deploy.sh hhnas4 --update-env
 USAGE
 }
 
 TARGET_HOST="hhnas4.internal.example"
-TARGET_DIR="/volume1/docker/homelab/hhnas4/postgres"
-SHARED_DB_NETWORK="${SHARED_DB_NETWORK:-hhlab-shared-db}"
+TARGET_DIR="/volume1/docker/homelab/hhnas4/redis"
 UPDATE_ENV=0
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
@@ -112,11 +111,9 @@ else
 	DOCKER_PREFIX="sudo "
 fi
 
-ssh "${TARGET_HOST}" "${DOCKER_PREFIX}${DOCKER_BIN} network inspect '${SHARED_DB_NETWORK}' >/dev/null 2>&1 || ${DOCKER_PREFIX}${DOCKER_BIN} network create '${SHARED_DB_NETWORK}'"
-
 ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose pull && ${DOCKER_PREFIX}${DOCKER_BIN} compose up -d"
 
-echo "[deploy] postgres deployed. Verify with:"
+echo "[deploy] redis deployed. Verify with:"
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose ps\""
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose logs --tail 60\""
-echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && grep -E '^POSTGRES_PORT=' .env\""
+echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && grep -E '^REDIS_(PORT|BIND)=' .env\""

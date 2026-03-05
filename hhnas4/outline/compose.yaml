@@ -11,8 +11,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     healthcheck:
       test:
         - CMD-SHELL
@@ -49,31 +47,6 @@ services:
       retries: 8
       start_period: 30s
 
-  redis:
-    image: redis:7.4.2-alpine
-    container_name: outline-redis
-    restart: unless-stopped
-    network_mode: host
-    command:
-      - redis-server
-      - --appendonly
-      - "yes"
-      - --bind
-      - "127.0.0.1"
-      - --port
-      - "${REDIS_PORT:-6379}"
-    volumes:
-      - "outline_redis_data:/data"
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - 'redis-cli -h 127.0.0.1 -p ${REDIS_PORT:-6379} ping'
-      interval: 10s
-      timeout: 5s
-      retries: 6
-      start_period: 10s
-
 volumes:
   outline_storage_data:
   outline_postgres_data:
-  outline_redis_data:

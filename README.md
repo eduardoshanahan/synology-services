@@ -39,6 +39,10 @@ nix develop --no-write-lock-file
 - `hhnas4/outline/.env.example`
 - `hhnas4/outline/deploy.sh`
 - `hhnas4/outline/README.md`
+- `hhnas4/redis/compose.yaml`
+- `hhnas4/redis/.env.example`
+- `hhnas4/redis/deploy.sh`
+- `hhnas4/redis/README.md`
 - `hhnas4/gitea/.env.example`
 - `hhnas4/promtail/compose.yaml`
 - `hhnas4/promtail/config.yml`

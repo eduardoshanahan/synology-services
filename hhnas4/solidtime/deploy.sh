@@ -15,6 +15,7 @@ USAGE
 
 TARGET_HOST="hhnas4.internal.example"
 TARGET_DIR="/volume1/docker/homelab/hhnas4/solidtime"
+SHARED_DB_NETWORK="${SHARED_DB_NETWORK:-hhlab-shared-db}"
 UPDATE_ENV=0
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
@@ -123,6 +124,8 @@ elif ssh "${TARGET_HOST}" "sudo -n ${DOCKER_BIN} info >/dev/null 2>&1"; then
 else
 	DOCKER_PREFIX="sudo "
 fi
+
+ssh "${TARGET_HOST}" "${DOCKER_PREFIX}${DOCKER_BIN} network inspect '${SHARED_DB_NETWORK}' >/dev/null 2>&1 || ${DOCKER_PREFIX}${DOCKER_BIN} network create '${SHARED_DB_NETWORK}'"
 
 # Solidtime image runs as uid/gid 1000; ensure bind-mounted paths are writable.
 ssh "${TARGET_HOST}" "${DOCKER_PREFIX}${DOCKER_BIN} run --rm -v '${TARGET_DIR}/logs:/target' busybox sh -lc 'mkdir -p /target && chown -R 1000:1000 /target && chmod -R u+rwX,g+rwX,o-rwx /target'"
