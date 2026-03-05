@@ -76,13 +76,13 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
 - Keep this DB endpoint internal-only. Do not expose it through DSM reverse proxy.
 - Create one DB role/user per service; do not share application users.
 
-Example role/database bootstrap for Solidtime:
+Example role/database bootstrap for a generic app:
 
 ```bash
-psql -h postgres.internal.example -p 5433 -U postgres -d postgres -c "CREATE ROLE solidtime LOGIN PASSWORD '<strong-password>';"
-psql -h postgres.internal.example -p 5433 -U postgres -d postgres -c "CREATE DATABASE solidtime OWNER solidtime;"
-psql -h postgres.internal.example -p 5433 -U postgres -d solidtime -c "CREATE SCHEMA IF NOT EXISTS solidtime AUTHORIZATION solidtime;"
-psql -h postgres.internal.example -p 5433 -U postgres -d postgres -c "ALTER ROLE solidtime IN DATABASE solidtime SET search_path TO solidtime,public;"
+psql -h postgres.internal.example -p 5433 -U postgres -d postgres -c "CREATE ROLE app_user LOGIN PASSWORD '<strong-password>';"
+psql -h postgres.internal.example -p 5433 -U postgres -d postgres -c "CREATE DATABASE app_db OWNER app_user;"
+psql -h postgres.internal.example -p 5433 -U postgres -d app_db -c "CREATE SCHEMA IF NOT EXISTS app AUTHORIZATION app_user;"
+psql -h postgres.internal.example -p 5433 -U postgres -d postgres -c "ALTER ROLE app_user IN DATABASE app_db SET search_path TO app,public;"
 ```
 
 ## Validation goals

@@ -80,7 +80,6 @@ Example image path:
 - Ghost database stack: `ghost-mysql/README.md`
 - Outline stack: `outline/README.md`
 - ArchiveBox stack: `archivebox/README.md`
-- Solidtime stack docs (deprecated on Synology after Pi pivot): `solidtime/README.md`
 - Shared PostgreSQL stack: `postgres/README.md`
 - Shared Redis stack: `redis/README.md`
 - Session continuity notes: `SESSION_NOTES.md`
