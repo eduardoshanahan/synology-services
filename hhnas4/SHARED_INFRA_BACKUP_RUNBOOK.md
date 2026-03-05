@@ -48,7 +48,7 @@ Optional overrides:
 Use DSM Task Scheduler (root user), for example daily at 02:30:
 
 ```bash
-/bin/sh /volume1/docker/homelab/hhnas4/backup-shared-infra.sh hhnas4 /volume1/docker/homelab/hhnas4 --retention-days 21 >> /volume1/docker/homelab/hhnas4/backups/shared-infra/backup.log 2>&1
+/bin/bash /volume1/docker/homelab/hhnas4/backup-shared-infra.sh hhnas4 /volume1/docker/homelab/hhnas4 --retention-days 21 >> /volume1/docker/homelab/hhnas4/backups/shared-infra/backup.log 2>&1
 ```
 
 ## Validation checklist
@@ -61,7 +61,7 @@ After each run:
    - `redis.rdb`
    - `SHA256SUMS`
    - `MANIFEST.txt`
-2. Confirm checksums verify:
+1. Confirm checksums verify:
 
 ```bash
 cd /volume1/docker/homelab/hhnas4/backups/shared-infra/<timestamp-utc>

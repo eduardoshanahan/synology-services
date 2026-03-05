@@ -14,7 +14,7 @@ Examples:
 USAGE
 }
 
-TARGET_HOST="hhnas4.internal.example"
+TARGET_HOST="hhnas4"
 REMOTE_BASE_DIR="/volume1/docker/homelab/hhnas4"
 RETENTION_DAYS=14
 
@@ -84,10 +84,10 @@ echo "[backup] dumping postgres (pg_dumpall)"
 ssh "${TARGET_HOST}" "cd '${REMOTE_BASE_DIR}/postgres' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T postgres pg_dumpall -U postgres | gzip -c > '${REMOTE_BACKUP_DIR}/postgres/pg_dumpall.sql.gz'"
 
 echo "[backup] dumping mysql (all databases)"
-ssh "${TARGET_HOST}" "cd '${REMOTE_BASE_DIR}/ghost-mysql' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T mysql sh -lc 'exec mysqldump --all-databases --single-transaction --routines --events --triggers -uroot -p\"\\$MYSQL_ROOT_PASSWORD\"' | gzip -c > '${REMOTE_BACKUP_DIR}/mysql/all-databases.sql.gz'"
+ssh "${TARGET_HOST}" "cd '${REMOTE_BASE_DIR}/ghost-mysql' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T mysql sh -lc 'exec mysqldump --all-databases --single-transaction --routines --events --triggers -uroot -p\"\$MYSQL_ROOT_PASSWORD\"' | gzip -c > '${REMOTE_BACKUP_DIR}/mysql/all-databases.sql.gz'"
 
 echo "[backup] exporting redis RDB snapshot"
-ssh "${TARGET_HOST}" "cd '${REMOTE_BASE_DIR}/redis' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T redis sh -lc 'redis-cli -h 127.0.0.1 -p \"\\${REDIS_PORT:-6379}\" -a \"\\$REDIS_PASSWORD\" --rdb /tmp/redis-backup.rdb >/dev/null && cat /tmp/redis-backup.rdb && rm -f /tmp/redis-backup.rdb' > '${REMOTE_BACKUP_DIR}/redis/redis.rdb'"
+ssh "${TARGET_HOST}" "cd '${REMOTE_BASE_DIR}/redis' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T redis sh -lc 'redis-cli -h 127.0.0.1 -p \"\${REDIS_PORT:-6379}\" -a \"\$REDIS_PASSWORD\" --rdb /tmp/redis-backup.rdb >/dev/null && cat /tmp/redis-backup.rdb && rm -f /tmp/redis-backup.rdb' > '${REMOTE_BACKUP_DIR}/redis/redis.rdb'"
 
 echo "[backup] writing checksums and manifest"
 ssh "${TARGET_HOST}" "cd '${REMOTE_BACKUP_DIR}' && sha256sum postgres/pg_dumpall.sql.gz mysql/all-databases.sql.gz redis/redis.rdb > SHA256SUMS"
