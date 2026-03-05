@@ -64,19 +64,56 @@ This confirms bridge-container outbound LAN connectivity was restored.
 
 ## Current SMTP test state
 
-After network fix, Gitea could connect to relay, but relay rejected the recipient:
+End-to-end SMTP from Gitea now succeeds through relay.
 
-- `554 5.7.1 Recipient address rejected: Access denied`
-- Recipient in test was `contact@primary.example`.
+Final verified path:
 
-This is now an SMTP relay policy/domain allowlist issue, not network transport.
+- Gitea (`nas-host`) -> `smtp-relay.internal.example:2525` -> Gmail upstream.
+- Relay log confirms accepted client, queued message, and upstream
+  `status=sent` for `contact@primary.example`.
+
+Note: A separate relay policy bug was fixed in `nix-services` so sender-domain
+allowlist values are rendered correctly for Postfix.
 
 ## Persistence note (important)
 
 This iptables rule may be lost on reboot/firewall reload.
 
-To make this persistent in Synology DSM, add/ensure equivalent firewall policy that allows forwarding traffic sourced from Docker bridge ranges (at least `172.16.0.0/12`) to LAN destinations, or maintain an equivalent host firewall bootstrap script that reapplies this rule after boot.
+To make this persistent in Synology DSM, add/ensure equivalent firewall policy
+that allows forwarding traffic sourced from Docker bridge ranges (at least
+`172.16.0.0/12`) to LAN destinations, or maintain an equivalent host firewall
+bootstrap script that reapplies this rule after boot.
+
+### Script deployed on NAS
+
+Deployed script path:
+
+```text
+/volume1/docker/homelab/nas-host/ensure-docker-bridge-lan-egress.sh
+```
+
+This script is idempotent and currently works when run manually.
+
+### DSM Task Scheduler steps (manual, recommended)
+
+This Synology host/user shell does not provide `crontab`, and
+`/usr/syno/bin/synoschedtask` exposes get/run/del but not create APIs, so task
+creation is best done in DSM UI.
+
+1. DSM -> Control Panel -> Task Scheduler -> Create -> Triggered Task -> User-defined script.
+1. User: `root`.
+1. Event: `Boot-up`.
+1. Task Settings -> User-defined script:
+
+```bash
+/bin/sh /volume1/docker/homelab/nas-host/ensure-docker-bridge-lan-egress.sh >> /volume1/docker/homelab/nas-host/ensure-docker-bridge-lan-egress.log 2>&1
+```
+
+Optional hardening task:
+
+1. Create a second task with schedule every 15 minutes using the same script.
+1. This periodically re-applies the rule if DSM/firewall reload removes it.
 
 ## Next step
 
-Adjust SMTP relay recipient/domain policy so Gitea notifications to intended domains are accepted.
+Create the DSM boot task so bridge-egress rule persistence survives reboots.
