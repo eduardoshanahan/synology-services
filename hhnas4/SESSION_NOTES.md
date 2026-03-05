@@ -1,6 +1,6 @@
 # nas-host Gitea Session Notes
 
-Last updated: 2026-02-25
+Last updated: 2026-03-05
 
 Purpose: capture operational findings from this session so future work can
 resume without rediscovery.
@@ -77,3 +77,25 @@ resume without rediscovery.
   - `nas-host/README.md`
   - this `SESSION_NOTES.md`
 - Use `GITEA_OPERATIONS_CHECKLIST.md` as the post-deploy runbook.
+
+## 2026-03-05 Outline + SMTP follow-up
+
+- Outline is running on `nas-host` with shared infrastructure endpoints:
+  - Postgres: `postgres.internal.example:5433`
+  - Redis: `redis.internal.example:6379`
+  - SMTP relay: `smtp-relay.internal.example:2525`
+- Outline database password was rotated from the placeholder value to a strong
+  random value generated with `openssl rand -hex ...`.
+- Source-of-truth secret remains encrypted in:
+  - `nas-host/outline/.env.sops`
+- Runtime sync and DB role rotation were completed:
+  - Outline env synced to NAS via `nas-host/outline/deploy.sh --update-env`
+  - Postgres role updated with `ALTER ROLE outline WITH PASSWORD ...`
+  - Authentication check with the rotated `outline` credentials succeeded.
+- Outline startup/health behavior was validated after deploy:
+  - container reports healthy
+  - internal endpoint `/_health` returns `200` with expected proxy headers
+  - public URL `https://outline.internal.example/` returns `HTTP/2 200`
+- Current relay logs include confirmed `status=sent` for Gitea SMTP tests.
+  Outline login flow is working; capture a fresh Outline-specific SMTP send log
+  entry in a dedicated test for strict audit evidence.
