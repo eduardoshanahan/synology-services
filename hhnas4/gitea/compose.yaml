@@ -22,6 +22,13 @@ services:
       - GITEA__packages__CONTAINER__REGISTRY_EXTERNAL_URL=${GITEA_REGISTRY_EXTERNAL_URL:-https://gitea.internal.example}
       - GITEA__packages__CONTAINER__REGISTRY_INSECURE=${GITEA_REGISTRY_INSECURE:-false}
       - GITEA__service__DISABLE_REGISTRATION=${GITEA_DISABLE_REGISTRATION:-true}
+      - GITEA__mailer__ENABLED=${GITEA_MAILER_ENABLED:-false}
+      - GITEA__mailer__SMTP_ADDR=${GITEA_SMTP_HOST:-smtp-relay.internal.example}
+      - GITEA__mailer__SMTP_PORT=${GITEA_SMTP_PORT:-2525}
+      - GITEA__mailer__FROM=${GITEA_SMTP_FROM:-gitea@internal.example}
+      - GITEA__mailer__USER=${GITEA_SMTP_USER:-}
+      - GITEA__mailer__PASSWD=${GITEA_SMTP_PASSWORD:-}
+      - GITEA__mailer__PROTOCOL=${GITEA_SMTP_PROTOCOL:-smtp}
     ports:
       - "${GITEA_HTTP_BIND:-0.0.0.0}:${GITEA_HTTP_PORT:-3000}:3000"
       - "${GITEA_SSH_BIND:-0.0.0.0}:${GITEA_SSH_PORT:-2222}:22"
