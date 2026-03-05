@@ -1,0 +1,123 @@
+services:
+  app:
+    image: solidtime/solidtime:${SOLIDTIME_IMAGE_TAG:-latest}
+    container_name: solidtime-app
+    restart: unless-stopped
+    ports:
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-3800}:8000"
+    networks:
+      - internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "solidtime_app_storage:/var/www/html/storage"
+      - "./logs:/var/www/html/storage/logs"
+      - "./app-storage:/var/www/html/storage/app"
+    environment:
+      CONTAINER_MODE: http
+    env_file:
+      - laravel.env
+    depends_on:
+      outline-pg-proxy:
+        condition: service_started
+      gotenberg:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - --fail
+        - http://localhost:8000/health-check/up
+      interval: 30s
+      timeout: 10s
+      retries: 6
+      start_period: 60s
+
+  scheduler:
+    image: solidtime/solidtime:${SOLIDTIME_IMAGE_TAG:-latest}
+    container_name: solidtime-scheduler
+    restart: unless-stopped
+    networks:
+      - internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "solidtime_app_storage:/var/www/html/storage"
+      - "./logs:/var/www/html/storage/logs"
+      - "./app-storage:/var/www/html/storage/app"
+    environment:
+      CONTAINER_MODE: scheduler
+    env_file:
+      - laravel.env
+    depends_on:
+      outline-pg-proxy:
+        condition: service_started
+    healthcheck:
+      test:
+        - CMD
+        - healthcheck
+      interval: 30s
+      timeout: 10s
+      retries: 6
+      start_period: 60s
+
+  queue:
+    image: solidtime/solidtime:${SOLIDTIME_IMAGE_TAG:-latest}
+    container_name: solidtime-queue
+    restart: unless-stopped
+    networks:
+      - internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "solidtime_app_storage:/var/www/html/storage"
+      - "./logs:/var/www/html/storage/logs"
+      - "./app-storage:/var/www/html/storage/app"
+    environment:
+      CONTAINER_MODE: worker
+      WORKER_COMMAND: php /var/www/html/artisan queue:work
+    env_file:
+      - laravel.env
+    depends_on:
+      outline-pg-proxy:
+        condition: service_started
+    healthcheck:
+      test:
+        - CMD
+        - healthcheck
+      interval: 30s
+      timeout: 10s
+      retries: 6
+      start_period: 60s
+
+  outline-pg-proxy:
+    image: alpine/socat:latest
+    container_name: solidtime-outline-pg-proxy
+    restart: unless-stopped
+    network_mode: host
+    command:
+      - "TCP-LISTEN:${OUTLINE_PG_PROXY_PORT:-15434},bind=0.0.0.0,fork,reuseaddr"
+      - "TCP:127.0.0.1:${OUTLINE_POSTGRES_PORT:-15432}"
+  gotenberg:
+    image: gotenberg/gotenberg:8.15
+    container_name: solidtime-gotenberg
+    restart: unless-stopped
+    networks:
+      - internal
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - --silent
+        - --fail
+        - http://localhost:3000/health
+      interval: 30s
+      timeout: 10s
+      retries: 6
+      start_period: 30s
+
+networks:
+  internal:
+
+volumes:
+  solidtime_app_storage:
