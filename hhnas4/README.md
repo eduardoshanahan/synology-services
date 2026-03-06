@@ -43,6 +43,27 @@ Create (or ensure) an admin user at deploy time:
 
 If the admin user already exists, the script keeps it and continues.
 
+## Authentik OIDC For Gitea
+
+`gitea-deploy.sh` can declaratively create/update a Gitea OAuth2 login source
+for Authentik.
+
+Set these keys in `gitea/.env` on NAS:
+
+- `GITEA_AUTHENTIK_OIDC_ENABLED=true`
+- `GITEA_AUTHENTIK_OIDC_NAME=authentik`
+- `GITEA_AUTHENTIK_OIDC_DISCOVERY_URL=https://authentik.<domain>/application/o/gitea/.well-known/openid-configuration`
+- `GITEA_AUTHENTIK_OIDC_CLIENT_ID=<client-id>`
+- `GITEA_AUTHENTIK_OIDC_CLIENT_SECRET=<client-secret>`
+- Optional group mapping:
+  - `GITEA_AUTHENTIK_OIDC_GROUP_CLAIM_NAME=groups`
+  - `GITEA_AUTHENTIK_OIDC_ADMIN_GROUP=<group-name>`
+  - `GITEA_AUTHENTIK_OIDC_RESTRICTED_GROUP=<group-name>`
+
+Use this redirect URI in Authentik:
+
+`https://gitea.<domain>/user/oauth2/authentik/callback`
+
 ## Promtail
 
 Deploy log shipping separately:
