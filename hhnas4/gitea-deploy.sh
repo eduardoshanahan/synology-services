@@ -67,11 +67,12 @@ SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REMOTE_GITEA_DIR="${TARGET_BASE}/gitea"
 REMOTE_COMPOSE_FILE="${REMOTE_GITEA_DIR}/compose.yaml"
 REMOTE_ENV_FILE="${REMOTE_GITEA_DIR}/.env"
+REMOTE_CERTS_DIR="${REMOTE_GITEA_DIR}/certs"
 
 echo "[deploy] target host: ${TARGET_HOST}"
 echo "[deploy] target dir : ${REMOTE_GITEA_DIR}"
 
-ssh "${TARGET_HOST}" "mkdir -p '${REMOTE_GITEA_DIR}' '${REMOTE_GITEA_DIR}/data'"
+ssh "${TARGET_HOST}" "mkdir -p '${REMOTE_GITEA_DIR}' '${REMOTE_GITEA_DIR}/data' '${REMOTE_CERTS_DIR}'"
 
 # Always stream-copy compose (works even when scp subsystem is disabled).
 cat "${SRC_DIR}/gitea/compose.yaml" | ssh "${TARGET_HOST}" "cat > '${REMOTE_COMPOSE_FILE}'"
@@ -83,6 +84,10 @@ if ssh "${TARGET_HOST}" "test ! -f '${REMOTE_ENV_FILE}'"; then
 else
 	echo "[deploy] keeping existing ${REMOTE_ENV_FILE}"
 fi
+
+# Keep the homelab root CA in sync so outbound TLS from the container trusts
+# internal services (for example Authentik OIDC discovery).
+cat "${SRC_DIR}/gitea/certs/homelab-root-ca.crt" | ssh "${TARGET_HOST}" "cat > '${REMOTE_CERTS_DIR}/homelab-root-ca.crt'"
 
 DOCKER_BIN="$(ssh "${TARGET_HOST}" "command -v docker || { test -x /usr/local/bin/docker && echo /usr/local/bin/docker; } || { test -x /var/packages/ContainerManager/target/usr/bin/docker && echo /var/packages/ContainerManager/target/usr/bin/docker; } || { test -x /var/packages/Docker/target/usr/bin/docker && echo /var/packages/Docker/target/usr/bin/docker; }")"
 
