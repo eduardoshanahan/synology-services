@@ -11,6 +11,8 @@ Reproducible, sanitized deployment artifacts for host `hhnas4`.
 - `postgres` as shared database server for internal services.
 - `redis` as shared cache/queue backend for internal services.
 - `promtail` shipping `gitea` container logs to Loki.
+- `docker-socket-proxy` exposing a read-only Docker API for Homepage remote
+  container status.
 
 ## Deploy
 
@@ -76,6 +78,14 @@ Optional target directory override:
 
 ```bash
 ./promtail-deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4
+```
+
+## Docker socket proxy (Homepage remote container stats)
+
+Deploy separately:
+
+```bash
+./docker-socket-proxy/deploy.sh hhnas4.internal.example
 ```
 
 ## Shared Infra Backups
