@@ -7,21 +7,25 @@ services:
     env_file:
       - .env
     command:
-      - redis-server
-      - --appendonly
-      - "yes"
-      - --bind
-      - "${REDIS_BIND:-0.0.0.0}"
-      - --port
-      - "${REDIS_PORT:-6379}"
-      - --requirepass
-      - "${REDIS_PASSWORD:?set in .env}"
+      - sh
+      - -ec
+      - |
+        cat > /tmp/redis-users.acl <<EOF
+        user default off
+        user $${REDIS_ADMIN_USERNAME:?set in .env} on >$${REDIS_ADMIN_PASSWORD:?set in .env} ~* &* +@all
+        user $${REDIS_OUTLINE_USERNAME:?set in .env} on >$${REDIS_OUTLINE_PASSWORD:?set in .env} ~* &* +@all
+        EOF
+        exec redis-server \
+          --appendonly yes \
+          --bind "$${REDIS_BIND:-0.0.0.0}" \
+          --port "$${REDIS_PORT:-6379}" \
+          --aclfile /tmp/redis-users.acl
     volumes:
       - "redis_data:/data"
     healthcheck:
       test:
         - CMD-SHELL
-        - 'redis-cli -h 127.0.0.1 -p ${REDIS_PORT:-6379} -a "$${REDIS_PASSWORD}" ping | grep -q PONG'
+        - 'redis-cli -h 127.0.0.1 -p $${REDIS_PORT:-6379} --user "$${REDIS_ADMIN_USERNAME}" --pass "$${REDIS_ADMIN_PASSWORD}" ping | grep -q PONG'
       interval: 10s
       timeout: 5s
       retries: 6

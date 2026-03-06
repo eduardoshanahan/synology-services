@@ -74,8 +74,8 @@ Optional target directory override:
   - `smtp-relay.internal.example:2525`
 - Shared Redis endpoint must be reachable:
   - `redis.internal.example:6379`
-  - `REDIS_URL` should include password auth:
-    - `redis://:<password>@redis.internal.example:6379`
+  - `REDIS_URL` should include ACL username + password auth:
+    - `redis://outline:<password>@redis.internal.example:6379`
 - If `.env.sops` exists, `sops` must be available locally. This repo's
   `nix develop` shell now includes it.
 

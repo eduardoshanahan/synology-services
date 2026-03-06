@@ -69,15 +69,18 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
 
 ## First-start rules
 
-- Set a strong `REDIS_PASSWORD` before first production start.
+- Set strong ACL credentials before first production start:
+  - `REDIS_ADMIN_USERNAME` / `REDIS_ADMIN_PASSWORD` for operator/admin access
+  - `REDIS_OUTLINE_USERNAME` / `REDIS_OUTLINE_PASSWORD` for Outline
 - Keep this endpoint internal-only; do not expose Redis through DSM reverse proxy.
-- Use authenticated client URLs, for example:
-  - `redis://:<password>@redis.internal.example:6379`
+- Use authenticated client URLs with username, for example:
+  - `redis://outline:<password>@redis.internal.example:6379`
+- The `default` Redis user is disabled in this stack.
 
 ## Validation goals
 
 - `docker compose ps` shows `redis` healthy.
-- From NAS: `redis-cli -h 127.0.0.1 -p 6379 -a '<password>' ping` returns `PONG`.
+- From NAS: `redis-cli -h 127.0.0.1 -p 6379 --user '<admin-user>' --pass '<admin-password>' ping` returns `PONG`.
 - Client services can connect using authenticated `REDIS_URL`.
 
 ## Backup note
