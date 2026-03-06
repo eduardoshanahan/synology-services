@@ -76,6 +76,9 @@ Optional target directory override:
   - `redis.internal.example:6379`
   - `REDIS_URL` should include ACL username + password auth:
     - `redis://outline:<password>@redis.internal.example:6379`
+- This stack ships `certs/homelab-root-ca.crt` and mounts it into the Outline
+  container as `NODE_EXTRA_CA_CERTS` so OIDC discovery/token calls to internal
+  TLS endpoints (for example Authentik) are trusted.
 - If `.env.sops` exists, `sops` must be available locally. This repo's
   `nix develop` shell now includes it.
 

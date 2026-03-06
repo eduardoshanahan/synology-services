@@ -6,8 +6,11 @@ services:
     network_mode: host
     env_file:
       - .env
+    environment:
+      - NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/homelab-root-ca.crt
     volumes:
       - "outline_storage_data:/var/lib/outline/data"
+      - ./certs/homelab-root-ca.crt:/usr/local/share/ca-certificates/homelab-root-ca.crt:ro
     healthcheck:
       test:
         - CMD-SHELL

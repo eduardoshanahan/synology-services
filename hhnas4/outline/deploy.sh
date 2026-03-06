@@ -49,15 +49,17 @@ done
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REMOTE_COMPOSE_FILE="${TARGET_DIR}/compose.yaml"
 REMOTE_ENV_FILE="${TARGET_DIR}/.env"
+REMOTE_CERTS_DIR="${TARGET_DIR}/certs"
 LOCAL_ENV_FILE="${SRC_DIR}/.env"
 LOCAL_SOPS_ENV_FILE="${SRC_DIR}/.env.sops"
 
 echo "[deploy] target host: ${TARGET_HOST}"
 echo "[deploy] target dir : ${TARGET_DIR}"
 
-ssh "${TARGET_HOST}" "mkdir -p '${TARGET_DIR}'"
+ssh "${TARGET_HOST}" "mkdir -p '${TARGET_DIR}' '${REMOTE_CERTS_DIR}'"
 
 cat "${SRC_DIR}/compose.yaml" | ssh "${TARGET_HOST}" "cat > '${REMOTE_COMPOSE_FILE}'"
+cat "${SRC_DIR}/certs/homelab-root-ca.crt" | ssh "${TARGET_HOST}" "cat > '${REMOTE_CERTS_DIR}/homelab-root-ca.crt'"
 
 if [[ -f "${LOCAL_SOPS_ENV_FILE}" ]]; then
 	SOPS_BIN="$(command -v sops || true)"
