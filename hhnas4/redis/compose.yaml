@@ -13,7 +13,7 @@ services:
         cat > /tmp/redis-users.acl <<EOF
         user default off
         user $${REDIS_ADMIN_USERNAME:?set in .env} on >$${REDIS_ADMIN_PASSWORD:?set in .env} ~* &* +@all
-        user $${REDIS_OUTLINE_USERNAME:?set in .env} on >$${REDIS_OUTLINE_PASSWORD:?set in .env} ~* &* +@all
+        user $${REDIS_OUTLINE_USERNAME:?set in .env} on >$${REDIS_OUTLINE_PASSWORD:?set in .env} ~* &* +@all -@admin -@dangerous
         EOF
         exec redis-server \
           --appendonly yes \

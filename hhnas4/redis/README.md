@@ -72,6 +72,9 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
 - Set strong ACL credentials before first production start:
   - `REDIS_ADMIN_USERNAME` / `REDIS_ADMIN_PASSWORD` for operator/admin access
   - `REDIS_OUTLINE_USERNAME` / `REDIS_OUTLINE_PASSWORD` for Outline
+- ACL policy:
+  - Admin user: full access (`+@all`)
+  - Outline user: app access with restricted risk surface (`+@all -@admin -@dangerous`)
 - Keep this endpoint internal-only; do not expose Redis through DSM reverse proxy.
 - Use authenticated client URLs with username, for example:
   - `redis://outline:<password>@redis.internal.example:6379`
