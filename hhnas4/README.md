@@ -123,6 +123,7 @@ Example image path:
 - Ghost database stack: `ghost-mysql/README.md`
 - Outline stack: `outline/README.md`
 - ArchiveBox stack: `archivebox/README.md`
+- Docker socket proxy stack: `docker-socket-proxy/README.md`
 - Shared PostgreSQL stack: `postgres/README.md`
 - Shared Redis stack: `redis/README.md`
 - Shared infra backup runbook: `SHARED_INFRA_BACKUP_RUNBOOK.md`

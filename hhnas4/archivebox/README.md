@@ -77,6 +77,7 @@ Optional target directory override:
 - This stack uses a named volume intentionally. A direct bind mount on `nas-host`
   exposed the path as non-writable to ArchiveBox's non-root user inside the
   container, causing startup failures.
+- The compose image is pinned by digest for reproducibility.
 
 ## Post-deploy bootstrap
 
