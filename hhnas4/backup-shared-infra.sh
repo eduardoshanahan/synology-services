@@ -54,6 +54,7 @@ done
 TIMESTAMP_UTC="$(date -u +%Y%m%dT%H%M%SZ)"
 REMOTE_BACKUP_ROOT="${REMOTE_BASE_DIR}/backups/shared-infra"
 REMOTE_BACKUP_DIR="${REMOTE_BACKUP_ROOT}/${TIMESTAMP_UTC}"
+MYSQL_STACK_DIR="${REMOTE_BASE_DIR}/mysql"
 
 echo "[backup] target host      : ${TARGET_HOST}"
 echo "[backup] remote base dir  : ${REMOTE_BASE_DIR}"
@@ -80,11 +81,15 @@ fi
 
 ssh "${TARGET_HOST}" "mkdir -p '${REMOTE_BACKUP_DIR}/postgres' '${REMOTE_BACKUP_DIR}/mysql' '${REMOTE_BACKUP_DIR}/redis'"
 
+if ssh "${TARGET_HOST}" "test ! -d '${MYSQL_STACK_DIR}' && test -d '${REMOTE_BASE_DIR}/ghost-mysql'"; then
+	MYSQL_STACK_DIR="${REMOTE_BASE_DIR}/ghost-mysql"
+fi
+
 echo "[backup] dumping postgres (pg_dumpall)"
 ssh "${TARGET_HOST}" "cd '${REMOTE_BASE_DIR}/postgres' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T postgres pg_dumpall -U postgres | gzip -c > '${REMOTE_BACKUP_DIR}/postgres/pg_dumpall.sql.gz'"
 
 echo "[backup] dumping mysql (all databases)"
-ssh "${TARGET_HOST}" "cd '${REMOTE_BASE_DIR}/ghost-mysql' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T mysql sh -lc 'exec mysqldump --all-databases --single-transaction --routines --events --triggers -uroot -p\"\$MYSQL_ROOT_PASSWORD\"' | gzip -c > '${REMOTE_BACKUP_DIR}/mysql/all-databases.sql.gz'"
+ssh "${TARGET_HOST}" "cd '${MYSQL_STACK_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T mysql sh -lc 'exec mysqldump --all-databases --single-transaction --routines --events --triggers -uroot -p\"\$MYSQL_ROOT_PASSWORD\"' | gzip -c > '${REMOTE_BACKUP_DIR}/mysql/all-databases.sql.gz'"
 
 echo "[backup] exporting redis RDB snapshot"
 ssh "${TARGET_HOST}" "cd '${REMOTE_BASE_DIR}/redis' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T redis sh -lc 'redis-cli -h 127.0.0.1 -p \"\${REDIS_PORT:-6379}\" --user \"\$REDIS_ADMIN_USERNAME\" --pass \"\$REDIS_ADMIN_PASSWORD\" --rdb /tmp/redis-backup.rdb >/dev/null && cat /tmp/redis-backup.rdb && rm -f /tmp/redis-backup.rdb' > '${REMOTE_BACKUP_DIR}/redis/redis.rdb'"
@@ -100,6 +105,7 @@ docker_bin=${DOCKER_BIN}
 docker_prefix=${DOCKER_PREFIX}
 postgres_dump=postgres/pg_dumpall.sql.gz
 mysql_dump=mysql/all-databases.sql.gz
+mysql_stack_dir=${MYSQL_STACK_DIR}
 redis_rdb=redis/redis.rdb
 checksums=SHA256SUMS
 EOF"

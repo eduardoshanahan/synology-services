@@ -3,7 +3,7 @@
 This runbook centralizes backups for shared stateful infrastructure on `nas-host`:
 
 - PostgreSQL (`nas-host/postgres`)
-- MySQL (`nas-host/ghost-mysql`)
+- MySQL (`nas-host/mysql`)
 - Redis (`nas-host/redis`)
 
 It uses one script:

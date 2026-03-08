@@ -31,10 +31,10 @@ nix develop --no-write-lock-file
 - `nas-host-template/deploy.sh`
 - `nas-host-template/DSM_MANUAL_CHECKLIST.md`
 - `nas-host/gitea/compose.yaml`
-- `nas-host/ghost-mysql/compose.yaml`
-- `nas-host/ghost-mysql/.env.example`
-- `nas-host/ghost-mysql/deploy.sh`
-- `nas-host/ghost-mysql/README.md`
+- `nas-host/mysql/compose.yaml`
+- `nas-host/mysql/.env.example`
+- `nas-host/mysql/deploy.sh`
+- `nas-host/mysql/README.md`
 - `nas-host/outline/compose.yaml`
 - `nas-host/outline/.env.example`
 - `nas-host/outline/deploy.sh`

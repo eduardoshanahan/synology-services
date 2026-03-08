@@ -8,12 +8,13 @@ Usage:
 
 Examples:
   ./deploy.sh nas-host
-  ./deploy.sh nas-host /volume1/docker/homelab/nas-host/ghost-mysql
+  ./deploy.sh nas-host /volume1/docker/homelab/nas-host/mysql
 USAGE
 }
 
 TARGET_HOST="nas-host.internal.example"
-TARGET_DIR="/volume1/docker/homelab/nas-host/ghost-mysql"
+TARGET_DIR="/volume1/docker/homelab/nas-host/mysql"
+LEGACY_TARGET_DIR="/volume1/docker/homelab/nas-host/ghost-mysql"
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
 	usage
@@ -39,6 +40,7 @@ fi
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REMOTE_COMPOSE_FILE="${TARGET_DIR}/compose.yaml"
 REMOTE_ENV_FILE="${TARGET_DIR}/.env"
+REMOTE_LEGACY_ENV_FILE="${LEGACY_TARGET_DIR}/.env"
 
 echo "[deploy] target host: ${TARGET_HOST}"
 echo "[deploy] target dir : ${TARGET_DIR}"
@@ -48,8 +50,13 @@ ssh "${TARGET_HOST}" "mkdir -p '${TARGET_DIR}'"
 cat "${SRC_DIR}/compose.yaml" | ssh "${TARGET_HOST}" "cat > '${REMOTE_COMPOSE_FILE}'"
 
 if ssh "${TARGET_HOST}" "test ! -f '${REMOTE_ENV_FILE}'"; then
-	cat "${SRC_DIR}/.env.example" | ssh "${TARGET_HOST}" "cat > '${REMOTE_ENV_FILE}'"
-	echo "[deploy] created ${REMOTE_ENV_FILE} from template"
+	if ssh "${TARGET_HOST}" "test -f '${REMOTE_LEGACY_ENV_FILE}'"; then
+		ssh "${TARGET_HOST}" "cat '${REMOTE_LEGACY_ENV_FILE}' > '${REMOTE_ENV_FILE}'"
+		echo "[deploy] created ${REMOTE_ENV_FILE} from legacy ${REMOTE_LEGACY_ENV_FILE}"
+	else
+		cat "${SRC_DIR}/.env.example" | ssh "${TARGET_HOST}" "cat > '${REMOTE_ENV_FILE}'"
+		echo "[deploy] created ${REMOTE_ENV_FILE} from template"
+	fi
 else
 	echo "[deploy] keeping existing ${REMOTE_ENV_FILE}"
 fi
@@ -71,7 +78,7 @@ fi
 
 ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose pull && ${DOCKER_PREFIX}${DOCKER_BIN} compose up -d"
 
-echo "[deploy] ghost-mysql deployed. Verify with:"
+echo "[deploy] mysql deployed. Verify with:"
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose ps\""
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose ps --format json\""
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose logs --tail 40\""
