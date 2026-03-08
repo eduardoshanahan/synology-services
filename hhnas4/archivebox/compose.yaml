@@ -3,7 +3,6 @@ services:
     image: archivebox/archivebox@sha256:fdf2936192aa1e909b0c3f286f60174efa24078555be4b6b90a07f2cef1d4909
     container_name: archivebox
     restart: unless-stopped
-    network_mode: host
     environment:
       - ALLOWED_HOSTS=${ARCHIVEBOX_ALLOWED_HOSTS:-*}
       - TZ=${ARCHIVEBOX_TIMEZONE:-UTC}
@@ -14,10 +13,12 @@ services:
       - SEARCH_BACKEND_ENGINE=${ARCHIVEBOX_SEARCH_BACKEND_ENGINE:-ripgrep}
     volumes:
       - "archivebox_data:/data"
+    ports:
+      - "${ARCHIVEBOX_HOST_BIND:-127.0.0.1}:${ARCHIVEBOX_PORT:-8000}:8000"
     command:
       - server
       - --quick-init
-      - "${ARCHIVEBOX_BIND:-127.0.0.1}:${ARCHIVEBOX_PORT:-8000}"
+      - "${ARCHIVEBOX_BIND:-0.0.0.0}:8000"
 
 volumes:
   archivebox_data:
