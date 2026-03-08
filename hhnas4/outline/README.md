@@ -10,8 +10,8 @@ Internal wiki / knowledge base stack for `hhnas4`.
 - Uses shared Redis endpoint `redis.internal.example` for cache/queue state.
 - Uses shared SMTP relay endpoint `smtp-relay.internal.example:2525`.
 - Uses a single Compose project that matches the other `hhnas4` stacks.
-- Uses Synology host networking, like `archivebox`, so the stack uses the NAS
-  resolver directly instead of the default Docker bridge DNS path.
+- Uses bridge networking with loopback-only publish on the NAS host:
+  `127.0.0.1:${OUTLINE_PORT}:3010`.
 
 ## Layout
 
@@ -66,8 +66,9 @@ Optional target directory override:
 - Use exactly one SMTP configuration mode:
   - either `SMTP_SERVICE`
   - or explicit `SMTP_HOST` / `SMTP_PORT` / related settings
-- This stack binds Outline to loopback by default:
-  - Outline listens directly on `127.0.0.1:3010`
+- This stack publishes the container port on loopback by default:
+  - host publish `127.0.0.1:${OUTLINE_PORT:-3010}` -> container `:3010`
+  - `OUTLINE_HOST_BIND=127.0.0.1` keeps it local to the NAS
 - Shared PostgreSQL endpoint must be reachable:
   - `postgres.internal.example:5433`
 - Shared SMTP relay endpoint must be reachable:
@@ -76,6 +77,10 @@ Optional target directory override:
   - `redis.internal.example:6379`
   - `REDIS_URL` should include ACL username + password auth:
     - `redis://outline:<password>@redis.internal.example:6379`
+- For bridge-mode DNS stability on Synology, this stack sets:
+  - explicit DNS resolvers (`OUTLINE_DNS_1`, `OUTLINE_DNS_2`)
+  - static host mappings (`OUTLINE_POSTGRES_HOST_IP`, `OUTLINE_REDIS_HOST_IP`,
+    `OUTLINE_SMTP_HOST_IP`)
 - This stack ships `certs/homelab-root-ca.crt` and mounts it into the Outline
   container as `NODE_EXTRA_CA_CERTS` so OIDC discovery/token calls to internal
   TLS endpoints (for example Authentik) are trusted.

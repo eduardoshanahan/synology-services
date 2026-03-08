@@ -4,14 +4,14 @@ set -euo pipefail
 # Keep Docker bridge subnets able to reach LAN services on Synology hosts where
 # FORWARD_FIREWALL applies a default drop policy.
 #
-# Rule ensured:
+# Rules ensured:
 #   iptables -I FORWARD_FIREWALL <pos> -s 172.16.0.0/12 -j RETURN
+#   iptables -I INPUT_FIREWALL   <pos> -s 172.16.0.0/12 -j RETURN
 #
 # This script is idempotent and intended to be run on boot (and optionally
 # periodically) via user cron.
 
 DOCKER_BIN="/usr/local/bin/docker"
-CHAIN="FORWARD_FIREWALL"
 SRC_CIDR="172.16.0.0/12"
 TARGET="RETURN"
 INSERT_POS="5"
@@ -27,10 +27,15 @@ run_iptables() {
 		chroot /host /usr/bin/iptables "$@"
 }
 
-if run_iptables -C "${CHAIN}" -s "${SRC_CIDR}" -j "${TARGET}" >/dev/null 2>&1; then
-	echo "[egress-fix] rule already present: ${CHAIN} ${SRC_CIDR} -> ${TARGET}"
-	exit 0
-fi
+ensure_rule() {
+	local chain="$1"
+	if run_iptables -C "${chain}" -s "${SRC_CIDR}" -j "${TARGET}" >/dev/null 2>&1; then
+		echo "[egress-fix] rule already present: ${chain} ${SRC_CIDR} -> ${TARGET}"
+		return 0
+	fi
+	run_iptables -I "${chain}" "${INSERT_POS}" -s "${SRC_CIDR}" -j "${TARGET}"
+	echo "[egress-fix] inserted rule: ${chain} ${SRC_CIDR} -> ${TARGET}"
+}
 
-run_iptables -I "${CHAIN}" "${INSERT_POS}" -s "${SRC_CIDR}" -j "${TARGET}"
-echo "[egress-fix] inserted rule: ${CHAIN} ${SRC_CIDR} -> ${TARGET}"
+ensure_rule "FORWARD_FIREWALL"
+ensure_rule "INPUT_FIREWALL"
