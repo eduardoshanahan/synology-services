@@ -3,7 +3,7 @@
 This runbook centralizes backups for shared stateful infrastructure on `hhnas4`:
 
 - PostgreSQL (`hhnas4/postgres`)
-- MySQL (`hhnas4/ghost-mysql`)
+- MySQL (`hhnas4/mysql`)
 - Redis (`hhnas4/redis`)
 
 It uses one script:

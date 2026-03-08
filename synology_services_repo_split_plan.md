@@ -63,7 +63,7 @@ synology-services/
       README.md
       compose.yaml
       deploy.sh
-    ghost-mysql/
+    mysql/
       .env.example
       README.md
       compose.yaml
@@ -111,7 +111,7 @@ These docs currently use commands like `cd synology-services/...` because they a
 - `synology-services/nas-host-template/README.md`
 - `synology-services/hhnas4/README.md`
 - `synology-services/hhnas4/archivebox/README.md`
-- `synology-services/hhnas4/ghost-mysql/README.md`
+- `synology-services/hhnas4/mysql/README.md`
 - `synology-services/hhnas4/SESSION_NOTES.md`
 
 After the split, update those commands to repo-root-relative usage, for example:

@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:8.4.6
-    container_name: ghost-mysql
+    container_name: hhnas4-mysql
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?set in .env}
@@ -18,7 +18,7 @@ services:
     ports:
       - "${MYSQL_BIND:-0.0.0.0}:${MYSQL_PORT:-3306}:3306"
     volumes:
-      - "ghost_mysql_data:/var/lib/mysql"
+      - "mysql_data:/var/lib/mysql"
     healthcheck:
       test:
         - CMD-SHELL
@@ -29,4 +29,5 @@ services:
       start_period: 45s
 
 volumes:
-  ghost_mysql_data:
+  mysql_data:
+    name: ghost_mysql_data

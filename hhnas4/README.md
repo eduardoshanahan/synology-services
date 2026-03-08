@@ -4,7 +4,7 @@ Reproducible, sanitized deployment artifacts for host `hhnas4`.
 
 ## Included stack
 
-- `ghost-mysql` for a dedicated Ghost production database.
+- `mysql` as shared MySQL server for internal services.
 - `gitea` with built-in container registry enabled.
 - `outline` for an internal wiki / knowledge base.
 - `archivebox` for large local web archive storage.
@@ -122,7 +122,7 @@ Example image path:
 
 - The copied `.env` is a template; adjust values on NAS as needed.
 - No credentials or secret values are committed in this directory.
-- Ghost database stack: `ghost-mysql/README.md`
+- Shared MySQL stack: `mysql/README.md`
 - Outline stack: `outline/README.md`
 - ArchiveBox stack: `archivebox/README.md`
 - Docker socket proxy stack: `docker-socket-proxy/README.md`
