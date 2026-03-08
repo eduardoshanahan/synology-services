@@ -49,6 +49,7 @@ Rule inserted on `nas-host`:
 
 ```bash
 iptables -I FORWARD_FIREWALL 5 -s 172.16.0.0/12 -j RETURN
+iptables -I INPUT_FIREWALL 5 -s 172.16.0.0/12 -j RETURN
 ```
 
 Because we only had passwordless `/usr/local/bin/docker`, this was executed via a privileged helper container using host network namespace.
@@ -77,7 +78,7 @@ allowlist values are rendered correctly for Postfix.
 
 ## Persistence note (important)
 
-This iptables rule may be lost on reboot/firewall reload.
+These iptables rules may be lost on reboot/firewall reload.
 
 To make this persistent in Synology DSM, add/ensure equivalent firewall policy
 that allows forwarding traffic sourced from Docker bridge ranges (at least

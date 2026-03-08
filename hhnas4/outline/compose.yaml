@@ -3,10 +3,19 @@ services:
     image: docker.getoutline.com/outlinewiki/outline:1.4.0
     container_name: outline
     restart: unless-stopped
-    network_mode: host
+    ports:
+      - "${OUTLINE_HOST_BIND:-127.0.0.1}:${OUTLINE_PORT:-3010}:3010"
+    dns:
+      - "${OUTLINE_DNS_1:-192.0.2.10}"
+      - "${OUTLINE_DNS_2:-192.0.2.10}"
+    extra_hosts:
+      - "postgres.internal.example:${OUTLINE_POSTGRES_HOST_IP:-192.0.2.10}"
+      - "redis.internal.example:${OUTLINE_REDIS_HOST_IP:-192.0.2.10}"
+      - "smtp-relay.internal.example:${OUTLINE_SMTP_HOST_IP:-192.0.2.10}"
     env_file:
       - .env
     environment:
+      - HOST=0.0.0.0
       - NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/homelab-root-ca.crt
     volumes:
       - "outline_storage_data:/var/lib/outline/data"
