@@ -77,10 +77,9 @@ Optional target directory override:
   - `redis.internal.example:6379`
   - `REDIS_URL` should include ACL username + password auth:
     - `redis://outline:<password>@redis.internal.example:6379`
-- For bridge-mode DNS stability on Synology, this stack sets:
-  - explicit DNS resolvers (`OUTLINE_DNS_1`, `OUTLINE_DNS_2`)
-  - static host mappings (`OUTLINE_POSTGRES_HOST_IP`, `OUTLINE_REDIS_HOST_IP`,
-    `OUTLINE_SMTP_HOST_IP`)
+- This stack intentionally relies on DNS names for shared dependencies
+  (`postgres.internal.example`, `redis.internal.example`,
+  `smtp-relay.internal.example`) and does not pin service IPs in Compose.
 - This stack ships `certs/homelab-root-ca.crt` and mounts it into the Outline
   container as `NODE_EXTRA_CA_CERTS` so OIDC discovery/token calls to internal
   TLS endpoints (for example Authentik) are trusted.
