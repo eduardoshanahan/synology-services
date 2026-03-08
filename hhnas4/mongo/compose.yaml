@@ -1,0 +1,35 @@
+services:
+  mongo:
+    image: mongo:4.4
+    container_name: nas-host-mongo
+    restart: unless-stopped
+    ports:
+      - "${MONGO_BIND:-0.0.0.0}:${MONGO_PORT:-27017}:27017"
+    env_file:
+      - .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:?set in .env}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:?set in .env}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE:-admin}
+    command:
+      - --bind_ip_all
+      - --port
+      - "27017"
+    volumes:
+      - "mongo_data:/data/db"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          mongo --quiet --host 127.0.0.1 --port 27017
+          --username "$${MONGO_INITDB_ROOT_USERNAME}"
+          --password "$${MONGO_INITDB_ROOT_PASSWORD}"
+          --authenticationDatabase admin
+          --eval 'db.adminCommand({ ping: 1 }).ok' | grep -q 1
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 40s
+
+volumes:
+  mongo_data:
