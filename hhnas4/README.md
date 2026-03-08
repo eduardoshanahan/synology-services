@@ -11,6 +11,7 @@ Reproducible, sanitized deployment artifacts for host `hhnas4`.
 - `postgres` as shared database server for internal services.
 - `redis` as shared cache/queue backend for internal services.
 - `mongo` as shared document database for internal services.
+- `karakeep` read-it-later/bookmarks service with dedicated NAS storage.
 - `promtail` shipping `gitea` container logs to Loki.
 - `docker-socket-proxy` exposing a read-only Docker API for Homepage remote
   container status.
@@ -128,6 +129,7 @@ Example image path:
 - Shared PostgreSQL stack: `postgres/README.md`
 - Shared Redis stack: `redis/README.md`
 - Shared MongoDB stack: `mongo/README.md`
+- KaraKeep stack: `karakeep/README.md`
 - Shared infra backup runbook: `SHARED_INFRA_BACKUP_RUNBOOK.md`
 - Session continuity notes: `SESSION_NOTES.md`
 - Post-deploy operations checklist: `GITEA_OPERATIONS_CHECKLIST.md`
