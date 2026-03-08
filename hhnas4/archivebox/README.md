@@ -9,9 +9,8 @@ Dedicated ArchiveBox stack for large local archival storage on `hhnas4`.
 - Avoids remote SQLite I/O from a Raspberry Pi mount.
 - Uses a Docker-managed named volume because this Synology host exposes bind
   mounts as read-only to ArchiveBox's required non-root runtime user.
-- Uses `network_mode: host` because the default Docker bridge on this Synology
-  host failed external DNS resolution for ArchiveBox, while host networking uses
-  the NAS resolver stack correctly.
+- Uses bridge networking with an explicit host port publish
+  (`${ARCHIVEBOX_HOST_BIND}:${ARCHIVEBOX_PORT}:8000`).
 
 ## Layout
 
@@ -52,12 +51,11 @@ Optional target directory override:
 
 - Edit `.env` on the NAS before first production start if you need a different port,
   timezone, or search backend.
-- The default template binds ArchiveBox to `127.0.0.1` and sets
+- The default template binds ArchiveBox inside the container to `0.0.0.0:8000`
+  and publishes only on host loopback (`127.0.0.1:${ARCHIVEBOX_PORT}`), and sets
   `ARCHIVEBOX_ALLOWED_HOSTS=archivebox.internal.example`, which is the intended
   shape when it sits behind the DSM reverse proxy.
-- ArchiveBox binds directly to `${ARCHIVEBOX_BIND}:${ARCHIVEBOX_PORT}` inside
-  the host network namespace. Keep this on loopback when using the DSM reverse
-  proxy.
+- Keep `ARCHIVEBOX_HOST_BIND=127.0.0.1` when using the DSM reverse proxy.
 - `CHROME_USER_DATA_DIR` defaults to `/data/chrome-profile`, which lets the
   Chromium-based extractors reuse a persistent browser profile stored inside the
   ArchiveBox data volume.
