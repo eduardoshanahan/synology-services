@@ -10,8 +10,8 @@ Internal wiki / knowledge base stack for `hhnas4`.
 - Uses shared Redis endpoint `redis.internal.example` for cache/queue state.
 - Uses shared SMTP relay endpoint `smtp-relay.internal.example:2525`.
 - Uses a single Compose project that matches the other `hhnas4` stacks.
-- Uses Synology host networking, like `archivebox`, so the stack uses the NAS
-  resolver directly instead of the default Docker bridge DNS path.
+- Uses bridge networking with an explicit host port publish
+  (`${OUTLINE_HOST_BIND}:${OUTLINE_PORT}:3010`).
 
 ## Layout
 
@@ -66,8 +66,9 @@ Optional target directory override:
 - Use exactly one SMTP configuration mode:
   - either `SMTP_SERVICE`
   - or explicit `SMTP_HOST` / `SMTP_PORT` / related settings
-- This stack binds Outline to loopback by default:
-  - Outline listens directly on `127.0.0.1:3010`
+- This stack publishes Outline to host loopback by default:
+  - `OUTLINE_HOST_BIND=127.0.0.1`
+  - `OUTLINE_PORT=3010`
 - Shared PostgreSQL endpoint must be reachable:
   - `postgres.internal.example:5433`
 - Shared SMTP relay endpoint must be reachable:
