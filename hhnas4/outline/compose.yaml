@@ -3,6 +3,7 @@ services:
     image: docker.getoutline.com/outlinewiki/outline:1.4.0
     container_name: outline
     restart: unless-stopped
+    network_mode: host
     env_file:
       - .env
     environment:
@@ -10,8 +11,6 @@ services:
     volumes:
       - "outline_storage_data:/var/lib/outline/data"
       - ./certs/homelab-root-ca.crt:/usr/local/share/ca-certificates/homelab-root-ca.crt:ro
-    ports:
-      - "${OUTLINE_HOST_BIND:-127.0.0.1}:${OUTLINE_PORT:-3010}:3010"
     healthcheck:
       test:
         - CMD-SHELL
