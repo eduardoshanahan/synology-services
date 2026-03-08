@@ -7,6 +7,7 @@ Shared Redis server for internal services on `nas-host`.
 - Provides one reusable Redis endpoint for services in `internal.example`.
 - Replaces per-app embedded Redis sidecars where shared Redis is preferred.
 - Keeps Redis internal-only (no DSM reverse proxy exposure).
+- Uses bridge networking with host port publish for `6379`.
 
 ## Service endpoint
 
