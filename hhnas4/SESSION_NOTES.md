@@ -1,6 +1,6 @@
 # nas-host Gitea Session Notes
 
-Last updated: 2026-03-05
+Last updated: 2026-03-09
 
 Purpose: capture operational findings from this session so future work can
 resume without rediscovery.
@@ -99,3 +99,58 @@ resume without rediscovery.
 - Current relay logs include confirmed `status=sent` for Gitea SMTP tests.
   Outline login flow is working; capture a fresh Outline-specific SMTP send log
   entry in a dedicated test for strict audit evidence.
+
+## 2026-03-09 Shared Tika + Gotenberg deployment
+
+- Apache Tika is deployed on `nas-host` using:
+  - compose path: `/volume1/docker/homelab/nas-host/tika/compose.yaml`
+  - env path: `/volume1/docker/homelab/nas-host/tika/.env`
+  - container: `nas-host-tika`
+  - endpoint: `http://<nas-host-lan-ip>:9998` (`/version` returns `Apache Tika 3.2.3`)
+- Gotenberg is deployed on `nas-host` using:
+  - compose path: `/volume1/docker/homelab/nas-host/gotenberg/compose.yaml`
+  - env path: `/volume1/docker/homelab/nas-host/gotenberg/.env`
+  - container: `nas-host-gotenberg`
+  - endpoint: `http://<nas-host-lan-ip>:3001` (`/health` returns `HTTP 200` with
+    `chromium` and `libreoffice` status `up`)
+- DSM reverse proxy hostnames are now configured for operator access:
+  - `https://tika.internal.example/version`
+  - `https://gotenberg.internal.example/health`
+
+## 2026-03-09 Paperless-ngx deployment
+
+- Paperless-ngx is deployed on `nas-host` using:
+  - compose path: `/volume1/docker/homelab/nas-host/paperless/compose.yaml`
+  - env path: `/volume1/docker/homelab/nas-host/paperless/.env`
+  - container: `nas-host-paperless`
+  - local endpoint: `http://127.0.0.1:8010`
+- Dependency wiring is active and validated from container logs:
+  - Postgres: `postgres.internal.example:5433`
+  - Redis: `redis.internal.example:6379`
+  - Tika: `tika.internal.example:9998`
+  - Gotenberg: `gotenberg.internal.example:3001`
+- Runtime checks confirm successful startup:
+  - migrations complete
+  - Celery worker and beat started
+  - HTTP `302` from `/` to login path
+- Network note:
+  - Paperless now runs on Docker network `paperless-net` with subnet
+    `172.23.0.0/16` to avoid conflicting bridge ranges.
+- Current Redis auth uses the shared Redis admin credential in
+  `PAPERLESS_REDIS`. Plan a follow-up to introduce a dedicated Redis ACL user
+  for Paperless and rotate to that account.
+- DSM reverse proxy + certificate is configured for:
+  - `https://paperless.internal.example/`
+- A first admin user was bootstrapped:
+  - username: `eduardo`
+- Production incident observed and resolved:
+  - Symptom: intermittent HTTP `500` on login.
+  - Error in logs: `Temporary failure in name resolution` for Postgres/Redis.
+  - Root cause: Synology firewall chain `FORWARD_FIREWALL` was dropping Docker
+    bridge egress (`172.16.0.0/12`).
+  - Remediation:
+    - applied `nas-host/ensure-docker-bridge-lan-egress.sh` on host.
+    - added `dns` to Paperless compose (`PAPERLESS_DNS`, default
+      `192.0.2.10`) for deterministic internal DNS resolution.
+  - Result: `nas-host-paperless` returned to `healthy`; login endpoint returns
+    `HTTP 200`.
