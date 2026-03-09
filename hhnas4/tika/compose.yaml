@@ -1,0 +1,9 @@
+services:
+  tika:
+    image: apache/tika:3.2.3.0
+    container_name: hhnas4-tika
+    restart: unless-stopped
+    ports:
+      - "${TIKA_BIND:-0.0.0.0}:${TIKA_PORT:-9998}:9998"
+    env_file:
+      - .env

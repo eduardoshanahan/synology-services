@@ -1,0 +1,9 @@
+services:
+  gotenberg:
+    image: gotenberg/gotenberg:8.25
+    container_name: hhnas4-gotenberg
+    restart: unless-stopped
+    ports:
+      - "${GOTENBERG_BIND:-0.0.0.0}:${GOTENBERG_PORT:-3001}:3000"
+    env_file:
+      - .env
