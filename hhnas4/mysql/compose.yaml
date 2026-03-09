@@ -30,4 +30,4 @@ services:
 
 volumes:
   mysql_data:
-    name: ghost_mysql_data
+    name: ghost-mysql_ghost_mysql_data

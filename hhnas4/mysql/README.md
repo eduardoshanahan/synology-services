@@ -25,7 +25,7 @@ Default target directory:
 Persistent database volume:
 
 ```text
-ghost_mysql_data
+ghost-mysql_ghost_mysql_data
 ```
 
 ## Deploy
@@ -63,7 +63,8 @@ Optional target directory override:
 ## Compatibility note
 
 - The Compose volume key is `mysql_data`, but it is explicitly mapped to the
-  existing Docker volume name `ghost_mysql_data` to preserve current data.
+  legacy Docker volume name `ghost-mysql_ghost_mysql_data` to preserve
+  pre-rename data.
 
 ## Backup note
 
