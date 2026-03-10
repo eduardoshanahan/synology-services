@@ -45,12 +45,20 @@ So packets from Docker bridge source `172.18.0.0/16` were dropped before Docker'
 
 We allowed Docker bridge source CIDRs in `FORWARD_FIREWALL` before the final drop.
 
-Rule inserted on `hhnas4`:
+Rules inserted on `hhnas4` at the time:
 
 ```bash
 iptables -I FORWARD_FIREWALL 5 -s 172.16.0.0/12 -j RETURN
 iptables -I INPUT_FIREWALL 5 -s 172.16.0.0/12 -j RETURN
 ```
+
+Update on March 10, 2026:
+
+- Newer Compose-created networks on `hhnas4` may use non-`172.x` bridge
+  subnets, for example `192.0.2.10/20` for `jellyfin_default`.
+- The persistence helper `ensure-docker-bridge-lan-egress.sh` was updated to
+  enumerate active Docker network subnets dynamically instead of hardcoding
+  `172.16.0.0/12`.
 
 Because we only had passwordless `/usr/local/bin/docker`, this was executed via a privileged helper container using host network namespace.
 

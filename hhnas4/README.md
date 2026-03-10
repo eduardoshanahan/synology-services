@@ -16,7 +16,8 @@ Reproducible, sanitized deployment artifacts for host `hhnas4`.
 - `gotenberg` as shared document conversion service for internal services.
 - `paperless` document management with OCR using shared Postgres/Redis/Tika/Gotenberg.
 - `karakeep` read-it-later/bookmarks service with dedicated NAS storage.
-- `promtail` shipping `gitea` container logs to Loki.
+- `jellyfin` media server with NAS-local config/cache and a configurable media mount.
+- `promtail` shipping `gitea` and `jellyfin` container logs to Loki.
 - `docker-socket-proxy` exposing a read-only Docker API for Homepage remote
   container status.
 
@@ -94,6 +95,14 @@ Deploy separately:
 ./docker-socket-proxy/deploy.sh hhnas4.internal.example
 ```
 
+## Jellyfin
+
+Deploy separately:
+
+```bash
+./jellyfin/deploy.sh hhnas4.internal.example
+```
+
 ## Shared Infra Backups
 
 Centralized backup orchestration for shared Postgres/MySQL/Redis state:
@@ -137,6 +146,7 @@ Example image path:
 - Shared Apache Tika stack: `tika/README.md`
 - Shared Gotenberg stack: `gotenberg/README.md`
 - Paperless-ngx stack: `paperless/README.md`
+- Jellyfin stack: `jellyfin/README.md`
 - KaraKeep stack: `karakeep/README.md`
 - Shared infra backup runbook: `SHARED_INFRA_BACKUP_RUNBOOK.md`
 - Session continuity notes: `SESSION_NOTES.md`

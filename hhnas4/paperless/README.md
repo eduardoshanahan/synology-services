@@ -112,8 +112,9 @@ Symptom:
 
 Likely cause on Synology:
 
-- `FORWARD_FIREWALL` / `INPUT_FIREWALL` drops Docker bridge traffic from
-  `172.16.0.0/12`, preventing paperless network egress to LAN DNS/DB services.
+- `FORWARD_FIREWALL` / `INPUT_FIREWALL` drops Docker bridge traffic from the
+  active Docker subnets, preventing Paperless network egress to LAN DNS/DB
+  services.
 
 Fix:
 

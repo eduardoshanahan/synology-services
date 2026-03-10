@@ -29,3 +29,24 @@ scrape_configs:
         replacement: synology-gitea
     pipeline_stages:
       - docker: {}
+
+  - job_name: synology-jellyfin
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 15s
+        filters:
+          - name: label
+            values: ["com.docker.compose.service=jellyfin"]
+    relabel_configs:
+      - source_labels: ["__meta_docker_container_name"]
+        regex: "/hhnas4-jellyfin"
+        action: keep
+      - source_labels: ["__meta_docker_container_name"]
+        regex: "/(.*)"
+        target_label: container
+      - target_label: host
+        replacement: ${PROMTAIL_HOST_LABEL}
+      - target_label: job
+        replacement: synology-jellyfin
+    pipeline_stages:
+      - docker: {}

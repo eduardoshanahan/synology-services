@@ -31,6 +31,10 @@ nix develop --no-write-lock-file
 - `nas-host-template/deploy.sh`
 - `nas-host-template/DSM_MANUAL_CHECKLIST.md`
 - `hhnas4/gitea/compose.yaml`
+- `hhnas4/jellyfin/compose.yaml`
+- `hhnas4/jellyfin/.env.example`
+- `hhnas4/jellyfin/deploy.sh`
+- `hhnas4/jellyfin/README.md`
 - `hhnas4/mysql/compose.yaml`
 - `hhnas4/mysql/.env.example`
 - `hhnas4/mysql/deploy.sh`
