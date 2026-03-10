@@ -61,6 +61,10 @@ nix develop --no-write-lock-file
 - `hhnas4/promtail/.env.example`
 - `hhnas4/gitea-deploy.sh`
 - `hhnas4/promtail-deploy.sh`
+- `hhnas4/dolt/compose.yaml`
+- `hhnas4/dolt/.env.example`
+- `hhnas4/dolt/deploy.sh`
+- `hhnas4/dolt/README.md`
 - `hhnas4/README.md`
 
 ## Reproducibility Contract

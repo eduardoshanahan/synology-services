@@ -11,6 +11,7 @@ Reproducible, sanitized deployment artifacts for host `hhnas4`.
 - `postgres` as shared database server for internal services.
 - `redis` as shared cache/queue backend for internal services.
 - `mongo` as shared document database for internal services.
+- `dolt` as shared versioned SQL database for internal services.
 - `tika` as shared text and metadata extraction service for internal services.
 - `gotenberg` as shared document conversion service for internal services.
 - `paperless` document management with OCR using shared Postgres/Redis/Tika/Gotenberg.
@@ -132,6 +133,7 @@ Example image path:
 - Shared PostgreSQL stack: `postgres/README.md`
 - Shared Redis stack: `redis/README.md`
 - Shared MongoDB stack: `mongo/README.md`
+- Shared Dolt stack: `dolt/README.md`
 - Shared Apache Tika stack: `tika/README.md`
 - Shared Gotenberg stack: `gotenberg/README.md`
 - Paperless-ngx stack: `paperless/README.md`
