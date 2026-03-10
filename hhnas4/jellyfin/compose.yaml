@@ -1,0 +1,16 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:10.11.6
+    container_name: nas-host-jellyfin
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - TZ=${JELLYFIN_TIMEZONE:-UTC}
+      - JELLYFIN_PublishedServerUrl=${JELLYFIN_PUBLISHED_SERVER_URL:-https://jellyfin.internal.example}
+    volumes:
+      - "${JELLYFIN_CONFIG_DIR:-./config}:/config"
+      - "${JELLYFIN_CACHE_DIR:-./cache}:/cache"
+      - "${JELLYFIN_MEDIA_DIR:-/volume1/media}:/media:ro"
+    ports:
+      - "${JELLYFIN_HOST_BIND:-127.0.0.1}:${JELLYFIN_PORT:-8096}:8096"
