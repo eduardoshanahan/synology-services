@@ -1,0 +1,36 @@
+services:
+  dolt:
+    image: dolthub/dolt-sql-server:1.59.10
+    container_name: nas-host-dolt
+    restart: unless-stopped
+    ports:
+      - "${DOLT_BIND:-0.0.0.0}:${DOLT_PORT:-3307}:3306"
+      - "${DOLT_METRICS_BIND:-0.0.0.0}:${DOLT_METRICS_PORT:-11228}:11228"
+    env_file:
+      - .env
+    environment:
+      - DOLT_ROOT_HOST=${DOLT_ROOT_HOST:-%}
+      - DOLT_ROOT_PASSWORD=${DOLT_ROOT_PASSWORD:?set in .env}
+    networks:
+      shared-db:
+        aliases:
+          - dolt-shared
+    volumes:
+      - dolt_data:/var/lib/dolt
+      - ./server/config.yaml:/etc/dolt/servercfg.d/config.yaml:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "dolt --host 127.0.0.1 --port 3306 --user root --password \"$${DOLT_ROOT_PASSWORD}\" --no-tls sql -q 'select current_timestamp();' >/dev/null 2>&1 || exit 1"
+      interval: 20s
+      timeout: 8s
+      retries: 8
+      start_period: 30s
+
+volumes:
+  dolt_data:
+
+networks:
+  shared-db:
+    external: true
+    name: ${SHARED_DB_NETWORK:-hhlab-shared-db}

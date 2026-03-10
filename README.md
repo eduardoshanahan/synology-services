@@ -61,6 +61,10 @@ nix develop --no-write-lock-file
 - `nas-host/promtail/.env.example`
 - `nas-host/gitea-deploy.sh`
 - `nas-host/promtail-deploy.sh`
+- `nas-host/dolt/compose.yaml`
+- `nas-host/dolt/.env.example`
+- `nas-host/dolt/deploy.sh`
+- `nas-host/dolt/README.md`
 - `nas-host/README.md`
 
 ## Reproducibility Contract

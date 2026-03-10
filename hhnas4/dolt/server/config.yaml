@@ -1,0 +1,24 @@
+log_level: info
+log_format: text
+
+behavior:
+  read_only: false
+  autocommit: true
+  disable_client_multi_statements: false
+
+listener:
+  host: 0.0.0.0
+  port: 3306
+  max_connections: 100
+  read_timeout_millis: 28800000
+  write_timeout_millis: 28800000
+
+data_dir: /var/lib/dolt
+
+metrics:
+  labels:
+    host: nas-host
+    service: dolt
+    env: homelab
+  host: 0.0.0.0
+  port: 11228
