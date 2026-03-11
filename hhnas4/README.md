@@ -145,6 +145,12 @@ Example image path:
 
 - The copied `.env` is a template; adjust values on NAS as needed.
 - No credentials or secret values are committed in this directory.
+- Future bridge-mode services on `nas-host` should be planned around a reserved
+  Docker address pool on the NAS. Long term, the cleaner fix for Synology
+  firewall interaction is to constrain Docker bridge networks to one known
+  internal range and allow that range explicitly in DSM firewall policy,
+  instead of relying on ad-hoc per-network firewall inserts from
+  `ensure-docker-bridge-lan-egress.sh`.
 - Shared MySQL stack: `mysql/README.md`
 - Outline stack: `outline/README.md`
 - ArchiveBox stack: `archivebox/README.md`
