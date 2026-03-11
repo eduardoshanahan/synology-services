@@ -1,0 +1,29 @@
+services:
+  woodpecker-agent:
+    image: ${WOODPECKER_AGENT_IMAGE:-woodpeckerci/woodpecker-agent:latest}
+    container_name: ${WOODPECKER_AGENT_CONTAINER_NAME:-woodpecker-agent}
+    restart: unless-stopped
+    init: true
+
+    environment:
+      - TZ=${TZ:-UTC}
+      - WOODPECKER_SERVER=${WOODPECKER_SERVER:-woodpecker.internal.example:9000}
+      - WOODPECKER_AGENT_SECRET=${WOODPECKER_AGENT_SECRET}
+      - WOODPECKER_MAX_WORKFLOWS=${WOODPECKER_MAX_WORKFLOWS:-1}
+      - WOODPECKER_BACKEND=docker
+      - WOODPECKER_HOSTNAME=${WOODPECKER_HOSTNAME:-hhnas4}
+      - WOODPECKER_HEALTHCHECK_ADDR=${WOODPECKER_HEALTHCHECK_ADDR:-127.0.0.1:3100}
+      - WOODPECKER_BACKEND_DOCKER_VOLUMES=${WOODPECKER_BACKEND_DOCKER_VOLUMES:-${WOODPECKER_CA_BUNDLE_HOST_PATH:-/volume1/docker/homelab/hhnas4/woodpecker-agent/certs/ca-certificates-with-homelab.pem}:/etc/ssl/cert.pem:ro,${WOODPECKER_CA_CERT_HOST_PATH:-/volume1/docker/homelab/hhnas4/woodpecker-agent/certs/homelab-root-ca.crt}:/etc/ssl/certs/homelab-root-ca.crt:ro}
+      - WOODPECKER_BACKEND_DOCKER_NETWORK=${WOODPECKER_BACKEND_DOCKER_NETWORK:-}
+      - WOODPECKER_ENVIRONMENT=${WOODPECKER_ENVIRONMENT:-GIT_SSL_CAINFO=/etc/ssl/cert.pem,SSL_CERT_FILE=/etc/ssl/cert.pem,CURL_CA_BUNDLE=/etc/ssl/cert.pem}
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${WOODPECKER_CA_CERT_HOST_PATH:-./certs/homelab-root-ca.crt}:/etc/ssl/certs/homelab-root-ca.crt:ro
+      - ${WOODPECKER_CA_BUNDLE_HOST_PATH:-./certs/ca-certificates-with-homelab.pem}:/etc/ssl/cert.pem:ro
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"

@@ -16,6 +16,7 @@ Reproducible, sanitized deployment artifacts for host `hhnas4`.
 - `gotenberg` as shared document conversion service for internal services.
 - `paperless` document management with OCR using shared Postgres/Redis/Tika/Gotenberg.
 - `karakeep` read-it-later/bookmarks service with dedicated NAS storage.
+- `woodpecker-agent` as the AMD64 Woodpecker CI runner.
 - `jellyfin` media server with NAS-local config/cache, a configurable media
   mount, and bridge-mode LAN discovery ports exposed for TV clients.
 - `promtail` shipping `gitea` and `jellyfin` container logs to Loki.
@@ -96,6 +97,14 @@ Deploy separately:
 ./docker-socket-proxy/deploy.sh hhnas4.internal.example
 ```
 
+## Woodpecker Agent
+
+Deploy separately:
+
+```bash
+./woodpecker-agent/deploy.sh hhnas4.internal.example
+```
+
 ## Jellyfin
 
 Deploy separately:
@@ -149,6 +158,7 @@ Example image path:
 - Paperless-ngx stack: `paperless/README.md`
 - Jellyfin stack: `jellyfin/README.md`
 - KaraKeep stack: `karakeep/README.md`
+- Woodpecker agent stack: `woodpecker-agent/README.md`
 - Shared infra backup runbook: `SHARED_INFRA_BACKUP_RUNBOOK.md`
 - Session continuity notes: `SESSION_NOTES.md`
 - Post-deploy operations checklist: `GITEA_OPERATIONS_CHECKLIST.md`
