@@ -154,3 +154,33 @@ resume without rediscovery.
       `192.0.2.10`) for deterministic internal DNS resolution.
   - Result: `nas-host-paperless` returned to `healthy`; login endpoint returns
     `HTTP 200`.
+
+## 2026-03-10 Jellyfin discovery finding
+
+- Jellyfin is running on `nas-host` at:
+  - compose path: `/volume1/docker/homelab/nas-host/jellyfin/compose.yaml`
+  - env path: `/volume1/docker/homelab/nas-host/jellyfin/.env`
+  - container: `nas-host-jellyfin`
+- Observed runtime before remediation:
+  - container network mode: Docker bridge (`jellyfin_default`)
+  - published ports: `127.0.0.1:8096->8096/tcp`
+  - UDP discovery ports for Jellyfin local discovery / SSDP were not exposed
+- User-visible symptom:
+  - desktop and mobile clients worked through the configured URL
+  - Google TV Streamer could not discover the server on LAN
+- Likely root cause:
+  - loopback-only bind plus missing UDP discovery ports prevented direct LAN
+    discovery even though reverse-proxy access worked
+- Tracked fix prepared in this repository:
+  - `nas-host/jellyfin/compose.yaml` now exposes:
+    - `8096/tcp`
+    - `7359/udp`
+  - `nas-host/jellyfin/.env.example` defaults `JELLYFIN_HOST_BIND=0.0.0.0`
+- Additional deployment finding:
+  - NAS host already has `0.0.0.0:1900/udp` in use, so publishing SSDP from the
+    Jellyfin container fails on this Synology unless that host service is
+    disabled or reconfigured
+- Validation still needed after redeploy:
+  - confirm direct LAN access to `http://<nas-host-lan-ip>:8096`
+  - confirm DSM firewall allows `8096/tcp` and `7359/udp`
+  - retest discovery from Google TV Streamer

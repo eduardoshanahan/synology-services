@@ -107,7 +107,6 @@ if ! ssh "${TARGET_HOST}" "test -d '${MEDIA_DIR}'"; then
 	echo "[deploy] update ${REMOTE_ENV_FILE} and retry." >&2
 	exit 1
 fi
-
 DOCKER_BIN="$(ssh "${TARGET_HOST}" "command -v docker || { test -x /usr/local/bin/docker && echo /usr/local/bin/docker; } || { test -x /var/packages/ContainerManager/target/usr/bin/docker && echo /var/packages/ContainerManager/target/usr/bin/docker; } || { test -x /var/packages/Docker/target/usr/bin/docker && echo /var/packages/Docker/target/usr/bin/docker; }")"
 
 if [[ -z "${DOCKER_BIN}" ]]; then
@@ -127,4 +126,5 @@ ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compos
 
 echo "[deploy] jellyfin deployed. Verify with:"
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose ps\""
-echo "         ssh ${TARGET_HOST} \"curl -sS -m 6 -I http://127.0.0.1:\$(grep '^JELLYFIN_PORT=' '${REMOTE_ENV_FILE}' | cut -d= -f2) | sed -n '1,12p'\""
+echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose logs --tail 120\""
+echo "         ssh ${TARGET_HOST} \"curl -sS -m 6 -i http://127.0.0.1:\$(grep '^JELLYFIN_PORT=' '${REMOTE_ENV_FILE}' | cut -d= -f2) | sed -n '1,12p'\""
