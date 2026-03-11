@@ -11,6 +11,7 @@ services:
     volumes:
       - "${JELLYFIN_CONFIG_DIR:-./config}:/config"
       - "${JELLYFIN_CACHE_DIR:-./cache}:/cache"
-      - "${JELLYFIN_MEDIA_DIR:-/volume1/media}:/media:ro"
+      - "${JELLYFIN_MEDIA_DIR:-/volume1/Media}:/media:ro"
     ports:
-      - "${JELLYFIN_HOST_BIND:-127.0.0.1}:${JELLYFIN_PORT:-8096}:8096"
+      - "${JELLYFIN_HOST_BIND:-0.0.0.0}:${JELLYFIN_PORT:-8096}:8096/tcp"
+      - "${JELLYFIN_DISCOVERY_BIND:-0.0.0.0}:${JELLYFIN_LOCAL_DISCOVERY_PORT:-7359}:7359/udp"

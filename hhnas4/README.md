@@ -16,7 +16,8 @@ Reproducible, sanitized deployment artifacts for host `hhnas4`.
 - `gotenberg` as shared document conversion service for internal services.
 - `paperless` document management with OCR using shared Postgres/Redis/Tika/Gotenberg.
 - `karakeep` read-it-later/bookmarks service with dedicated NAS storage.
-- `jellyfin` media server with NAS-local config/cache and a configurable media mount.
+- `jellyfin` media server with NAS-local config/cache, a configurable media
+  mount, and bridge-mode LAN discovery ports exposed for TV clients.
 - `promtail` shipping `gitea` and `jellyfin` container logs to Loki.
 - `docker-socket-proxy` exposing a read-only Docker API for Homepage remote
   container status.
