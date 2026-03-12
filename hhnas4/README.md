@@ -161,6 +161,10 @@ Example image path:
   internal range and allow that range explicitly in DSM firewall policy,
   instead of relying on ad-hoc per-network firewall inserts from
   `ensure-docker-bridge-lan-egress.sh`.
+- Preferred reserved pool for `nas-host`: `172.30.0.0/16` for Docker user-defined
+  bridge networks, with one DSM firewall allow rule covering that full source
+  range.
+- Migration runbook: `DOCKER_ADDRESS_POOL_RUNBOOK.md`
 - Shared MySQL stack: `mysql/README.md`
 - Outline stack: `outline/README.md`
 - ArchiveBox stack: `archivebox/README.md`
