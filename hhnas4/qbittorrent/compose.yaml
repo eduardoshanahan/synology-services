@@ -1,0 +1,23 @@
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:${QBITTORRENT_VERSION:-latest}
+    container_name: nas-host-qbittorrent
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - PUID=${QBITTORRENT_PUID:-1026}
+      - PGID=${QBITTORRENT_PGID:-100}
+      - TZ=${QBITTORRENT_TIMEZONE:-UTC}
+      - WEBUI_PORT=${QBITTORRENT_WEBUI_PORT:-8080}
+      - TORRENTING_PORT=${QBITTORRENT_TORRENT_PORT:-6881}
+    volumes:
+      - "qbittorrent_config:/config"
+      - "${QBITTORRENT_DOWNLOADS_DIR:-/volume1/Media/Downloads/qbittorrent}:/downloads"
+    ports:
+      - "${QBITTORRENT_HOST_BIND:-127.0.0.1}:${QBITTORRENT_WEBUI_PORT:-8080}:${QBITTORRENT_WEBUI_PORT:-8080}/tcp"
+      - "${QBITTORRENT_TORRENT_BIND:-0.0.0.0}:${QBITTORRENT_TORRENT_PORT:-6881}:${QBITTORRENT_TORRENT_PORT:-6881}/tcp"
+      - "${QBITTORRENT_TORRENT_BIND:-0.0.0.0}:${QBITTORRENT_TORRENT_PORT:-6881}:${QBITTORRENT_TORRENT_PORT:-6881}/udp"
+
+volumes:
+  qbittorrent_config:

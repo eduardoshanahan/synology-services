@@ -16,6 +16,8 @@ Reproducible, sanitized deployment artifacts for host `nas-host`.
 - `gotenberg` as shared document conversion service for internal services.
 - `paperless` document management with OCR using shared Postgres/Redis/Tika/Gotenberg.
 - `karakeep` read-it-later/bookmarks service with dedicated NAS storage.
+- `qbittorrent` torrent downloader with NAS-local config and a default
+  downloads path under `/volume1/Media/Downloads/qbittorrent`.
 - `woodpecker-agent` as the AMD64 Woodpecker CI runner.
 - `jellyfin` media server with NAS-local config/cache, a configurable media
   mount, and bridge-mode LAN discovery ports exposed for TV clients.
@@ -113,6 +115,14 @@ Deploy separately:
 ./jellyfin/deploy.sh nas-host.internal.example
 ```
 
+## qBittorrent
+
+Deploy separately:
+
+```bash
+./qbittorrent/deploy.sh nas-host.internal.example
+```
+
 ## Shared Infra Backups
 
 Centralized backup orchestration for shared Postgres/MySQL/Redis state:
@@ -163,6 +173,7 @@ Example image path:
 - Shared Gotenberg stack: `gotenberg/README.md`
 - Paperless-ngx stack: `paperless/README.md`
 - Jellyfin stack: `jellyfin/README.md`
+- qBittorrent stack: `qbittorrent/README.md`
 - KaraKeep stack: `karakeep/README.md`
 - Woodpecker agent stack: `woodpecker-agent/README.md`
 - Shared infra backup runbook: `SHARED_INFRA_BACKUP_RUNBOOK.md`
