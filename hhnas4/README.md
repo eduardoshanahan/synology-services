@@ -91,6 +91,10 @@ Optional target directory override:
 ./promtail-deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4
 ```
 
+Promtail does not require `network_mode: host` in this repository shape. It
+discovers containers through `/var/run/docker.sock` and only needs normal
+bridge-network outbound access to push logs to Loki.
+
 ## Docker socket proxy (Homepage remote container stats)
 
 Deploy separately:
@@ -161,9 +165,14 @@ Example image path:
   internal range and allow that range explicitly in DSM firewall policy,
   instead of relying on ad-hoc per-network firewall inserts from
   `ensure-docker-bridge-lan-egress.sh`.
-- Preferred reserved pool for `hhnas4`: `172.30.0.0/16` for Docker user-defined
-  bridge networks, with one DSM firewall allow rule covering that full source
-  range.
+- Current intentional exceptions:
+  - `paperless-net` is explicitly pinned by compose and will not move with the
+    Docker default address pool until that compose setting is changed.
+  - `hhlab-shared-db` is an external shared network and must be migrated
+    deliberately rather than through per-stack `compose down/up`.
+- Preferred reserved pool for `hhnas4`: `10.253.0.0/16` for Docker user-defined
+  bridge networks, with Docker's default `bridge` kept on `10.254.0.0/24` and
+  one DSM firewall allow rule covering the full `10.253.0.0/16` source range.
 - Migration runbook: `DOCKER_ADDRESS_POOL_RUNBOOK.md`
 - Shared MySQL stack: `mysql/README.md`
 - Outline stack: `outline/README.md`
