@@ -102,6 +102,11 @@ if [[ -z "${DOWNLOADS_DIR}" ]]; then
 	exit 1
 fi
 
+SERVER_DOMAINS="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_SERVER_DOMAINS=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+HOST_HEADER_VALIDATION="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_HOST_HEADER_VALIDATION=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+REVERSE_PROXY_SUPPORT="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_REVERSE_PROXY_SUPPORT=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+TRUSTED_REVERSE_PROXIES="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_TRUSTED_REVERSE_PROXIES=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+
 ssh "${TARGET_HOST}" "mkdir -p '${DOWNLOADS_DIR}'"
 
 DOCKER_BIN="$(ssh "${TARGET_HOST}" "command -v docker || { test -x /usr/local/bin/docker && echo /usr/local/bin/docker; } || { test -x /var/packages/ContainerManager/target/usr/bin/docker && echo /var/packages/ContainerManager/target/usr/bin/docker; } || { test -x /var/packages/Docker/target/usr/bin/docker && echo /var/packages/Docker/target/usr/bin/docker; }")"
@@ -120,6 +125,16 @@ else
 fi
 
 ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose pull && ${DOCKER_PREFIX}${DOCKER_BIN} compose up -d"
+
+if [[ -n "${SERVER_DOMAINS}" ]]; then
+	ssh "${TARGET_HOST}" \
+		"QBITTORRENT_SERVER_DOMAINS='${SERVER_DOMAINS}' \
+QBITTORRENT_HOST_HEADER_VALIDATION='${HOST_HEADER_VALIDATION:-true}' \
+QBITTORRENT_REVERSE_PROXY_SUPPORT='${REVERSE_PROXY_SUPPORT:-true}' \
+QBITTORRENT_TRUSTED_REVERSE_PROXIES='${TRUSTED_REVERSE_PROXIES:-127.0.0.1;::1}' \
+QBITTORRENT_CONTAINER_NAME='hhnas4-qbittorrent' \
+${DOCKER_PREFIX}${DOCKER_BIN} exec hhnas4-qbittorrent python3 -c \"from pathlib import Path; import os; p = Path('/config/qBittorrent/qBittorrent.conf'); lines = p.read_text().splitlines(); updates = {'WebUI\\\\ServerDomains': os.environ['QBITTORRENT_SERVER_DOMAINS'], 'WebUI\\\\HostHeaderValidation': os.environ['QBITTORRENT_HOST_HEADER_VALIDATION'].lower(), 'WebUI\\\\ReverseProxySupportEnabled': os.environ['QBITTORRENT_REVERSE_PROXY_SUPPORT'].lower(), 'WebUI\\\\TrustedReverseProxiesList': os.environ['QBITTORRENT_TRUSTED_REVERSE_PROXIES']}; out = []; seen = set();\nfor line in lines:\n    replaced = False\n    for key, value in updates.items():\n        if line.startswith(key + '='):\n            out.append(f'{key}={value}'); seen.add(key); replaced = True; break\n    if not replaced:\n        out.append(line)\nfor key, value in updates.items():\n    if key not in seen:\n        out.append(f'{key}={value}')\np.write_text('\\n'.join(out) + '\\n')\" && ${DOCKER_PREFIX}${DOCKER_BIN} restart hhnas4-qbittorrent >/dev/null"
+fi
 
 echo "[deploy] qbittorrent deployed. Verify with:"
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose ps\""
