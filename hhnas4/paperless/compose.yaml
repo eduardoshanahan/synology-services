@@ -20,8 +20,6 @@ services:
       - PAPERLESS_TIKA_ENDPOINT=${PAPERLESS_TIKA_ENDPOINT:-http://tika.internal.example:9998}
       - PAPERLESS_TIME_ZONE=${PAPERLESS_TIME_ZONE:-UTC}
       - PAPERLESS_OCR_LANGUAGE=${PAPERLESS_OCR_LANGUAGE:-eng}
-    dns:
-      - ${PAPERLESS_DNS:-192.0.2.10}
     networks:
       - paperless-net
     volumes:
