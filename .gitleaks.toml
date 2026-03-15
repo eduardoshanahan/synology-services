@@ -8,6 +8,11 @@ regex = '''(?i)(password|passwd|passphrase|secret|token|api[_-]?key|auth[_-]?key
 path = '''(?i)\.(env|ini|cfg|conf|json|jsonc|toml|ya?ml|sh|bash|zsh)$'''
 secretGroup = 0
 
+  [[rules.allowlists]]
+  description = "Allow PostgreSQL SCRAM mode configuration."
+  regexes = ['''password_encryption=scram-sha-256''']
+  paths = ['''nas-host/postgres/compose\.yaml''']
+
 [[rules]]
 id = "age-private-key"
 description = "Age private keys must never be committed."
