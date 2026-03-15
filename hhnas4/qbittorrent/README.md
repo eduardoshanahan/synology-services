@@ -74,6 +74,9 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
   the FQDN and does not depend on the NAS LAN IP remaining stable.
 - Keep `QBITTORRENT_SERVER_DOMAINS` focused on loopback plus the public FQDN
   unless you intentionally want extra direct-access hostnames.
+- Keep `QBITTORRENT_TRUSTED_REVERSE_PROXIES` limited to loopback when DSM
+  reverse proxy targets `127.0.0.1:8080`; a fixed LAN proxy IP is not needed
+  in that final shape.
 - Leave `QBITTORRENT_TORRENT_BIND=0.0.0.0` unless you intentionally want the
   BitTorrent ports bound to a narrower interface.
 - If you later want Radarr automatic import from `private-pi-02`, ensure the
