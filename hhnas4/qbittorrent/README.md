@@ -42,6 +42,7 @@ Default downloads path exposed read-write inside the container:
 - `compose.yaml`
 - `.env.example`
 - `deploy.sh`
+- `SYNOLOGY_REVERSE_PROXY_FQDN_CUTOVER.md`
 
 ## Deploy
 
@@ -67,8 +68,12 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
 ## First-start rules
 
 - Set `QBITTORRENT_DOWNLOADS_DIR` in `.env` if you want a different NAS path.
-- Keep `QBITTORRENT_HOST_BIND=127.0.0.1` if you plan to front the Web UI
-  through DSM reverse proxy.
+- Set `QBITTORRENT_WEBUI_USERNAME` and `QBITTORRENT_WEBUI_PASSWORD` in `.env`
+  or `.env.sops` so deploys keep the Web UI credentials declarative.
+- Prefer `QBITTORRENT_HOST_BIND=127.0.0.1` so the public entrypoint stays on
+  the FQDN and does not depend on the NAS LAN IP remaining stable.
+- Keep `QBITTORRENT_SERVER_DOMAINS` focused on loopback plus the public FQDN
+  unless you intentionally want extra direct-access hostnames.
 - Leave `QBITTORRENT_TORRENT_BIND=0.0.0.0` unless you intentionally want the
   BitTorrent ports bound to a narrower interface.
 - If you later want Radarr automatic import from `private-pi-02`, ensure the
@@ -77,7 +82,7 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
   in mind.
 - qBittorrent generates the initial Web UI admin password on first boot; read
   the container logs immediately after first start and rotate the password in
-  the UI.
+  the UI, or set declarative credentials and redeploy this stack.
 - This stack uses a named volume intentionally. On `hhnas4`, direct bind mounts
   for `/config` can appear non-writable to qBittorrent's non-root runtime user
   because of Synology ACL behavior.
@@ -92,13 +97,17 @@ Recommended public shape:
 Keep TLS termination in DSM. qBittorrent itself should continue serving plain
 HTTP on the NAS loopback endpoint.
 
+If the live stack still depends on a LAN-IP reverse proxy target, use
+[`SYNOLOGY_REVERSE_PROXY_FQDN_CUTOVER.md`](/path/to/hhlab-insfrastructure/synology-services/hhnas4/qbittorrent/SYNOLOGY_REVERSE_PROXY_FQDN_CUTOVER.md)
+to finish the cutover cleanly.
+
 ## Validation goals
 
 - `docker compose ps` shows `hhnas4-qbittorrent` running.
-- From NAS:
-  - `curl -sS -m 6 -I http://127.0.0.1:8080 | sed -n '1,12p'`
-  returns an HTTP response.
-- On first start, logs show the temporary admin password.
 - Through the reverse proxy:
   - `curl -skI https://qbittorrent.internal.example/ | sed -n '1,12p'`
   returns an HTTP response.
+- From NAS, direct loopback validation is optional:
+  - `curl -sS -m 6 -I http://127.0.0.1:8080 | sed -n '1,12p'`
+  returns an HTTP response.
+- On first start, logs show the temporary admin password.
