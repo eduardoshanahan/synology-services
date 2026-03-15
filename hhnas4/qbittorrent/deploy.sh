@@ -102,10 +102,36 @@ if [[ -z "${DOWNLOADS_DIR}" ]]; then
 	exit 1
 fi
 
+WEBUI_USERNAME="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_WEBUI_USERNAME=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+WEBUI_PASSWORD="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_WEBUI_PASSWORD=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+if [[ -z "${WEBUI_USERNAME}" || -z "${WEBUI_PASSWORD}" ]]; then
+	echo "[deploy] qBittorrent Web UI credentials are missing in ${REMOTE_ENV_FILE}" >&2
+	exit 1
+fi
+
 SERVER_DOMAINS="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_SERVER_DOMAINS=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
 HOST_HEADER_VALIDATION="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_HOST_HEADER_VALIDATION=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
 REVERSE_PROXY_SUPPORT="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_REVERSE_PROXY_SUPPORT=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
 TRUSTED_REVERSE_PROXIES="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_TRUSTED_REVERSE_PROXIES=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+WEBUI_PORT="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_WEBUI_PORT=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+HOST_BIND="$(ssh "${TARGET_HOST}" "grep '^QBITTORRENT_HOST_BIND=' '${REMOTE_ENV_FILE}' | cut -d= -f2-")"
+
+DIRECT_WEBUI_HOST="${HOST_BIND:-127.0.0.1}"
+if [[ "${DIRECT_WEBUI_HOST}" == "0.0.0.0" ]]; then
+	DIRECT_WEBUI_HOST="127.0.0.1"
+fi
+
+PUBLIC_WEBUI_HOST="$(
+	printf '%s' "${SERVER_DOMAINS}" |
+		tr ';' '\n' |
+		awk '
+			$0 == "" { next }
+			$0 == "localhost" { next }
+			$0 == "127.0.0.1" { next }
+			$0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ { next }
+			{ print; exit }
+		'
+)"
 
 ssh "${TARGET_HOST}" "mkdir -p '${DOWNLOADS_DIR}'"
 
@@ -124,19 +150,64 @@ else
 	DOCKER_PREFIX="sudo "
 fi
 
-ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose pull && ${DOCKER_PREFIX}${DOCKER_BIN} compose up -d"
+ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose pull && ${DOCKER_PREFIX}${DOCKER_BIN} compose up -d && ${DOCKER_PREFIX}${DOCKER_BIN} stop nas-host-qbittorrent >/dev/null"
 
-if [[ -n "${SERVER_DOMAINS}" ]]; then
-	ssh "${TARGET_HOST}" \
-		"QBITTORRENT_SERVER_DOMAINS='${SERVER_DOMAINS}' \
-QBITTORRENT_HOST_HEADER_VALIDATION='${HOST_HEADER_VALIDATION:-true}' \
-QBITTORRENT_REVERSE_PROXY_SUPPORT='${REVERSE_PROXY_SUPPORT:-true}' \
-QBITTORRENT_TRUSTED_REVERSE_PROXIES='${TRUSTED_REVERSE_PROXIES:-127.0.0.1;::1}' \
-QBITTORRENT_CONTAINER_NAME='nas-host-qbittorrent' \
-${DOCKER_PREFIX}${DOCKER_BIN} exec nas-host-qbittorrent python3 -c \"from pathlib import Path; import os; p = Path('/config/qBittorrent/qBittorrent.conf'); lines = p.read_text().splitlines(); updates = {'WebUI\\\\ServerDomains': os.environ['QBITTORRENT_SERVER_DOMAINS'], 'WebUI\\\\HostHeaderValidation': os.environ['QBITTORRENT_HOST_HEADER_VALIDATION'].lower(), 'WebUI\\\\ReverseProxySupportEnabled': os.environ['QBITTORRENT_REVERSE_PROXY_SUPPORT'].lower(), 'WebUI\\\\TrustedReverseProxiesList': os.environ['QBITTORRENT_TRUSTED_REVERSE_PROXIES']}; out = []; seen = set();\nfor line in lines:\n    replaced = False\n    for key, value in updates.items():\n        if line.startswith(key + '='):\n            out.append(f'{key}={value}'); seen.add(key); replaced = True; break\n    if not replaced:\n        out.append(line)\nfor key, value in updates.items():\n    if key not in seen:\n        out.append(f'{key}={value}')\np.write_text('\\n'.join(out) + '\\n')\" && ${DOCKER_PREFIX}${DOCKER_BIN} restart nas-host-qbittorrent >/dev/null"
-fi
+ssh "${TARGET_HOST}" \
+	"${DOCKER_PREFIX}${DOCKER_BIN} run --rm -i --entrypoint python3 \
+-v qbittorrent_qbittorrent_config:/config \
+lscr.io/linuxserver/qbittorrent:latest - <<'PY'
+from pathlib import Path
+import base64
+import hashlib
+import os
+
+password = '${WEBUI_PASSWORD}'
+username = '${WEBUI_USERNAME}'
+server_domains = '${SERVER_DOMAINS}'
+host_header_validation = '${HOST_HEADER_VALIDATION:-true}'.lower()
+reverse_proxy_support = '${REVERSE_PROXY_SUPPORT:-true}'.lower()
+trusted_reverse_proxies = '${TRUSTED_REVERSE_PROXIES:-127.0.0.1;::1}'
+
+p = Path('/config/qBittorrent/qBittorrent.conf')
+lines = p.read_text().splitlines()
+salt = os.urandom(16)
+digest = hashlib.pbkdf2_hmac('sha512', password.encode(), salt, 100000)
+password_hash = f'@ByteArray({base64.b64encode(salt).decode()}:{base64.b64encode(digest).decode()})'
+sep = chr(92)
+updates = {
+    f'WebUI{sep}Username': username,
+    f'WebUI{sep}Password_PBKDF2': password_hash,
+    f'WebUI{sep}ServerDomains': server_domains,
+    f'WebUI{sep}HostHeaderValidation': host_header_validation,
+    f'WebUI{sep}ReverseProxySupportEnabled': reverse_proxy_support,
+    f'WebUI{sep}TrustedReverseProxiesList': trusted_reverse_proxies,
+}
+out = []
+seen = set()
+
+for line in lines:
+    replaced = False
+    for key, value in updates.items():
+        if line.startswith(key + '='):
+            out.append(f'{key}={value}')
+            seen.add(key)
+            replaced = True
+            break
+    if not replaced:
+        out.append(line)
+
+for key, value in updates.items():
+    if key not in seen:
+        out.append(f'{key}={value}')
+
+p.write_text('\\n'.join(out) + '\\n')
+PY
+${DOCKER_PREFIX}${DOCKER_BIN} start nas-host-qbittorrent >/dev/null"
 
 echo "[deploy] qbittorrent deployed. Verify with:"
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose ps\""
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose logs --tail 80\""
-echo "         ssh ${TARGET_HOST} \"curl -sS -m 6 -I http://127.0.0.1:\$(grep '^QBITTORRENT_WEBUI_PORT=' '${REMOTE_ENV_FILE}' | cut -d= -f2) | sed -n '1,12p'\""
+echo "         ssh ${TARGET_HOST} \"curl -sS -m 6 -I http://${DIRECT_WEBUI_HOST}:${WEBUI_PORT} | sed -n '1,12p'\""
+if [[ -n "${PUBLIC_WEBUI_HOST}" ]]; then
+	echo "         curl -skI https://${PUBLIC_WEBUI_HOST}/ | sed -n '1,12p'"
+fi
