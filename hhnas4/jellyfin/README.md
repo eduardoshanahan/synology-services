@@ -43,6 +43,7 @@ Default media path exposed read-only inside the container:
 ## Layout
 
 - `compose.yaml`
+- `.env.sops` (recommended tracked encrypted source)
 - `.env.example`
 - `deploy.sh`
 
