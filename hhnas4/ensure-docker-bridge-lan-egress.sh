@@ -11,25 +11,64 @@ set -eu
 # This script is idempotent and intended to be run on boot (and optionally
 # periodically) via user cron.
 
-DOCKER_BIN="/usr/local/bin/docker"
 TARGET="RETURN"
 INSERT_POS="5"
 IMAGE="alpine:3.20"
+DOCKER_BIN=""
+DOCKER_PREFIX=""
 
-if [ ! -x "${DOCKER_BIN}" ]; then
-	echo "[egress-fix] docker binary not found at ${DOCKER_BIN}" >&2
+resolve_docker() {
+	for candidate in \
+		"$(command -v docker 2>/dev/null || true)" \
+		"/usr/local/bin/docker" \
+		"/var/packages/ContainerManager/target/usr/bin/docker" \
+		"/var/packages/Docker/target/usr/bin/docker"; do
+		[ -n "${candidate}" ] || continue
+		[ -x "${candidate}" ] || continue
+		DOCKER_BIN="${candidate}"
+		break
+	done
+
+	if [ -z "${DOCKER_BIN}" ]; then
+		echo "[egress-fix] docker binary not found" >&2
+		exit 1
+	fi
+
+	if "${DOCKER_BIN}" info >/dev/null 2>&1; then
+		DOCKER_PREFIX=""
+		return 0
+	fi
+
+	if sudo -n "${DOCKER_BIN}" info >/dev/null 2>&1; then
+		DOCKER_PREFIX="sudo -n"
+		return 0
+	fi
+
+	echo "[egress-fix] docker daemon is not ready or requires interactive sudo" >&2
 	exit 1
-fi
+}
+
+docker_cmd() {
+	if [ -n "${DOCKER_PREFIX}" ]; then
+		${DOCKER_PREFIX} "${DOCKER_BIN}" "$@"
+	else
+		"${DOCKER_BIN}" "$@"
+	fi
+}
 
 run_iptables() {
-	sudo -n "${DOCKER_BIN}" run --rm --privileged --network host -v /:/host "${IMAGE}" \
+	docker_cmd run --rm --privileged --network host -v /:/host "${IMAGE}" \
 		chroot /host /usr/bin/iptables "$@"
 }
 
 docker_subnets() {
-	sudo -n "${DOCKER_BIN}" network ls -q |
-		xargs -r sudo -n "${DOCKER_BIN}" network inspect \
-			--format '{{range .IPAM.Config}}{{if .Subnet}}{{println .Subnet}}{{end}}{{end}}' |
+	docker_cmd network ls -q |
+		while IFS= read -r network_id; do
+			[ -n "${network_id}" ] || continue
+			docker_cmd network inspect \
+				--format '{{range .IPAM.Config}}{{if .Subnet}}{{println .Subnet}}{{end}}{{end}}' \
+				"${network_id}"
+		done |
 		sort -u
 }
 
@@ -43,6 +82,8 @@ ensure_rule() {
 	run_iptables -I "${chain}" "${INSERT_POS}" -s "${src_cidr}" -j "${TARGET}"
 	echo "[egress-fix] inserted rule: ${chain} ${src_cidr} -> ${TARGET}"
 }
+
+resolve_docker
 
 docker_subnets | while IFS= read -r subnet; do
 	[ -n "${subnet}" ] || continue
