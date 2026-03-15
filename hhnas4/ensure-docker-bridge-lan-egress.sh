@@ -27,8 +27,9 @@ run_iptables() {
 }
 
 docker_subnets() {
-	sudo -n "${DOCKER_BIN}" network inspect $(sudo -n "${DOCKER_BIN}" network ls -q) \
-		--format '{{range .IPAM.Config}}{{if .Subnet}}{{println .Subnet}}{{end}}{{end}}' |
+	sudo -n "${DOCKER_BIN}" network ls -q |
+		xargs -r sudo -n "${DOCKER_BIN}" network inspect \
+			--format '{{range .IPAM.Config}}{{if .Subnet}}{{println .Subnet}}{{end}}{{end}}' |
 		sort -u
 }
 
