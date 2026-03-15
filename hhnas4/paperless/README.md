@@ -8,6 +8,8 @@ Shared Paperless-ngx stack on `hhnas4` using centralized dependencies.
 - Uses shared PostgreSQL and Redis services on `hhnas4`.
 - Uses shared Apache Tika and Gotenberg services for extraction/conversion.
 - Keeps primary app endpoint internal-only (typically via DSM reverse proxy).
+- Uses the Synology host resolver path by default; no fixed container DNS
+  override is required.
 
 ## Service endpoint
 
@@ -77,8 +79,6 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
   - `PAPERLESS_SECRET_KEY`
   - `PAPERLESS_DBPASS`
   - Redis credential inside `PAPERLESS_REDIS`
-- Ensure `PAPERLESS_DNS` points at an internal resolver that serves
-  `*.internal.example` (default: `192.0.2.10`).
 - Keep Paperless internal-only; do not expose port `8000` publicly.
 - Create dedicated DB role/database on shared Postgres:
   - role: `paperless`
