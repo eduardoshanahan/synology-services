@@ -175,6 +175,7 @@ Example image path:
   one DSM firewall allow rule covering the full `10.253.0.0/16` source range.
 - Migration runbook: `DOCKER_ADDRESS_POOL_RUNBOOK.md`
 - Shared MySQL stack: `mysql/README.md`
+- Gitea stack: `gitea/README.md`
 - Outline stack: `outline/README.md`
 - ArchiveBox stack: `archivebox/README.md`
 - Docker socket proxy stack: `docker-socket-proxy/README.md`
@@ -189,8 +190,11 @@ Example image path:
 - qBittorrent stack: `qbittorrent/README.md`
 - KaraKeep stack: `karakeep/README.md`
 - Woodpecker agent stack: `woodpecker-agent/README.md`
+- Promtail stack: `promtail/README.md`
 - Shared infra backup runbook: `SHARED_INFRA_BACKUP_RUNBOOK.md`
 - Session continuity notes: `SESSION_NOTES.md`
 - Post-deploy operations checklist: `GITEA_OPERATIONS_CHECKLIST.md`
 - Promtail settings live at `promtail/.env` on the NAS. Set `LOKI_PUSH_URL` to
   your Loki endpoint (for example `http://loki.<domain>:3100/loki/api/v1/push`).
+- `smtp-relay/` is currently an intentional placeholder only; there is no live
+  Synology SMTP relay stack in this repository today.

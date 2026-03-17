@@ -21,55 +21,43 @@ nix develop --no-write-lock-file
 
 ## Scope
 
-- This directory intentionally contains no credentials, certificates, or host-private secrets.
+- This directory intentionally contains no credentials, private keys, or
+  host-private secrets.
+- Public CA certificates may be committed when a stack needs them at runtime.
 - Host-specific values are either parameterized in `.env.example` files or documented as manual DSM UI steps.
 
 ## Layout
 
-- `nas-host-template/node-exporter/compose.yaml`
-- `nas-host-template/node-exporter/.env.example`
-- `nas-host-template/deploy.sh`
-- `nas-host-template/DSM_MANUAL_CHECKLIST.md`
-- `nas-host/gitea/compose.yaml`
-- `nas-host/jellyfin/compose.yaml`
-- `nas-host/jellyfin/.env.example`
-- `nas-host/jellyfin/deploy.sh`
-- `nas-host/jellyfin/README.md`
-- `nas-host/mysql/compose.yaml`
-- `nas-host/mysql/.env.example`
-- `nas-host/mysql/deploy.sh`
-- `nas-host/mysql/README.md`
-- `nas-host/outline/compose.yaml`
-- `nas-host/outline/.env.example`
-- `nas-host/outline/deploy.sh`
-- `nas-host/outline/README.md`
-- `nas-host/redis/compose.yaml`
-- `nas-host/redis/.env.example`
-- `nas-host/redis/deploy.sh`
-- `nas-host/redis/README.md`
-- `nas-host/tika/compose.yaml`
-- `nas-host/tika/.env.example`
-- `nas-host/tika/deploy.sh`
-- `nas-host/tika/README.md`
-- `nas-host/gotenberg/compose.yaml`
-- `nas-host/gotenberg/.env.example`
-- `nas-host/gotenberg/deploy.sh`
-- `nas-host/gotenberg/README.md`
-- `nas-host/paperless/compose.yaml`
-- `nas-host/paperless/.env.example`
-- `nas-host/paperless/deploy.sh`
-- `nas-host/paperless/README.md`
-- `nas-host/gitea/.env.example`
-- `nas-host/promtail/compose.yaml`
-- `nas-host/promtail/config.yml`
-- `nas-host/promtail/.env.example`
-- `nas-host/gitea-deploy.sh`
-- `nas-host/promtail-deploy.sh`
-- `nas-host/dolt/compose.yaml`
-- `nas-host/dolt/.env.example`
-- `nas-host/dolt/deploy.sh`
-- `nas-host/dolt/README.md`
-- `nas-host/README.md`
+- `nas-host/`
+  - shared infra stacks:
+    - `mysql/`
+    - `postgres/`
+    - `redis/`
+    - `mongo/`
+    - `dolt/`
+    - `tika/`
+    - `gotenberg/`
+  - application stacks:
+    - `gitea/`
+    - `outline/`
+    - `paperless/`
+    - `karakeep/`
+    - `jellyfin/`
+    - `qbittorrent/`
+    - `archivebox/`
+  - observability / integration stacks:
+    - `promtail/`
+    - `docker-socket-proxy/`
+    - `woodpecker-agent/`
+  - host runbooks and scripts:
+    - `README.md`
+    - `SESSION_NOTES.md`
+    - `GITEA_OPERATIONS_CHECKLIST.md`
+    - `DOCKER_ADDRESS_POOL_RUNBOOK.md`
+    - `SHARED_INFRA_BACKUP_RUNBOOK.md`
+    - `backup-shared-infra.sh`
+    - `gitea-deploy.sh`
+    - `promtail-deploy.sh`
 
 ## Reproducibility Contract
 
