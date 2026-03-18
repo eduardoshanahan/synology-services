@@ -1,4 +1,4 @@
-# nas-host Documentation Index
+# `nas-host` Documentation Index
 
 Canonical map for host-level documentation under `synology-services/nas-host/`.
 
@@ -55,3 +55,12 @@ Canonical map for host-level documentation under `synology-services/nas-host/`.
 
 - `smtp-relay/` is intentionally a placeholder only today:
   - `smtp-relay/README.md`
+
+## Boundary Reminder
+
+- `../README.md`
+  - repo overview, scope, and top-level documentation pointers
+- `README.md`
+  - host overview and deploy entrypoints
+- `SESSION_NOTES.md`
+  - host-specific continuity notes across sessions
