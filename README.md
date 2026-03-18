@@ -59,15 +59,15 @@ nix develop --no-write-lock-file
     - `gitea-deploy.sh`
     - `promtail-deploy.sh`
 
-## Documentation Map
+## Documentation Index
 
-- Top-level repo scope and layout:
-  - this file
-- Active `hhnas4` stack and runbook index:
+- Top-level repo overview, scope, and layout:
+  - `README.md`
+- Active `hhnas4` host overview and deploy entrypoint:
   - `hhnas4/README.md`
 - Active `hhnas4` local documentation index:
   - `hhnas4/DOCUMENTATION_INDEX.md`
-- Template host bootstrap/manual-step guidance:
+- Template host bootstrap and manual-step guidance:
   - `nas-host-template/README.md`
 
 ## Reproducibility Contract
@@ -76,7 +76,7 @@ nix develop --no-write-lock-file
 - Any unavoidable Synology DSM UI action must be documented in `DSM_MANUAL_CHECKLIST.md`.
 - Secret material must stay outside this repository.
 
-## Session Notes
+## Session Continuity
 
 Host-specific operational notes for continuity across sessions:
 

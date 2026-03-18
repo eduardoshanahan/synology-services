@@ -1,4 +1,4 @@
-# hhnas4 Documentation Index
+# `hhnas4` Documentation Index
 
 Canonical map for host-level documentation under `synology-services/hhnas4/`.
 
@@ -55,3 +55,12 @@ Canonical map for host-level documentation under `synology-services/hhnas4/`.
 
 - `smtp-relay/` is intentionally a placeholder only today:
   - `smtp-relay/README.md`
+
+## Boundary Reminder
+
+- `../README.md`
+  - repo overview, scope, and top-level documentation pointers
+- `README.md`
+  - host overview and deploy entrypoints
+- `SESSION_NOTES.md`
+  - host-specific continuity notes across sessions
