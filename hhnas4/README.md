@@ -2,7 +2,7 @@
 
 Reproducible, sanitized deployment artifacts for host `hhnas4`.
 
-## Included stack
+## Included Stack
 
 - `mysql` as shared MySQL server for internal services.
 - `gitea` with built-in container registry enabled.
@@ -40,7 +40,7 @@ Optional target directory override:
 ./gitea-deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4
 ```
 
-## Non-UI bootstrap (recommended)
+## Non-UI Bootstrap
 
 Gitea is configured with SQLite and `INSTALL_LOCK=true` by default, so you can
 bootstrap without opening the install wizard.
@@ -77,51 +77,33 @@ Use this redirect URI in Authentik:
 
 `https://gitea.<domain>/user/oauth2/authentik/callback`
 
-## Promtail
+## Additional Deploy Entrypoints
 
-Deploy log shipping separately:
+- Promtail:
 
 ```bash
 ./promtail-deploy.sh hhnas4.internal.example
 ```
 
-Optional target directory override:
-
-```bash
-./promtail-deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4
-```
-
-Promtail does not require `network_mode: host` in this repository shape. It
-discovers containers through `/var/run/docker.sock` and only needs normal
-bridge-network outbound access to push logs to Loki.
-
-## Docker socket proxy (Homepage remote container stats)
-
-Deploy separately:
+- Docker socket proxy:
 
 ```bash
 ./docker-socket-proxy/deploy.sh hhnas4.internal.example
 ```
 
-## Woodpecker Agent
-
-Deploy separately:
+- Woodpecker agent:
 
 ```bash
 ./woodpecker-agent/deploy.sh hhnas4.internal.example
 ```
 
-## Jellyfin
-
-Deploy separately:
+- Jellyfin:
 
 ```bash
 ./jellyfin/deploy.sh hhnas4.internal.example
 ```
 
-## qBittorrent
-
-Deploy separately:
+- qBittorrent:
 
 ```bash
 ./qbittorrent/deploy.sh hhnas4.internal.example
@@ -135,11 +117,35 @@ Centralized backup orchestration for shared Postgres/MySQL/Redis state:
 ./backup-shared-infra.sh hhnas4
 ```
 
-Runbook:
+The full workflow lives in
+`SHARED_INFRA_BACKUP_RUNBOOK.md`.
 
-- `SHARED_INFRA_BACKUP_RUNBOOK.md`
+## Documentation Map
 
-## Registry behavior
+- Host-local docs index:
+  - `DOCUMENTATION_INDEX.md`
+- Session continuity notes:
+  - `SESSION_NOTES.md`
+- Host runbooks and checklists:
+  - `GITEA_OPERATIONS_CHECKLIST.md`
+  - `DOCKER_ADDRESS_POOL_RUNBOOK.md`
+  - `SHARED_INFRA_BACKUP_RUNBOOK.md`
+  - `GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
+
+## Notes
+
+- The copied `.env` is a template; adjust values on NAS as needed.
+- No credentials or secret values are committed in this directory.
+- Future bridge-mode services on `hhnas4` should be planned around a reserved
+  Docker address pool on the NAS.
+- `smtp-relay/` is currently an intentional placeholder only; there is no live
+  Synology SMTP relay stack in this repository today.
+
+Longer operational guidance now lives in
+`DOCUMENTATION_INDEX.md`
+instead of expanding this README into a runbook.
+
+## Registry Behavior
 
 Container registry is enabled through Gitea settings in compose env vars:
 
@@ -154,47 +160,3 @@ Example image path:
 ```text
 <registry-host>/<owner>/<image>:<tag>
 ```
-
-## Notes
-
-- The copied `.env` is a template; adjust values on NAS as needed.
-- No credentials or secret values are committed in this directory.
-- Future bridge-mode services on `hhnas4` should be planned around a reserved
-  Docker address pool on the NAS. Long term, the cleaner fix for Synology
-  firewall interaction is to constrain Docker bridge networks to one known
-  internal range and allow that range explicitly in DSM firewall policy,
-  instead of relying on ad-hoc per-network firewall inserts from
-  `ensure-docker-bridge-lan-egress.sh`.
-- Current intentional exceptions:
-  - `paperless-net` is explicitly pinned by compose and will not move with the
-    Docker default address pool until that compose setting is changed.
-  - `hhlab-shared-db` is an external shared network and must be migrated
-    deliberately rather than through per-stack `compose down/up`.
-- Preferred reserved pool for `hhnas4`: `10.253.0.0/16` for Docker user-defined
-  bridge networks, with Docker's default `bridge` kept on `10.254.0.0/24` and
-  one DSM firewall allow rule covering the full `10.253.0.0/16` source range.
-- Migration runbook: `DOCKER_ADDRESS_POOL_RUNBOOK.md`
-- Shared MySQL stack: `mysql/README.md`
-- Gitea stack: `gitea/README.md`
-- Outline stack: `outline/README.md`
-- ArchiveBox stack: `archivebox/README.md`
-- Docker socket proxy stack: `docker-socket-proxy/README.md`
-- Shared PostgreSQL stack: `postgres/README.md`
-- Shared Redis stack: `redis/README.md`
-- Shared MongoDB stack: `mongo/README.md`
-- Shared Dolt stack: `dolt/README.md`
-- Shared Apache Tika stack: `tika/README.md`
-- Shared Gotenberg stack: `gotenberg/README.md`
-- Paperless-ngx stack: `paperless/README.md`
-- Jellyfin stack: `jellyfin/README.md`
-- qBittorrent stack: `qbittorrent/README.md`
-- KaraKeep stack: `karakeep/README.md`
-- Woodpecker agent stack: `woodpecker-agent/README.md`
-- Promtail stack: `promtail/README.md`
-- Shared infra backup runbook: `SHARED_INFRA_BACKUP_RUNBOOK.md`
-- Session continuity notes: `SESSION_NOTES.md`
-- Post-deploy operations checklist: `GITEA_OPERATIONS_CHECKLIST.md`
-- Promtail settings live at `promtail/.env` on the NAS. Set `LOKI_PUSH_URL` to
-  your Loki endpoint (for example `http://loki.<domain>:3100/loki/api/v1/push`).
-- `smtp-relay/` is currently an intentional placeholder only; there is no live
-  Synology SMTP relay stack in this repository today.

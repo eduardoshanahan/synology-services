@@ -65,6 +65,8 @@ nix develop --no-write-lock-file
   - this file
 - Active `hhnas4` stack and runbook index:
   - `hhnas4/README.md`
+- Active `hhnas4` local documentation index:
+  - `hhnas4/DOCUMENTATION_INDEX.md`
 - Template host bootstrap/manual-step guidance:
   - `nas-host-template/README.md`
 
