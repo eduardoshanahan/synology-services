@@ -76,6 +76,23 @@ nix develop --no-write-lock-file
 - Any unavoidable Synology DSM UI action must be documented in `DSM_MANUAL_CHECKLIST.md`.
 - Secret material must stay outside this repository.
 
+## Current Private Model
+
+As of 2026-03-21, this repo does not currently require a sibling private
+companion repository.
+
+Current private-state contract:
+
+- sanitized `.env.example` files are tracked
+- optional encrypted `.env.sops` files are tracked for stacks that need a
+  versioned secret source of truth
+- deploy scripts preserve the remote NAS-side `.env` unless `--update-env` is
+  explicitly requested
+
+Audit record:
+
+- `PRIVATE_STATE_AUDIT_2026-03-21.md`
+
 ## Session Continuity
 
 Host-specific operational notes for continuity across sessions:
