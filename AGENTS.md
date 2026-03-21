@@ -214,10 +214,15 @@ When working here:
 - if you are going to commit or push, enter `nix develop` first so the repo's
   pre-hook tools are available (`prek`, `gitleaks`, `markdownlint-cli2`,
   `shellcheck`, `shfmt`, `sops`)
+- at the start of a session, use that dev shell to run `git fetch origin`, then
+  `git pull --rebase origin main`, and inspect `git status --short --branch`
+  before editing
 - prefer `rg` for discovery
 - ignore binary cert contents unless you specifically need to confirm mount/use
 - avoid destructive Docker or git cleanup unless explicitly requested
 - preserve remote state handling and operator-friendly deploy messages
+- when the task is finished, commit and push the resulting changes to `origin`
+  unless the user explicitly wants them kept local
 - keep changes small and aligned with the existing shell style
 
 When unsure, follow the existing stack pattern rather than introducing a new
