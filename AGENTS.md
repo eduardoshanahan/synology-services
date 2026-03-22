@@ -121,6 +121,9 @@ Rules:
   visible local exception that should be moved out, encrypted, or deleted.
 - Respect the deploy-script behavior that keeps existing remote `.env` files
   unless `--update-env` is requested.
+- Private continuity notes, real hostnames, real internal IPs, and
+  operator-specific Synology workflow belong in
+  `../synology-services-private`, not in public docs or notes here.
 
 If a stack already supports `sops`, preserve that workflow. The repo dev shell
 in `flake.nix` includes `sops`.
@@ -193,6 +196,9 @@ When behavior changes, update the nearest relevant docs:
 - host runbooks when operational procedures change
 - `hhnas4/docs/SESSION_NOTES.md` for host-level continuity when the change affects ongoing
   operations
+- if those continuity notes need real hostnames, real internal IPs, or
+  operator-specific workflow, write them in `../synology-services-private`
+  instead and keep only the sanitized version here
 
 If a DSM UI step is unavoidable, document it explicitly instead of leaving it as
 tribal knowledge.
