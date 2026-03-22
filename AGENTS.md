@@ -21,7 +21,7 @@ What does not belong here:
 
 Start with [README.md](./README.md), then
 [nas-host/README.md](./nas-host/README.md), then
-[nas-host/DOCUMENTATION_INDEX.md](./nas-host/DOCUMENTATION_INDEX.md).
+[nas-host/docs/DOCUMENTATION_INDEX.md](./nas-host/docs/DOCUMENTATION_INDEX.md).
 
 ## Active Host
 
@@ -36,7 +36,7 @@ High-level layout under `nas-host/`:
   `qbittorrent/`, `archivebox/`
 - Observability and integration: `promtail/`, `docker-socket-proxy/`,
   `woodpecker-agent/`
-- Host-level runbooks and wrappers in the root of `nas-host/`
+- Host-level runbooks in `nas-host/docs/` and wrappers in the root of `nas-host/`
 
 `nas-host-template/` is a template/reference area, not the main live stack.
 
@@ -136,8 +136,8 @@ drop Docker bridge traffic before normal Docker forwarding rules apply.
 
 Read these before making networking changes:
 
-- `nas-host/DOCKER_ADDRESS_POOL_RUNBOOK.md`
-- `nas-host/GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
+- `nas-host/docs/DOCKER_ADDRESS_POOL_RUNBOOK.md`
+- `nas-host/docs/GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
 - `nas-host/ensure-docker-bridge-lan-egress.sh`
 
 If a service has symptoms like DNS failures or inability to reach LAN-hosted
@@ -191,7 +191,7 @@ When behavior changes, update the nearest relevant docs:
 - stack README when runtime model, ports, storage, dependencies, or validation
   change
 - host runbooks when operational procedures change
-- `SESSION_NOTES.md` for host-level continuity when the change affects ongoing
+- `nas-host/docs/SESSION_NOTES.md` for host-level continuity when the change affects ongoing
   operations
 
 If a DSM UI step is unavoidable, document it explicitly instead of leaving it as
@@ -202,7 +202,7 @@ tribal knowledge.
 Shared stateful infrastructure backups are documented and scripted already:
 
 - `nas-host/backup-shared-infra.sh`
-- `nas-host/SHARED_INFRA_BACKUP_RUNBOOK.md`
+- `nas-host/docs/SHARED_INFRA_BACKUP_RUNBOOK.md`
 
 Do not invent a parallel backup workflow for Postgres/MySQL/Redis without a
 clear reason.

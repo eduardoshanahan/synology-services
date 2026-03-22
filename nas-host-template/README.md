@@ -25,4 +25,4 @@ Optional target directory override:
 ## What remains manual
 
 - DSM Log Center forwarding setup for file/security activity logs.
-- See `DSM_MANUAL_CHECKLIST.md`.
+- See `docs/DSM_MANUAL_CHECKLIST.md`.

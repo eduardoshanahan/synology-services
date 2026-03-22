@@ -49,15 +49,19 @@ nix develop --no-write-lock-file
     - `promtail/`
     - `docker-socket-proxy/`
     - `woodpecker-agent/`
-  - host runbooks and scripts:
+  - host docs, runbooks, and scripts:
     - `README.md`
-    - `SESSION_NOTES.md`
-    - `GITEA_OPERATIONS_CHECKLIST.md`
-    - `DOCKER_ADDRESS_POOL_RUNBOOK.md`
-    - `SHARED_INFRA_BACKUP_RUNBOOK.md`
+    - `docs/`
+      - `DOCUMENTATION_INDEX.md`
+      - `SESSION_NOTES.md`
+      - `GITEA_OPERATIONS_CHECKLIST.md`
+      - `DOCKER_ADDRESS_POOL_RUNBOOK.md`
+      - `SHARED_INFRA_BACKUP_RUNBOOK.md`
     - `backup-shared-infra.sh`
     - `gitea-deploy.sh`
     - `promtail-deploy.sh`
+- `docs/`
+  - repo-level background and transition notes
 
 ## Documentation Index
 
@@ -66,14 +70,17 @@ nix develop --no-write-lock-file
 - Active `nas-host` host overview and deploy entrypoint:
   - `nas-host/README.md`
 - Active `nas-host` local documentation index:
-  - `nas-host/DOCUMENTATION_INDEX.md`
+  - `nas-host/docs/DOCUMENTATION_INDEX.md`
+- Repo-level background and transition docs:
+  - `docs/`
 - Template host bootstrap and manual-step guidance:
   - `nas-host-template/README.md`
 
 ## Reproducibility Contract
 
 - Container definitions, pinned image tags, ports, and restart policies must be git-tracked here.
-- Any unavoidable Synology DSM UI action must be documented in `DSM_MANUAL_CHECKLIST.md`.
+- Any unavoidable Synology DSM UI action must be documented in the relevant
+  host `docs/DSM_MANUAL_CHECKLIST.md`.
 - Secret material must stay outside this repository.
 
 ## Current Private Model
@@ -93,11 +100,11 @@ Current private-state contract:
 
 Current transition records:
 
-- `PRIVATE_STATE_AUDIT_2026-03-21.md`
-- `PRIVATE_COMPANION_SPLIT_2026-03-22.md`
+- `docs/PRIVATE_STATE_AUDIT_2026-03-21.md`
+- `docs/PRIVATE_COMPANION_SPLIT_2026-03-22.md`
 
 ## Session Continuity
 
 Host-specific operational notes for continuity across sessions:
 
-- `nas-host/SESSION_NOTES.md`
+- `nas-host/docs/SESSION_NOTES.md`

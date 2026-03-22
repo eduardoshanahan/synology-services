@@ -1,11 +1,11 @@
 # `nas-host` Documentation Index
 
-Canonical map for host-level documentation under `synology-services/nas-host/`.
+Canonical map for host-level documentation under `synology-services/nas-host/docs/`.
 
 ## Core Docs
 
 - Host overview and deploy entrypoint:
-  - `README.md`
+  - `../README.md`
 - Session continuity notes:
   - `SESSION_NOTES.md`
 
@@ -23,25 +23,25 @@ Canonical map for host-level documentation under `synology-services/nas-host/`.
 ## Stack READMEs
 
 - Shared infra:
-  - `mysql/README.md`
-  - `postgres/README.md`
-  - `redis/README.md`
-  - `mongo/README.md`
-  - `dolt/README.md`
-  - `tika/README.md`
-  - `gotenberg/README.md`
+  - `../mysql/README.md`
+  - `../postgres/README.md`
+  - `../redis/README.md`
+  - `../mongo/README.md`
+  - `../dolt/README.md`
+  - `../tika/README.md`
+  - `../gotenberg/README.md`
 - Applications:
-  - `gitea/README.md`
-  - `outline/README.md`
-  - `paperless/README.md`
-  - `karakeep/README.md`
-  - `jellyfin/README.md`
-  - `qbittorrent/README.md`
-  - `archivebox/README.md`
+  - `../gitea/README.md`
+  - `../outline/README.md`
+  - `../paperless/README.md`
+  - `../karakeep/README.md`
+  - `../jellyfin/README.md`
+  - `../qbittorrent/README.md`
+  - `../archivebox/README.md`
 - Observability and integration:
-  - `promtail/README.md`
-  - `docker-socket-proxy/README.md`
-  - `woodpecker-agent/README.md`
+  - `../promtail/README.md`
+  - `../docker-socket-proxy/README.md`
+  - `../woodpecker-agent/README.md`
 
 ## Operational Notes
 
@@ -54,13 +54,13 @@ Canonical map for host-level documentation under `synology-services/nas-host/`.
 ## Current Placeholders
 
 - `smtp-relay/` is intentionally a placeholder only today:
-  - `smtp-relay/README.md`
+  - `../smtp-relay/README.md`
 
 ## Boundary Reminder
 
-- `../README.md`
+- `../../README.md`
   - repo overview, scope, and top-level documentation pointers
-- `README.md`
+- `../README.md`
   - host overview and deploy entrypoints
 - `SESSION_NOTES.md`
   - host-specific continuity notes across sessions
