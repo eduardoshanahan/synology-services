@@ -35,7 +35,7 @@ curl -sS http://dolt.internal.example:11228/metrics | sed -n '1,20p'
 
 - `compose.yaml`
 - `.env.example`
-- `.env.sops` (recommended tracked encrypted source)
+- sibling private `.env.sops` in `../synology-services-private/` (preferred tracked encrypted source)
 - `deploy.sh`
 - `server/config.yaml`
 
@@ -74,7 +74,7 @@ Optional target directory override:
 ./deploy.sh nas-host.internal.example /volume1/docker/homelab/nas-host/dolt
 ```
 
-If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
+If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.sops` during transition), push it explicitly:
 
 ```bash
 ./deploy.sh nas-host.internal.example --update-env

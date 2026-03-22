@@ -56,7 +56,7 @@ Optional target directory override:
 ## Validation goals
 
 - Container reports `healthy`.
-- Port `3306` is reachable from `private-pi-02`.
+- Port `3306` is reachable from `relay-host.internal.example`.
 - App users can connect to their assigned databases.
 - Test write/read survives a container restart.
 

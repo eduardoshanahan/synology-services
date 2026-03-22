@@ -19,8 +19,8 @@ Compose bridge networks on ranges such as:
 
 - `172.18.0.0/16`
 - `172.23.0.0/16`
-- `192.0.2.10/20`
-- `192.0.2.10/20`
+- `198.18.64.0/20`
+- `198.19.224.0/20`
 
 That makes DSM firewall policy brittle, because each newly created network may
 need its own source allow rule.
@@ -64,7 +64,7 @@ destinations such as:
 
 - Pi services
 - NAS-local services
-- DNS (`192.0.2.10`)
+- DNS (`<dns-lan-ip>`)
 - reverse proxies
 - trackers / outbound internet flows if your policy distinguishes LAN/WAN paths
 

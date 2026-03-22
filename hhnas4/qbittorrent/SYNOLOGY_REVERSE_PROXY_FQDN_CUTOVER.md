@@ -20,7 +20,7 @@ Before the cutover, the Synology reverse proxy forwarded
 `qbittorrent.internal.example` to:
 
 ```text
-http://192.0.2.10:8080
+http://<nas-lan-ip>:8080
 ```
 
 It was changed to:
@@ -50,7 +50,7 @@ Observed stanza:
 ```nginx
 server_name qbittorrent.internal.example ;
 ...
-proxy_pass http://192.0.2.10:8080;
+proxy_pass http://<nas-lan-ip>:8080;
 ```
 
 ## Method Used
@@ -64,7 +64,7 @@ Applied change in DSM:
 1. Go to the Reverse Proxy configuration page.
 1. Find the entry for `qbittorrent.internal.example`.
 1. Change the backend destination from:
-   - host: `192.0.2.10`
+   - host: `<nas-lan-ip>`
    - port: `8080`
 1. To:
    - host: `127.0.0.1`
@@ -97,7 +97,7 @@ repo-managed qBittorrent config that removes the fixed NAS IP:
 was applied from the repo:
 
 ```bash
-cd /path/to/hhlab-insfrastructure/synology-services
+cd <worktree>/synology-services
 nix develop -c ./nas-host/qbittorrent/deploy.sh nas-host --update-env
 ```
 
@@ -112,7 +112,7 @@ curl -sS -m 6 -I http://127.0.0.1:8080 | sed -n '1,12p'
 curl -skI https://qbittorrent.internal.example/ | sed -n '1,12p'
 ```
 
-From `private-pi-02`:
+From `another-lan-host.internal.example`:
 
 ```bash
 curl -skI https://qbittorrent.internal.example/ | sed -n '1,12p'

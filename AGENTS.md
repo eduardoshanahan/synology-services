@@ -11,7 +11,6 @@ What belongs here:
 
 - Git-tracked `compose.yaml` files, deploy scripts, runbooks, and templates.
 - Sanitized `.env.example` files.
-- Encrypted `.env.sops` files when secrets need a tracked source of truth.
 - Public CA certificates required by containers at runtime.
 
 What does not belong here:
@@ -49,7 +48,7 @@ Most service directories follow this shape:
 - `compose.yaml`
 - `deploy.sh`
 - `.env.example`
-- optional `.env.sops`
+- optional sibling private `.env.sops`
 
 Before changing implementation, read the stack README first. The READMEs are
 not fluff here; they usually document the intended runtime shape, DNS names,
@@ -64,7 +63,8 @@ Most `nas-host/*/deploy.sh` scripts follow the same pattern:
 - create the remote stack directory over SSH
 - stream-copy `compose.yaml` to the NAS using `cat ... | ssh ... "cat > ..."`
 - preserve an existing remote `.env` unless `--update-env` is explicitly used
-- prefer local `.env.sops`, then local `.env`, then `.env.example`
+- prefer `../synology-services-private/.../.env.sops`, then local transitional
+  `.env.sops`, then local `.env`, then `.env.example`
 - auto-detect the Docker binary on Synology
 - auto-select direct Docker access vs `sudo -n` vs `sudo`
 - run `docker compose pull` and `docker compose up -d`
@@ -115,9 +115,10 @@ container users.
 Rules:
 
 - Never commit plaintext secrets.
-- Prefer `.env.sops` as the tracked secret source when the stack already uses
-  it.
+- Prefer the sibling private repo's `.env.sops` as the tracked secret source.
 - Use `.env.example` for sanitized defaults and documentation.
+- Plaintext `.env` files are not blanket-ignored; treat any such file as a
+  visible local exception that should be moved out, encrypted, or deleted.
 - Respect the deploy-script behavior that keeps existing remote `.env` files
   unless `--update-env` is requested.
 

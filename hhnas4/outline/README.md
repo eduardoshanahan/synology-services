@@ -17,7 +17,7 @@ Internal wiki / knowledge base stack for `nas-host`.
 
 - `compose.yaml`
 - `.env.example`
-- `.env.sops` (recommended tracked encrypted source)
+- sibling private `.env.sops` in `../synology-services-private/` (preferred tracked encrypted source)
 - `deploy.sh`
 
 ## Runtime storage on NAS
@@ -51,7 +51,7 @@ Optional target directory override:
 
 ## First-start rules
 
-- Preferred: keep the committed encrypted source in `.env.sops` and use
+- Preferred: keep the mirrored encrypted source in `../synology-services-private/nas-host/outline/.env.sops` and use
   `./deploy.sh --update-env` to decrypt locally and sync the runtime `.env` to
   the NAS.
 - Fallback: keep a local ignored `.env` and use `./deploy.sh --update-env`.
@@ -83,7 +83,7 @@ Optional target directory override:
 - This stack ships `certs/homelab-root-ca.crt` and mounts it into the Outline
   container as `NODE_EXTRA_CA_CERTS` so OIDC discovery/token calls to internal
   TLS endpoints (for example Authentik) are trusted.
-- If `.env.sops` exists, `sops` must be available locally. This repo's
+- If the sibling-private `.env.sops` (or a local transitional `.env.sops`) exists, `sops` must be available locally. This repo's
   `nix develop` shell now includes it.
 
 ## Migration from local Outline Postgres to shared Postgres

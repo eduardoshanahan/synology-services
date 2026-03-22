@@ -87,7 +87,7 @@ resume without rediscovery.
 - Outline database password was rotated from the placeholder value to a strong
   random value generated with `openssl rand -hex ...`.
 - Source-of-truth secret remains encrypted in:
-  - `nas-host/outline/.env.sops`
+  - `../synology-services-private/nas-host/outline/.env.sops`
 - Runtime sync and DB role rotation were completed:
   - Outline env synced to NAS via `nas-host/outline/deploy.sh --update-env`
   - Postgres role updated with `ALTER ROLE outline WITH PASSWORD ...`
@@ -142,7 +142,7 @@ resume without rediscovery.
 - DSM reverse proxy + certificate is configured for:
   - `https://paperless.internal.example/`
 - A first admin user was bootstrapped:
-  - username: `eduardo`
+  - username: `<bootstrap-admin>`
 - Production incident observed and resolved:
   - Symptom: intermittent HTTP `500` on login.
   - Error in logs: `Temporary failure in name resolution` for Postgres/Redis.
@@ -151,7 +151,7 @@ resume without rediscovery.
   - Remediation:
     - applied `nas-host/ensure-docker-bridge-lan-egress.sh` on host.
     - added `dns` to Paperless compose (`PAPERLESS_DNS`, default
-      `192.0.2.10`) for deterministic internal DNS resolution.
+      `<dns-lan-ip>`) for deterministic internal DNS resolution.
   - Result: `nas-host-paperless` returned to `healthy`; login endpoint returns
     `HTTP 200`.
 
@@ -205,6 +205,6 @@ resume without rediscovery.
     user while still keeping `-@admin -@dangerous`
 - Additional note:
   - Outline logs also contained earlier transient `ECONNREFUSED
-    192.0.2.10:5433` errors for Postgres, but Postgres was healthy during the
+    <nas-lan-ip>:5433` errors for Postgres, but Postgres was healthy during the
     incident review and the persistent user-facing failure aligned with the
     Redis ACL denial.

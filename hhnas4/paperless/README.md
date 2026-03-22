@@ -27,7 +27,7 @@ Shared Paperless-ngx stack on `nas-host` using centralized dependencies.
 
 - `compose.yaml`
 - `.env.example`
-- `.env.sops` (recommended tracked encrypted source)
+- sibling private `.env.sops` in `../synology-services-private/` (preferred tracked encrypted source)
 - `deploy.sh`
 
 ## Runtime storage on NAS
@@ -67,7 +67,7 @@ Optional target directory override:
 ./deploy.sh nas-host.internal.example /volume1/docker/homelab/nas-host/paperless
 ```
 
-If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
+If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.sops` during transition), push it explicitly:
 
 ```bash
 ./deploy.sh nas-host.internal.example --update-env

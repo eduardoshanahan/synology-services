@@ -19,7 +19,7 @@ Gitea was configured to use `smtp-relay.internal.example:2525`, but SMTP send fa
 Observed symptoms:
 
 - From inside Gitea container, DNS resolution worked.
-- From inside Gitea container, TCP to LAN endpoints failed (`192.0.2.10:2525`, `192.0.2.10:53`).
+- From inside Gitea container, TCP to LAN endpoints failed (`<smtp-relay-lan-ip>:2525`, `<dns-lan-ip>:53`).
 - From NAS host itself, TCP to relay worked.
 
 Conclusion: this was not DNS records. It was bridge-container egress being dropped in host firewall forwarding chain.
@@ -36,7 +36,7 @@ Relevant chain shape:
   - allow loopback
   - allow established
   - allow SNMP port 161
-  - allow source `192.0.2.10/24`
+  - allow source `<lan-cidr>`
   - final `DROP`
 
 So packets from Docker bridge source `172.18.0.0/16` were dropped before Docker's normal forwarding rules could pass them.
@@ -55,7 +55,7 @@ iptables -I INPUT_FIREWALL 5 -s 172.16.0.0/12 -j RETURN
 Update on March 10, 2026:
 
 - Newer Compose-created networks on `nas-host` may use non-`172.x` bridge
-  subnets, for example `192.0.2.10/20` for `jellyfin_default`.
+  subnets, for example `<dynamic-bridge-subnet>` for `jellyfin_default`.
 - The persistence helper `ensure-docker-bridge-lan-egress.sh` was updated to
   enumerate active Docker network subnets dynamically instead of hardcoding
   `172.16.0.0/12`.
@@ -66,8 +66,8 @@ Because we only had passwordless `/usr/local/bin/docker`, this was executed via 
 
 From inside Gitea container:
 
-- TCP to relay: `192.0.2.10:2525` -> OK
-- TCP to DNS: `192.0.2.10:53` -> OK
+- TCP to relay: `<smtp-relay-lan-ip>:2525` -> OK
+- TCP to DNS: `<dns-lan-ip>:53` -> OK
 
 This confirms bridge-container outbound LAN connectivity was restored.
 
@@ -79,7 +79,7 @@ Final verified path:
 
 - Gitea (`nas-host`) -> `smtp-relay.internal.example:2525` -> Gmail upstream.
 - Relay log confirms accepted client, queued message, and upstream
-  `status=sent` for `contact@primary.example`.
+  `status=sent` for `contact@example.com`.
 
 Note: A separate relay policy bug was fixed in `nix-services` so sender-domain
 allowlist values are rendered correctly for Postfix.

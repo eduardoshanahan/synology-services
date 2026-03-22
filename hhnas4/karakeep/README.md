@@ -11,7 +11,7 @@ These are dedicated KaraKeep paths and are not shared with Prometheus data.
 
 ## First-time setup
 
-1. Create/edit `.env` (or encrypted `.env.sops`) with:
+1. Create/edit `.env` locally, or update the mirrored file in `../synology-services-private/`, with:
 
 - `NEXTAUTH_SECRET`
 - `MEILI_MASTER_KEY`

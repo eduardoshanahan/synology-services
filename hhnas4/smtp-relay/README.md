@@ -7,7 +7,7 @@ This directory is currently an intentional placeholder only.
 - There is no live Synology SMTP relay stack committed here.
 - The directory was empty when audited on 2026-03-17.
 - Homelab SMTP relay traffic currently points at the relay running on
-  `private-pi-02`, not at `nas-host`.
+  `relay-host.internal.example`, not at `nas-host`.
 
 ## Why this exists
 

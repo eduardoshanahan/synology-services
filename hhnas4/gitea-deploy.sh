@@ -4,17 +4,19 @@ set -euo pipefail
 usage() {
 	cat <<'USAGE'
 Usage:
-  gitea-deploy.sh [target-host] [target-base] [--admin-user USER --admin-email EMAIL --admin-password PASSWORD]
+  gitea-deploy.sh [target-host] [target-base] [--update-env] [--admin-user USER --admin-email EMAIL --admin-password PASSWORD]
 
 Examples:
   ./gitea-deploy.sh nas-host
   ./gitea-deploy.sh nas-host /volume1/docker/homelab/nas-host
+  ./gitea-deploy.sh nas-host --update-env
   ./gitea-deploy.sh nas-host --admin-user gitea-admin --admin-email admin@example.com --admin-password 'change-me'
 USAGE
 }
 
 TARGET_HOST="nas-host.internal.example"
 TARGET_BASE="/volume1/docker/homelab/nas-host"
+UPDATE_ENV=0
 ADMIN_USER=""
 ADMIN_EMAIL=""
 ADMIN_SECRET=""
@@ -36,6 +38,10 @@ fi
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
+	--update-env)
+		UPDATE_ENV=1
+		shift
+		;;
 	--admin-user)
 		ADMIN_USER="${2:-}"
 		shift 2
@@ -64,10 +70,15 @@ if [[ -n "${ADMIN_USER}" || -n "${ADMIN_EMAIL}" || -n "${ADMIN_SECRET}" ]]; then
 fi
 
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1091
+source "${SRC_DIR}/../lib/env-source.sh"
 REMOTE_GITEA_DIR="${TARGET_BASE}/gitea"
 REMOTE_COMPOSE_FILE="${REMOTE_GITEA_DIR}/compose.yaml"
 REMOTE_ENV_FILE="${REMOTE_GITEA_DIR}/.env"
 REMOTE_CERTS_DIR="${REMOTE_GITEA_DIR}/certs"
+LOCAL_ENV_FILE="${SRC_DIR}/gitea/.env"
+LOCAL_SOPS_ENV_FILE="${SRC_DIR}/gitea/.env.sops"
+synology_select_sops_env_file "${LOCAL_SOPS_ENV_FILE}"
 
 echo "[deploy] target host: ${TARGET_HOST}"
 echo "[deploy] target dir : ${REMOTE_GITEA_DIR}"
@@ -77,10 +88,40 @@ ssh "${TARGET_HOST}" "mkdir -p '${REMOTE_GITEA_DIR}' '${REMOTE_GITEA_DIR}/data' 
 # Always stream-copy compose (works even when scp subsystem is disabled).
 cat "${SRC_DIR}/gitea/compose.yaml" | ssh "${TARGET_HOST}" "cat > '${REMOTE_COMPOSE_FILE}'"
 
+if [[ -n "${SYN_SELECTED_SOPS_ENV_FILE}" ]]; then
+	SOPS_BIN="$(command -v sops || true)"
+	if [[ -z "${SOPS_BIN}" ]]; then
+		echo "[deploy] ${SYN_SELECTED_SOPS_ENV_FILE} exists but sops is not installed." >&2
+		echo "[deploy] enter 'nix develop' in synology-services (or install sops) and retry." >&2
+		exit 1
+	fi
+fi
+
 # Seed .env once; preserve existing host-local values on subsequent deploys.
-if ssh "${TARGET_HOST}" "test ! -f '${REMOTE_ENV_FILE}'"; then
-	cat "${SRC_DIR}/gitea/.env.example" | ssh "${TARGET_HOST}" "cat > '${REMOTE_ENV_FILE}'"
-	echo "[deploy] created ${REMOTE_ENV_FILE} from template"
+if ((UPDATE_ENV)); then
+	if [[ -n "${SYN_SELECTED_SOPS_ENV_FILE}" ]]; then
+		sops -d --input-type dotenv --output-type dotenv "${SYN_SELECTED_SOPS_ENV_FILE}" |
+			ssh "${TARGET_HOST}" "cat > '${REMOTE_ENV_FILE}'"
+		echo "[deploy] updated ${REMOTE_ENV_FILE} from ${SYN_SELECTED_SOPS_ENV_FILE}"
+	elif [[ -f "${LOCAL_ENV_FILE}" ]]; then
+		cat "${LOCAL_ENV_FILE}" | ssh "${TARGET_HOST}" "cat > '${REMOTE_ENV_FILE}'"
+		echo "[deploy] updated ${REMOTE_ENV_FILE} from local .env"
+	else
+		echo "[deploy] --update-env was set but no env source exists in ${SYN_PRIVATE_SOPS_ENV_FILE:-<no private companion path>}, ${LOCAL_SOPS_ENV_FILE}, or ${LOCAL_ENV_FILE}." >&2
+		exit 1
+	fi
+elif ssh "${TARGET_HOST}" "test ! -f '${REMOTE_ENV_FILE}'"; then
+	if [[ -n "${SYN_SELECTED_SOPS_ENV_FILE}" ]]; then
+		sops -d --input-type dotenv --output-type dotenv "${SYN_SELECTED_SOPS_ENV_FILE}" |
+			ssh "${TARGET_HOST}" "cat > '${REMOTE_ENV_FILE}'"
+		echo "[deploy] created ${REMOTE_ENV_FILE} from ${SYN_SELECTED_SOPS_ENV_FILE}"
+	elif [[ -f "${LOCAL_ENV_FILE}" ]]; then
+		cat "${LOCAL_ENV_FILE}" | ssh "${TARGET_HOST}" "cat > '${REMOTE_ENV_FILE}'"
+		echo "[deploy] created ${REMOTE_ENV_FILE} from local .env"
+	else
+		cat "${SRC_DIR}/gitea/.env.example" | ssh "${TARGET_HOST}" "cat > '${REMOTE_ENV_FILE}'"
+		echo "[deploy] created ${REMOTE_ENV_FILE} from template"
+	fi
 else
 	echo "[deploy] keeping existing ${REMOTE_ENV_FILE}"
 fi

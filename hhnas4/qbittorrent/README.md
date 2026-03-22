@@ -59,7 +59,7 @@ Optional target directory override:
 ./deploy.sh nas-host.internal.example /volume1/docker/homelab/nas-host/qbittorrent
 ```
 
-If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
+If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.sops` during transition), push it explicitly:
 
 ```bash
 ./deploy.sh nas-host.internal.example --update-env
@@ -69,7 +69,7 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
 
 - Set `QBITTORRENT_DOWNLOADS_DIR` in `.env` if you want a different NAS path.
 - Set `QBITTORRENT_WEBUI_USERNAME` and `QBITTORRENT_WEBUI_PASSWORD` in `.env`
-  or `.env.sops` so deploys keep the Web UI credentials declarative.
+  or the sibling private `.env.sops` so deploys keep the Web UI credentials declarative.
 - Prefer `QBITTORRENT_HOST_BIND=127.0.0.1` so the public entrypoint stays on
   the FQDN and does not depend on the NAS LAN IP remaining stable.
 - Keep `QBITTORRENT_SERVER_DOMAINS` focused on loopback plus the public FQDN
@@ -79,7 +79,7 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
   in that final shape.
 - Leave `QBITTORRENT_TORRENT_BIND=0.0.0.0` unless you intentionally want the
   BitTorrent ports bound to a narrower interface.
-- If you later want Radarr automatic import from `private-pi-02`, ensure the
+- If you later want Radarr automatic import from `relay-host.internal.example`, ensure the
   completed-download path lives under the same shared export that the Pi can
   mount. The default `/volume1/Media/Downloads/qbittorrent` is chosen with that
   in mind.
@@ -101,7 +101,7 @@ Keep TLS termination in DSM. qBittorrent itself should continue serving plain
 HTTP on the NAS loopback endpoint.
 
 If the live stack still depends on a LAN-IP reverse proxy target, use
-[`SYNOLOGY_REVERSE_PROXY_FQDN_CUTOVER.md`](/path/to/hhlab-insfrastructure/synology-services/nas-host/qbittorrent/SYNOLOGY_REVERSE_PROXY_FQDN_CUTOVER.md)
+[`SYNOLOGY_REVERSE_PROXY_FQDN_CUTOVER.md`](./SYNOLOGY_REVERSE_PROXY_FQDN_CUTOVER.md)
 to finish the cutover cleanly.
 
 ## Validation goals

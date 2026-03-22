@@ -78,20 +78,23 @@ nix develop --no-write-lock-file
 
 ## Current Private Model
 
-As of 2026-03-21, this repo does not currently require a sibling private
-companion repository.
+As of 2026-03-22, this repo uses a sibling private companion repository:
 
 Current private-state contract:
 
 - sanitized `.env.example` files are tracked
-- optional encrypted `.env.sops` files are tracked for stacks that need a
-  versioned secret source of truth
+- tracked encrypted env sources live in `../synology-services-private/`
+- deploy scripts prefer the sibling private `.env.sops`, then fall back to a
+  local transitional `.env.sops`, then local `.env`, then `.env.example`
+- plaintext `.env` files are no longer blanket-ignored; if one exists, it will
+  show up in Git status and should be moved out or encrypted
 - deploy scripts preserve the remote NAS-side `.env` unless `--update-env` is
   explicitly requested
 
-Audit record:
+Current transition records:
 
 - `PRIVATE_STATE_AUDIT_2026-03-21.md`
+- `PRIVATE_COMPANION_SPLIT_2026-03-22.md`
 
 ## Session Continuity
 
