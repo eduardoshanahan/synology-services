@@ -126,12 +126,39 @@ Recommended public shape:
 Keep TLS termination in DSM. Outline itself should continue serving plain HTTP
 on loopback only.
 
+Important: Outline editing also depends on websocket upgrades for document
+collaboration paths under `/collaboration/<document-id>`.
+
+If DSM reverse proxy is misconfigured, the main UI can still return `200` while
+the editor shows `offline`. A healthy public collaboration path should return a
+websocket `101 Switching Protocols`, not the normal HTML app shell.
+
+Validation example:
+
+```bash
+curl -sk --http1.1 -D - -o /tmp/outline-collab.out \
+  -H 'Connection: Upgrade' \
+  -H 'Upgrade: websocket' \
+  -H 'Sec-WebSocket-Key: <base64-test-key>' \
+  -H 'Sec-WebSocket-Version: 13' \
+  'https://outline.internal.example/collaboration/<document-id>'
+```
+
+Expected:
+
+- good reverse proxy path: `HTTP/1.1 101 Switching Protocols`
+- broken reverse proxy path: `HTTP/1.1 200 OK` with the Outline HTML shell
+
 ## Validation goals
 
 - `docker compose ps` shows only `outline` running in this stack.
 - `curl -sSI http://127.0.0.1:3010/` returns a page or redirect from the NAS.
 - `curl -skI https://outline.internal.example/` returns a page or redirect
   through the DSM reverse proxy.
+- document editing no longer shows `offline` in the UI.
+- `https://outline.internal.example/collaboration/<document-id>` upgrades as a
+  websocket through DSM reverse proxy instead of falling back to the HTML app
+  shell.
 - Outline can complete initial sign-in with SMTP magic-link auth.
 - Outline can read/write documents with shared Postgres.
 
