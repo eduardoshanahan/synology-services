@@ -224,6 +224,9 @@ When working here:
 - preserve remote state handling and operator-friendly deploy messages
 - when the task is finished, commit and push the resulting changes to `origin`
   unless the user explicitly wants them kept local
+- if the task changes service behavior, complete the owning Synology deploy
+  after push and verify on the live host that the fix still works after that
+  deploy
 - keep changes small and aligned with the existing shell style
 
 When unsure, follow the existing stack pattern rather than introducing a new
