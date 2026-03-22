@@ -208,3 +208,50 @@ resume without rediscovery.
     <nas-lan-ip>:5433` errors for Postgres, but Postgres was healthy during the
     incident review and the persistent user-facing failure aligned with the
     Redis ACL denial.
+- Later the same day, after the Redis ACL recovery:
+  - Outline regressed to `502` after restarts and the UI again behaved
+    inconsistently
+  - earlier app logs had shown intermittent `ENOTFOUND
+    postgres.<domain>` / `redis.<domain>` during recovery
+  - the Synology Docker daemon config on `hhnas4` had the reserved address
+    pool configured but no explicit daemon `dns` setting
+- Permanent host-level fix applied on `2026-03-22`:
+  - updated `/var/packages/ContainerManager/etc/dockerd.json` on `hhnas4` to
+    keep:
+    - `bip: 10.254.0.1/24`
+    - `default-address-pools: 10.253.0.0/16 size 24`
+  - and add:
+    - `dns: [<primary-lan-dns-ip>, <secondary-lan-dns-ip>]`
+  - restarted `pkg-ContainerManager-dockerd.service`
+  - recreated the Outline container so it picked up the new daemon DNS policy
+- Validation after host-level fix:
+  - `docker info` still reported the reserved `10.253.0.0/16` address pool
+  - Outline container returned to `healthy`
+  - `https://outline.internal.example/` returned `HTTP/2 200`
+  - `https://outline.internal.example/realtime/?EIO=4&transport=polling`
+    returned a Socket.IO handshake payload
+- Follow-up finding later the same evening:
+  - the UI still showed `offline` even after a hard refresh
+  - local collaboration websocket handling inside Outline was healthy:
+    - direct `ws://127.0.0.1:3010/collaboration/<document-id>` upgraded
+  - public collaboration websocket handling through DSM reverse proxy was not:
+    - `https://outline.internal.example/collaboration/<document-id>` returned
+      `HTTP/1.1 200 OK` and the normal Outline HTML shell instead of websocket
+      `101 Switching Protocols`
+  - this isolates the remaining issue to DSM reverse proxy websocket handling
+    for Outline collaboration paths, not app health, Redis, Postgres, or DNS
+- Final reverse proxy fix:
+  - enabling websocket forwarding on the DSM reverse proxy entry for Outline
+    restored document collaboration
+  - after that change, the public collaboration path returned websocket
+    `101 Switching Protocols` instead of the HTML shell fallback
+- Operational note:
+  - Docker containers still showed `nameserver 127.0.0.11` in
+    `/etc/resolv.conf`; this was expected
+  - the daemon `dns` change controls the upstream resolvers used by Docker's
+    embedded resolver, not the literal resolver line written into every
+    container
+- Private follow-up:
+  - exact resolver values, live hostname details, and operator-specific sudo
+    workflow were moved to the private companion repo for continuity without
+    publishing host-internal identifiers
