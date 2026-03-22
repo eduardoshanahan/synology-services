@@ -1,4 +1,1 @@
 .direnv/
-
-# Host-local runtime secrets/config for Synology Compose stacks.
-**/.env

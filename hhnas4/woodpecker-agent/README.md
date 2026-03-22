@@ -9,7 +9,7 @@ AMD64 Woodpecker agent for `hhnas4`.
 
 ## First-time setup
 
-Edit `.env` (or encrypted `.env.sops`) with:
+Edit `.env` locally, or update the mirrored file in `../synology-services-private/`, with:
 
 - `WOODPECKER_AGENT_SECRET`
 - `WOODPECKER_CA_CERT_HOST_PATH` pointing at the deployed `homelab-root-ca.crt`

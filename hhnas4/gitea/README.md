@@ -26,7 +26,7 @@ Gitea provides source hosting and the container registry for the homelab NAS.
   - SQLite defaults
   - registry external URL settings
   - optional Authentik OIDC integration
-  - SMTP settings for the relay on `private-pi-02`
+  - SMTP settings for the relay on `relay-host.internal.example`
 
 ## Validation
 

@@ -27,7 +27,7 @@ Shared Paperless-ngx stack on `hhnas4` using centralized dependencies.
 
 - `compose.yaml`
 - `.env.example`
-- `.env.sops` (recommended tracked encrypted source)
+- sibling private `.env.sops` in `../synology-services-private/` (preferred tracked encrypted source)
 - `deploy.sh`
 
 ## Runtime storage on NAS
@@ -67,7 +67,7 @@ Optional target directory override:
 ./deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4/paperless
 ```
 
-If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
+If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.sops` during transition), push it explicitly:
 
 ```bash
 ./deploy.sh hhnas4.internal.example --update-env
