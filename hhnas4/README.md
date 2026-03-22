@@ -5,6 +5,7 @@ Reproducible, sanitized deployment artifacts for host `nas-host`.
 ## Included Stack
 
 - `mysql` as shared MySQL server for internal services.
+- `minio` as shared S3-compatible object storage for internal services.
 - `gitea` with built-in container registry enabled.
 - `outline` for an internal wiki / knowledge base.
 - `archivebox` for large local web archive storage.
@@ -95,6 +96,12 @@ Use this redirect URI in Authentik:
 
 ```bash
 ./woodpecker-agent/deploy.sh nas-host.internal.example
+```
+
+- MinIO:
+
+```bash
+./minio/deploy.sh nas-host.internal.example
 ```
 
 - Jellyfin:

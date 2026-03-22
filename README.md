@@ -31,6 +31,7 @@ nix develop --no-write-lock-file
 - `nas-host/`
   - shared infra stacks:
     - `mysql/`
+    - `minio/`
     - `postgres/`
     - `redis/`
     - `mongo/`
