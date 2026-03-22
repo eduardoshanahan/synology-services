@@ -21,7 +21,7 @@ What does not belong here:
 
 Start with [README.md](./README.md), then
 [hhnas4/README.md](./hhnas4/README.md), then
-[hhnas4/DOCUMENTATION_INDEX.md](./hhnas4/DOCUMENTATION_INDEX.md).
+[hhnas4/docs/DOCUMENTATION_INDEX.md](./hhnas4/docs/DOCUMENTATION_INDEX.md).
 
 ## Active Host
 
@@ -36,7 +36,7 @@ High-level layout under `hhnas4/`:
   `qbittorrent/`, `archivebox/`
 - Observability and integration: `promtail/`, `docker-socket-proxy/`,
   `woodpecker-agent/`
-- Host-level runbooks and wrappers in the root of `hhnas4/`
+- Host-level runbooks in `hhnas4/docs/` and wrappers in the root of `hhnas4/`
 
 `nas-host-template/` is a template/reference area, not the main live stack.
 
@@ -136,8 +136,8 @@ drop Docker bridge traffic before normal Docker forwarding rules apply.
 
 Read these before making networking changes:
 
-- `hhnas4/DOCKER_ADDRESS_POOL_RUNBOOK.md`
-- `hhnas4/GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
+- `hhnas4/docs/DOCKER_ADDRESS_POOL_RUNBOOK.md`
+- `hhnas4/docs/GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
 - `hhnas4/ensure-docker-bridge-lan-egress.sh`
 
 If a service has symptoms like DNS failures or inability to reach LAN-hosted
@@ -191,7 +191,7 @@ When behavior changes, update the nearest relevant docs:
 - stack README when runtime model, ports, storage, dependencies, or validation
   change
 - host runbooks when operational procedures change
-- `SESSION_NOTES.md` for host-level continuity when the change affects ongoing
+- `hhnas4/docs/SESSION_NOTES.md` for host-level continuity when the change affects ongoing
   operations
 
 If a DSM UI step is unavoidable, document it explicitly instead of leaving it as
@@ -202,7 +202,7 @@ tribal knowledge.
 Shared stateful infrastructure backups are documented and scripted already:
 
 - `hhnas4/backup-shared-infra.sh`
-- `hhnas4/SHARED_INFRA_BACKUP_RUNBOOK.md`
+- `hhnas4/docs/SHARED_INFRA_BACKUP_RUNBOOK.md`
 
 Do not invent a parallel backup workflow for Postgres/MySQL/Redis without a
 clear reason.

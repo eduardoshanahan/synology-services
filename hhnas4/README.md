@@ -118,19 +118,19 @@ Centralized backup orchestration for shared Postgres/MySQL/Redis state:
 ```
 
 The full workflow lives in
-`SHARED_INFRA_BACKUP_RUNBOOK.md`.
+`docs/SHARED_INFRA_BACKUP_RUNBOOK.md`.
 
 ## Documentation Map
 
 - Host-local docs index:
-  - `DOCUMENTATION_INDEX.md`
+  - `docs/DOCUMENTATION_INDEX.md`
 - Session continuity notes:
-  - `SESSION_NOTES.md`
+  - `docs/SESSION_NOTES.md`
 - Host runbooks and checklists:
-  - `GITEA_OPERATIONS_CHECKLIST.md`
-  - `DOCKER_ADDRESS_POOL_RUNBOOK.md`
-  - `SHARED_INFRA_BACKUP_RUNBOOK.md`
-  - `GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
+  - `docs/GITEA_OPERATIONS_CHECKLIST.md`
+  - `docs/DOCKER_ADDRESS_POOL_RUNBOOK.md`
+  - `docs/SHARED_INFRA_BACKUP_RUNBOOK.md`
+  - `docs/GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
 
 ## Notes
 
@@ -142,7 +142,7 @@ The full workflow lives in
   Synology SMTP relay stack in this repository today.
 
 Longer operational guidance now lives in
-`DOCUMENTATION_INDEX.md`
+`docs/DOCUMENTATION_INDEX.md`
 instead of expanding this README into a runbook.
 
 ## Registry Behavior

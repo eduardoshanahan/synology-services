@@ -41,6 +41,6 @@ known image path.
 ## Related docs
 
 - Host overview: `../README.md`
-- Operations checklist: `../GITEA_OPERATIONS_CHECKLIST.md`
+- Operations checklist: `../docs/GITEA_OPERATIONS_CHECKLIST.md`
 - NAS placement / bridge notes:
-  `../GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
+  `../docs/GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`

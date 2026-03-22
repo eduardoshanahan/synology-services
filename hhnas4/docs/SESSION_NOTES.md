@@ -76,7 +76,8 @@ resume without rediscovery.
 - If deploy behavior changes, update both:
   - `hhnas4/README.md`
   - this `SESSION_NOTES.md`
-- Use `GITEA_OPERATIONS_CHECKLIST.md` as the post-deploy runbook.
+- Use `GITEA_OPERATIONS_CHECKLIST.md` in this `docs/` directory as the
+  post-deploy runbook.
 
 ## 2026-03-05 Outline + SMTP follow-up
 
