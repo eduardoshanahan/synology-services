@@ -75,7 +75,10 @@ If you keep local `.env` (or encrypted `.env.sops`), push it explicitly:
   - `REDIS_OUTLINE_USERNAME` / `REDIS_OUTLINE_PASSWORD` for Outline
 - ACL policy:
   - Admin user: full access (`+@all`)
-  - Outline user: app access with restricted risk surface (`+@all -@admin -@dangerous`)
+  - Outline user: app access with restricted risk surface
+    (`+@all -@admin -@dangerous +keys`)
+  - `+keys` stays enabled for the Outline user because the app uses Redis key
+    lookups for collaborative editing/session state.
 - Keep this endpoint internal-only; do not expose Redis through DSM reverse proxy.
 - Use authenticated client URLs with username, for example:
   - `redis://outline:<password>@redis.internal.example:6379`

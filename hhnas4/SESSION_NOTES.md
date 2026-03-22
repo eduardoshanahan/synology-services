@@ -184,3 +184,27 @@ resume without rediscovery.
   - confirm direct LAN access to `http://<nas-host-lan-ip>:8096`
   - confirm DSM firewall allows `8096/tcp` and `7359/udp`
   - retest discovery from Google TV Streamer
+
+## 2026-03-22 Outline publish/offline incident
+
+- User-visible symptoms:
+  - Outline web UI loaded, but editing showed `offline`.
+  - Publish attempts failed with `Couldn't publish the document, please try again`.
+- Live checks on `2026-03-22` showed:
+  - `https://outline.internal.example/` returned `HTTP/2 200`
+  - Outline container was `healthy`
+  - local storage inside `/var/lib/outline/data` was writable
+  - shared Postgres and Redis containers were both `healthy`
+- Primary root cause found in Outline logs:
+  - Redis ACL denied `KEYS` for the `outline` user:
+    `NOPERM User outline has no permissions to run the 'keys' command`
+  - the shared Redis ACL had been defined as `+@all -@admin -@dangerous`,
+    which removes `KEYS`
+- Repo fix:
+  - `nas-host/redis/compose.yaml` now re-allows `+keys` for the Outline Redis
+    user while still keeping `-@admin -@dangerous`
+- Additional note:
+  - Outline logs also contained earlier transient `ECONNREFUSED
+    192.0.2.10:5433` errors for Postgres, but Postgres was healthy during the
+    incident review and the persistent user-facing failure aligned with the
+    Redis ACL denial.
