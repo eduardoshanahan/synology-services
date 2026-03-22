@@ -31,6 +31,7 @@ nix develop --no-write-lock-file
 - `hhnas4/`
   - shared infra stacks:
     - `mysql/`
+    - `minio/`
     - `postgres/`
     - `redis/`
     - `mongo/`

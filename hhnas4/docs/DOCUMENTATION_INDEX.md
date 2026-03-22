@@ -24,6 +24,7 @@ Canonical map for host-level documentation under `synology-services/hhnas4/docs/
 
 - Shared infra:
   - `../mysql/README.md`
+  - `../minio/README.md`
   - `../postgres/README.md`
   - `../redis/README.md`
   - `../mongo/README.md`
