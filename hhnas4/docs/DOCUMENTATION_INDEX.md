@@ -43,6 +43,8 @@ Canonical map for host-level documentation under `synology-services/nas-host/doc
   - `../promtail/README.md`
   - `../docker-socket-proxy/README.md`
   - `../woodpecker-agent/README.md`
+- Management tooling:
+  - `../adminer/README.md`
 
 ## Operational Notes
 

@@ -15,6 +15,14 @@ resume without rediscovery.
   - compose path: `/volume1/docker/homelab/nas-host/promtail/compose.yaml`
   - env path: `/volume1/docker/homelab/nas-host/promtail/.env`
   - config path: `/volume1/docker/homelab/nas-host/promtail/config.yml`
+- Adminer is deployed on Synology host `nas-host` using:
+  - compose path: `/volume1/docker/homelab/nas-host/adminer/compose.yaml`
+  - env path: `/volume1/docker/homelab/nas-host/adminer/.env`
+  - container: `nas-host-adminer`
+  - internal endpoint: `http://adminer.internal.example:8070` (fronted via DSM
+    reverse proxy for HTTPS)
+  - Docker network: the shared database bridge so the UI can reach the shared MySQL,
+    MariaDB, PostgreSQL, and Dolt services without publishing new bridges.
 - Public URL: `https://gitea.internal.example`
 - SSH Git endpoint: `gitea.internal.example:2222`
 - Container registry is enabled in Gitea.
