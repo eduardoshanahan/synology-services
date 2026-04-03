@@ -13,9 +13,9 @@ services:
     volumes:
       - ./wg0.conf:/config/wg_confs/wg0.conf:ro
       - /lib/modules:/lib/modules:ro
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
     network_mode: host
+    # Note: sysctls not allowed in host network mode
+    # Set on host if needed: sysctl -w net.ipv4.conf.all.src_valid_mark=1
     healthcheck:
       test: ["CMD", "sh", "-c", "wg show wg0 | grep -q interface"]
       interval: 30s
