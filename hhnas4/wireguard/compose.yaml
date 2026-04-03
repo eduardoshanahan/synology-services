@@ -1,6 +1,6 @@
 services:
   wireguard:
-    image: linuxserver/wireguard:legacy
+    image: linuxserver/wireguard:latest
     container_name: nas-host-wireguard
     restart: unless-stopped
     cap_add:
@@ -10,6 +10,7 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-UTC}
+      - LOG_CONFS=true
     volumes:
       - ./wg0.conf:/config/wg_confs/wg0.conf:ro
       - /lib/modules:/lib/modules:ro
