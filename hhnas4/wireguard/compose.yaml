@@ -9,4 +9,3 @@ services:
       - ./wg0.conf:/etc/wireguard/wg0.conf:ro
     sysctls:
       - net.ipv4.conf.all.forwarding=1
-    command: wg0
