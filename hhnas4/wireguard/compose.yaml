@@ -1,6 +1,6 @@
 services:
   wireguard:
-    image: linuxserver/wireguard:1.0.20210914
+    image: linuxserver/wireguard:legacy
     container_name: hhnas4-wireguard
     restart: unless-stopped
     cap_add:
