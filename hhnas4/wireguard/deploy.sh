@@ -78,7 +78,7 @@ if [[ -n "${SYN_SELECTED_SOPS_ENV_FILE}" ]]; then
 	WG_PRIVATE_KEY=$(sops -d --input-type dotenv --output-type dotenv "${SYN_SELECTED_SOPS_ENV_FILE}" | grep '^WG_PRIVATE_KEY=' | cut -d'=' -f2-)
 
 	# Generate wg0.conf from template
-	sed "s/\${WG_PRIVATE_KEY}/${WG_PRIVATE_KEY}/g" "${LOCAL_WG_CONF_TEMPLATE}" | ssh "${TARGET_HOST}" "cat > '${REMOTE_WG_CONF}'"
+	sed "s|\${WG_PRIVATE_KEY}|${WG_PRIVATE_KEY}|g" "${LOCAL_WG_CONF_TEMPLATE}" | ssh "${TARGET_HOST}" "cat > '${REMOTE_WG_CONF}'"
 	echo "[deploy] generated and copied wg0.conf"
 else
 	echo "[deploy] ERROR: .env.sops not found. WireGuard requires private key." >&2
