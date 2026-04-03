@@ -74,8 +74,8 @@ if [[ -n "${SYN_SELECTED_SOPS_ENV_FILE}" ]]; then
 		exit 1
 	fi
 
-	# Decrypt .env.sops and export WG_PRIVATE_KEY
-	WG_PRIVATE_KEY=$(sops -d --extract '["WG_PRIVATE_KEY"]' "${SYN_SELECTED_SOPS_ENV_FILE}")
+	# Decrypt .env.sops and extract WG_PRIVATE_KEY
+	WG_PRIVATE_KEY=$(sops -d --input-type dotenv --output-type dotenv "${SYN_SELECTED_SOPS_ENV_FILE}" | grep '^WG_PRIVATE_KEY=' | cut -d'=' -f2-)
 
 	# Generate wg0.conf from template
 	export WG_PRIVATE_KEY
