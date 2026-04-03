@@ -1,0 +1,11 @@
+[Interface]
+PrivateKey = ${WG_PRIVATE_KEY}
+Address = 10.100.0.4/24
+# DNS = 1.1.1.1
+
+[Peer]
+# VPS-01 (57.128.171.12)
+PublicKey = S1xPUTxwZpxKk63/9ZJcEIJfatGpGtbLUpR8wqlo7xU=
+Endpoint = 57.128.171.12:51820
+AllowedIPs = 10.100.0.0/24
+PersistentKeepalive = 25
