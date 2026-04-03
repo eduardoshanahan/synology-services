@@ -5,8 +5,6 @@ services:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
-    devices:
-      - /dev/net/tun
     volumes:
       - ./wg0.conf:/etc/wireguard/wg0.conf:ro
     sysctls:
