@@ -85,8 +85,25 @@ else
 	exit 1
 fi
 
-# Navigate to target directory and restart container
-ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && docker compose down 2>/dev/null || true && docker compose up -d"
+# Find docker binary on Synology
+DOCKER_BIN="$(ssh "${TARGET_HOST}" "command -v docker || { test -x /usr/local/bin/docker && echo /usr/local/bin/docker; } || { test -x /var/packages/ContainerManager/target/usr/bin/docker && echo /var/packages/ContainerManager/target/usr/bin/docker; } || { test -x /var/packages/Docker/target/usr/bin/docker && echo /var/packages/Docker/target/usr/bin/docker; }")"
+
+if [[ -z "${DOCKER_BIN}" ]]; then
+	echo "[deploy] could not find docker binary on ${TARGET_HOST}" >&2
+	exit 1
+fi
+
+# Determine if sudo is needed
+if ssh "${TARGET_HOST}" "${DOCKER_BIN} info >/dev/null 2>&1"; then
+	DOCKER_PREFIX=""
+elif ssh "${TARGET_HOST}" "sudo -n ${DOCKER_BIN} info >/dev/null 2>&1"; then
+	DOCKER_PREFIX="sudo -n "
+else
+	DOCKER_PREFIX="sudo "
+fi
+
+# Deploy container
+ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose down 2>/dev/null || true && ${DOCKER_PREFIX}${DOCKER_BIN} compose up -d"
 
 echo "[deploy] WireGuard deployed successfully"
-echo "[deploy] Check status: ssh ${TARGET_HOST} 'docker exec nas-host-wireguard wg show'"
+echo "[deploy] Check status: ssh ${TARGET_HOST} '${DOCKER_PREFIX}${DOCKER_BIN} exec nas-host-wireguard wg show'"
