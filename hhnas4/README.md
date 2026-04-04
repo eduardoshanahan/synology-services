@@ -17,6 +17,7 @@ Reproducible, sanitized deployment artifacts for host `nas-host`.
 - `gotenberg` as shared document conversion service for internal services.
 - `paperless` document management with OCR using shared Postgres/Redis/Tika/Gotenberg.
 - `karakeep` read-it-later/bookmarks service with dedicated NAS storage.
+- `freshrss` self-hosted RSS reader using shared Postgres.
 - `qbittorrent` torrent downloader with NAS-local config and a default
   downloads path under `/volume1/Media/Downloads/qbittorrent`.
 - `woodpecker-agent` as the AMD64 Woodpecker CI runner.

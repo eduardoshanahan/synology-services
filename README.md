@@ -43,6 +43,7 @@ nix develop --no-write-lock-file
     - `outline/`
     - `paperless/`
     - `karakeep/`
+    - `freshrss/`
     - `jellyfin/`
     - `qbittorrent/`
     - `archivebox/`

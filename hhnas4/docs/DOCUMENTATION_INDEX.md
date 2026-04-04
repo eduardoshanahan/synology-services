@@ -36,6 +36,7 @@ Canonical map for host-level documentation under `synology-services/nas-host/doc
   - `../outline/README.md`
   - `../paperless/README.md`
   - `../karakeep/README.md`
+  - `../freshrss/README.md`
   - `../jellyfin/README.md`
   - `../qbittorrent/README.md`
   - `../archivebox/README.md`
