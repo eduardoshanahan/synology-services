@@ -33,7 +33,7 @@ High-level layout under `hhnas4/`:
 - Shared infra: `mysql/`, `postgres/`, `redis/`, `mongo/`, `dolt/`, `tika/`,
   `gotenberg/`
 - Apps: `gitea/`, `outline/`, `paperless/`, `karakeep/`, `jellyfin/`,
-  `qbittorrent/`, `archivebox/`
+  `qbittorrent/`, `archivebox/`, `freshrss/`
 - Observability and integration: `promtail/`, `docker-socket-proxy/`,
   `woodpecker-agent/`
 - Host-level runbooks in `hhnas4/docs/` and wrappers in the root of `hhnas4/`
