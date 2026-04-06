@@ -161,6 +161,8 @@ Expected:
   shell.
 - Outline can complete initial sign-in with SMTP magic-link auth.
 - Outline can read/write documents with shared Postgres.
+- During heavy NAS I/O, local readiness can be delayed; prefer validating with
+  container logs plus repeated `curl` checks instead of a single probe.
 
 ## Backup note
 
