@@ -83,9 +83,12 @@ If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.so
 ## First-start rules
 
 - Set a strong `DOLT_ROOT_PASSWORD` before first production start.
-- Keep `DOLT_ROOT_HOST=%` only if you need LAN clients to connect as `root`.
 - Prefer one SQL user per application instead of sharing `root`.
 - Keep the SQL and metrics endpoints internal-only.
+- Optional: set `DOLT_ROOT_HOST` only if you intentionally need remote root
+  login from a non-localhost host entry.
+- This stack bypasses the upstream image entrypoint bootstrap because it can
+  query `127.0.0.1:3306` before the server is ready and restart-loop.
 
 Example bootstrap from a client:
 

@@ -100,6 +100,8 @@ psql -h postgres.internal.example -p 5433 -U postgres -d postgres -c "CREATE DAT
   - `curl -sS -m 6 -i http://127.0.0.1:8010/ | sed -n '1,8p'`
   returns an HTTP response.
 - Container logs show successful DB/Redis connectivity and worker startup.
+- Health can remain `starting` for several minutes after restart under heavy NAS
+  I/O load; treat `curl` + logs as primary readiness checks during recovery.
 
 ## Troubleshooting: HTTP 500 on login/startup
 
