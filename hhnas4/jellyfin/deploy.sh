@@ -127,6 +127,42 @@ fi
 
 ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose pull && ${DOCKER_PREFIX}${DOCKER_BIN} compose up -d"
 
+HARDENED_COUNT="$(
+	ssh "${TARGET_HOST}" "
+set -euo pipefail
+LIB_ROOT='${TARGET_DIR}/config/root/default'
+TIMESTAMP=\$(date +%Y%m%d%H%M%S)
+HARDENED=0
+
+if [ -d \"\${LIB_ROOT}\" ]; then
+	for OPTIONS_FILE in \"\${LIB_ROOT}\"/*/options.xml; do
+		[ -f \"\${OPTIONS_FILE}\" ] || continue
+		TMP_FILE=\$(mktemp)
+		sed \
+			-e 's#<EnableRealtimeMonitor>true</EnableRealtimeMonitor>#<EnableRealtimeMonitor>false</EnableRealtimeMonitor>#g' \
+			-e 's#<EnableLUFSScan>true</EnableLUFSScan>#<EnableLUFSScan>false</EnableLUFSScan>#g' \
+			-e 's#<AutomaticRefreshIntervalDays>[0-9][0-9]*</AutomaticRefreshIntervalDays>#<AutomaticRefreshIntervalDays>0</AutomaticRefreshIntervalDays>#g' \
+			\"\${OPTIONS_FILE}\" >\"\${TMP_FILE}\"
+
+		if ! cmp -s \"\${OPTIONS_FILE}\" \"\${TMP_FILE}\"; then
+			cp \"\${OPTIONS_FILE}\" \"\${OPTIONS_FILE}.bak-\${TIMESTAMP}\"
+			cat \"\${TMP_FILE}\" >\"\${OPTIONS_FILE}\"
+			HARDENED=\$((HARDENED + 1))
+		fi
+		rm -f \"\${TMP_FILE}\"
+	done
+fi
+
+printf '%s' \"\${HARDENED}\"
+"
+)"
+
+if [[ "${HARDENED_COUNT}" =~ ^[0-9]+$ ]] && ((HARDENED_COUNT > 0)); then
+	echo "[deploy] hardened ${HARDENED_COUNT} Jellyfin library option file(s) (realtime monitor/LUFS disabled)."
+	echo "[deploy] restarting nas-host-jellyfin to apply updated library options."
+	ssh "${TARGET_HOST}" "${DOCKER_PREFIX}${DOCKER_BIN} restart nas-host-jellyfin >/dev/null"
+fi
+
 echo "[deploy] jellyfin deployed. Verify with:"
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose ps\""
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose logs --tail 120\""

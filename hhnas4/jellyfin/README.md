@@ -68,6 +68,18 @@ If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.so
 ./deploy.sh nas-host.internal.example --update-env
 ```
 
+## Deploy hardening
+
+After each deploy, `deploy.sh` enforces low-impact defaults in existing
+library `options.xml` files under `config/root/default/*/options.xml`:
+
+- `EnableRealtimeMonitor=false`
+- `EnableLUFSScan=false`
+- `AutomaticRefreshIntervalDays=0`
+
+If one or more files were changed, the script restarts the Jellyfin container
+once so the updated library options take effect.
+
 ## First-start rules
 
 - Set `JELLYFIN_MEDIA_DIR` in `.env` to a real media path on `nas-host` before
@@ -82,6 +94,9 @@ If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.so
   back for broader DLNA-style discovery.
 - Ensure the media path is readable by the container runtime user on Synology; if library scans fail, fix NAS ACLs before changing Jellyfin itself.
 - If metadata searches are empty and logs show DNS or `TheMovieDb` errors, re-run `/volume1/docker/homelab/nas-host/ensure-docker-bridge-lan-egress.sh` on the NAS and verify Docker bridge subnets are allowed through Synology firewall chains.
+- Configure "Scan Media Library" schedule from Jellyfin Admin Dashboard ->
+  Scheduled Tasks and keep it in a low-traffic window (for example 03:00).
+  The task configuration is persisted in the Jellyfin config volume.
 - If DSM firewall is enabled, allow inbound LAN access to:
   - `8096/tcp`
   - `7359/udp`
