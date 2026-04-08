@@ -1,6 +1,6 @@
 services:
   dolt:
-    image: dolthub/dolt-sql-server:1.59.10
+    image: dolthub/dolt-sql-server:1.86.0
     container_name: nas-host-dolt
     restart: unless-stopped
     entrypoint:
