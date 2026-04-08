@@ -1,6 +1,6 @@
 services:
   redis:
-    image: redis:7.4.2-alpine
+    image: redis:7.4.8-alpine
     container_name: nas-host-redis
     restart: unless-stopped
     ports:
