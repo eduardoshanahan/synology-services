@@ -264,3 +264,31 @@ resume without rediscovery.
   - exact resolver values, live hostname details, and operator-specific sudo
     workflow were moved to the private companion repo for continuity without
     publishing host-internal identifiers
+
+## 2026-04-08 Multi-stack post-reboot outage
+
+- User-visible symptom:
+  - many `nas-host` services were down at once (for example internal Gitea was
+    unreachable and most containers were not running).
+- Host findings:
+  - host itself was up (`uptime` ~24h).
+  - Docker daemon was active (`pkg-ContainerManager-dockerd.service` running).
+  - `docker info` reported `ContainersRunning: 0`, `ContainersStopped: 27`.
+  - stopped container timestamps aligned around `2026-04-07 22:59Z`.
+- Immediate recovery:
+  - ran `docker compose up -d` stack-by-stack from
+    `/volume1/docker/homelab/nas-host`.
+  - all core shared infra and app stacks returned to `Up` / `healthy`.
+  - `wireguard` was intentionally skipped because `.env` was missing.
+- Secondary startup behavior observed:
+  - Outline initially logged transient DNS lookup errors against Redis
+    (`EAI_AGAIN redis.<domain>`) and remained `health: starting` briefly, then
+    converged to `healthy`.
+  - Paperless initially hit transient Postgres connection-slot pressure during
+    startup and then converged to `healthy`.
+- Durable fix added in repo:
+  - host helper: `nas-host/start-managed-stacks.sh`
+  - deploy wrapper: `nas-host/deploy-start-managed-stacks.sh`
+  - runbook: `nas-host/docs/STACK_AUTOSTART_RUNBOOK.md`
+  - recommended DSM boot task:
+    - `/bin/sh /volume1/docker/homelab/nas-host/start-managed-stacks.sh /volume1/docker/homelab/nas-host >> /volume1/docker/homelab/nas-host/start-managed-stacks.log 2>&1`

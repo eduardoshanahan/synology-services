@@ -17,6 +17,8 @@ Canonical map for host-level documentation under `synology-services/nas-host/doc
   - `DOCKER_ADDRESS_POOL_RUNBOOK.md`
 - Shared infra backup workflow:
   - `SHARED_INFRA_BACKUP_RUNBOOK.md`
+- Managed stack auto-start and reboot recovery:
+  - `STACK_AUTOSTART_RUNBOOK.md`
 - Historical Gitea placement and bridge egress investigation:
   - `GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
 

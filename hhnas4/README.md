@@ -117,6 +117,12 @@ Use this redirect URI in Authentik:
 ./qbittorrent/deploy.sh nas-host.internal.example
 ```
 
+- Managed stack auto-start helper (for reboot recovery):
+
+```bash
+./deploy-start-managed-stacks.sh nas-host /volume1/docker/homelab/nas-host --run-now
+```
+
 ## Shared Infra Backups
 
 Centralized backup orchestration for shared Postgres/MySQL/Redis state:
@@ -135,8 +141,9 @@ The full workflow lives in
 - Session continuity notes:
   - `docs/SESSION_NOTES.md`
 - Host runbooks and checklists:
-  - `docs/GITEA_OPERATIONS_CHECKLIST.md`
+- `docs/GITEA_OPERATIONS_CHECKLIST.md`
   - `docs/DOCKER_ADDRESS_POOL_RUNBOOK.md`
+  - `docs/STACK_AUTOSTART_RUNBOOK.md`
   - `docs/SHARED_INFRA_BACKUP_RUNBOOK.md`
   - `docs/GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
 
