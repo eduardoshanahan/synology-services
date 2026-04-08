@@ -1,6 +1,6 @@
 services:
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:${QBITTORRENT_VERSION:-latest}
+    image: lscr.io/linuxserver/qbittorrent:${QBITTORRENT_VERSION:-5.1.4-r2-ls445}
     container_name: nas-host-qbittorrent
     restart: unless-stopped
     env_file:
