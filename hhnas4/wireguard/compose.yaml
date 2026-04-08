@@ -3,6 +3,13 @@ services:
     image: masipcat/wireguard-go@sha256:696206e5954d3bdeaa59d5a006dc8de7d9ccdbe1fb0ac1b41650ea75cbd133e9
     container_name: nas-host-wireguard
     restart: unless-stopped
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - |
+        mkdir -p /dev/net
+        [ -c /dev/net/tun ] || mknod /dev/net/tun c 10 200
+        exec /entrypoint.sh
     cap_add:
       - NET_ADMIN
     volumes:
