@@ -1,6 +1,6 @@
 services:
   karakeep:
-    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
+    image: ghcr.io/karakeep-app/karakeep@sha256:20754dbdafb11dfe288bbb1c2342a7855081b08ea069e86fcf2d4a2d945d3653
     container_name: karakeep
     restart: unless-stopped
     env_file:
