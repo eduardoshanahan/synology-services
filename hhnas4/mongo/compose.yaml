@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo:4.4
+    image: mongo:4.4.30
     container_name: nas-host-mongo
     restart: unless-stopped
     ports:
