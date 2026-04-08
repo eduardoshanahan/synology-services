@@ -1,6 +1,6 @@
 services:
   woodpecker-agent:
-    image: ${WOODPECKER_AGENT_IMAGE:-woodpeckerci/woodpecker-agent:v3.11.0}
+    image: ${WOODPECKER_AGENT_IMAGE:-woodpeckerci/woodpecker-agent:v2.8.3}
     container_name: ${WOODPECKER_AGENT_CONTAINER_NAME:-woodpecker-agent}
     restart: unless-stopped
     init: true
