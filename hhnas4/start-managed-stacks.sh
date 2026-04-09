@@ -75,6 +75,12 @@ STACKS=(
 	wireguard
 )
 
+# Some host-level projects live outside the managed nas-host stack base.
+# Keep these in the same recovery flow so monitoring survives host restarts.
+EXTRA_COMPOSE_DIRS=(
+	/volume1/docker/homelab/nas-observability
+)
+
 echo "[start-stacks] base dir    : ${BASE_DIR}"
 echo "[start-stacks] docker bin  : ${DOCKER_BIN}"
 echo "[start-stacks] docker mode : ${DOCKER_PREFIX[*]:-direct}"
@@ -98,6 +104,21 @@ for stack in "${STACKS[@]}"; do
 	echo "[start-stacks] up ${stack}"
 	if ! "${DOCKER_PREFIX[@]}" "${DOCKER_BIN}" compose -f "${compose_file}" --env-file "${env_file}" up -d; then
 		echo "[start-stacks] failed ${stack}" >&2
+		failures=$((failures + 1))
+	fi
+done
+
+for project_dir in "${EXTRA_COMPOSE_DIRS[@]}"; do
+	compose_file="${project_dir}/compose.yaml"
+
+	if [[ ! -f "${compose_file}" ]]; then
+		echo "[start-stacks] skip extra ${project_dir}: missing compose file"
+		continue
+	fi
+
+	echo "[start-stacks] up extra ${project_dir}"
+	if ! "${DOCKER_PREFIX[@]}" "${DOCKER_BIN}" compose -f "${compose_file}" up -d; then
+		echo "[start-stacks] failed extra ${project_dir}" >&2
 		failures=$((failures + 1))
 	fi
 done

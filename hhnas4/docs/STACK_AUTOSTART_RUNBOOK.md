@@ -63,3 +63,5 @@ Target outcome:
 - shared infra healthy (`postgres`, `redis`, `mysql`, `mongo`, `dolt`)
 - apps running (`gitea`, `outline`, `paperless`, `karakeep`, `jellyfin`, etc.)
 - optional stacks without `.env` are logged as skipped, not treated as fatal.
+- standalone monitoring stack is running:
+  - `node-exporter` from `/volume1/docker/homelab/nas-observability/compose.yaml`
