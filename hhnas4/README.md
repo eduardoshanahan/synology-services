@@ -18,6 +18,7 @@ Reproducible, sanitized deployment artifacts for host `nas-host`.
 - `paperless` document management with OCR using shared Postgres/Redis/Tika/Gotenberg.
 - `karakeep` read-it-later/bookmarks service with dedicated NAS storage.
 - `freshrss` self-hosted RSS reader using shared Postgres.
+- `immich` self-hosted photo/video management with local NAS library + Postgres storage.
 - `qbittorrent` torrent downloader with NAS-local config and a default
   downloads path under `/volume1/Media/Downloads/qbittorrent`.
 - `woodpecker-agent` as the AMD64 Woodpecker CI runner.
@@ -109,6 +110,12 @@ Use this redirect URI in Authentik:
 
 ```bash
 ./jellyfin/deploy.sh nas-host.internal.example
+```
+
+- Immich:
+
+```bash
+./immich/deploy.sh nas-host.internal.example
 ```
 
 - qBittorrent:

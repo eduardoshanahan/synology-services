@@ -6,7 +6,7 @@ WireGuard VPN client to connect nas-host to the homelab WireGuard network.
 
 - **nas-host WireGuard IP**: 10.0.0.10/24
 - **VPS WireGuard IP**: 10.0.0.10/24
-- **VPS Endpoint**: 203.0.113.10:51820
+- **VPS Endpoint**: vpn.example.net:51820
 
 ## Deployment
 
@@ -65,4 +65,4 @@ After deploying WireGuard on nas-host, you must add nas-host as a peer on the VP
 ### Connection not working
 - Verify firewall on VPS allows UDP 51820
 - Check peer configuration on VPS: `ssh vps-host 'sudo wg show'`
-- Verify endpoint is reachable: `nc -zvu 203.0.113.10 51820`
+- Verify endpoint is reachable: `nc -zvu vpn.example.net 51820`

@@ -7,6 +7,7 @@ Shared PostgreSQL server for internal services on `nas-host`.
 - Provides one reusable PostgreSQL endpoint for services in `internal.example`.
 - Uses one dedicated runtime/data path on Synology.
 - Replaces ad-hoc per-app proxy patterns for DB connectivity.
+- Includes the `pgvector` extension for vector-indexed workloads.
 
 ## Service endpoint
 

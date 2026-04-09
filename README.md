@@ -44,6 +44,7 @@ nix develop --no-write-lock-file
     - `paperless/`
     - `karakeep/`
     - `freshrss/`
+    - `immich/`
     - `jellyfin/`
     - `qbittorrent/`
     - `archivebox/`

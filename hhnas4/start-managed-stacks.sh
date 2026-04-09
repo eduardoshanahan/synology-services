@@ -65,6 +65,7 @@ STACKS=(
 	paperless
 	karakeep
 	freshrss
+	immich
 	qbittorrent
 	jellyfin
 	promtail

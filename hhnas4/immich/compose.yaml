@@ -1,0 +1,28 @@
+services:
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-v2}
+    container_name: nas-host-immich-server
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - "${UPLOAD_LOCATION:-./library}:/data"
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "${IMMICH_HOST_BIND:-127.0.0.1}:${IMMICH_HOST_PORT:-2283}:2283"
+    healthcheck:
+      disable: false
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-v2}
+    container_name: nas-host-immich-machine-learning
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - immich_model_cache:/cache
+    healthcheck:
+      disable: false
+
+volumes:
+  immich_model_cache:

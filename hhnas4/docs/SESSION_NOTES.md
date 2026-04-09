@@ -218,6 +218,55 @@ resume without rediscovery.
     incident review and the persistent user-facing failure aligned with the
     Redis ACL denial.
 - Later the same day, after the Redis ACL recovery:
+
+## 2026-04-09 Immich initial deployment
+
+- Immich is deployed on `nas-host` using:
+  - compose path: `/volume1/docker/homelab/nas-host/immich/compose.yaml`
+  - env path: `/volume1/docker/homelab/nas-host/immich/.env`
+  - containers:
+    - `nas-host-immich-server`
+    - `nas-host-immich-machine-learning`
+    - `nas-host-immich-postgres`
+    - `nas-host-immich-redis`
+- Current listener model:
+  - `127.0.0.1:2283 -> immich-server:2283`
+  - intended to sit behind DSM reverse proxy (`immich.internal.example`).
+- First-start behavior observed:
+  - loopback `curl` initially returned `connection reset by peer` during startup.
+  - server logs showed normal migration/index initialization and then successful
+    app availability.
+  - after initialization, `curl -i http://127.0.0.1:2283` returned `HTTP/1.1 200`.
+- Managed stack auto-start helper was redeployed so `immich` is included in the
+  reboot recovery stack list.
+
+## 2026-04-09 Immich shared-service cutover follow-up
+
+- Immich was moved from embedded DB/Redis sidecars to shared services on `nas-host`.
+- Shared Postgres image was updated to a pgvector-enabled Postgres 17 image:
+  - `pgvector/pgvector:0.8.1-pg17-bookworm`
+- Shared DB prerequisites required for Immich were applied in DB `immich`
+  as Postgres superuser:
+  - `CREATE EXTENSION IF NOT EXISTS vector;`
+  - `CREATE EXTENSION IF NOT EXISTS cube;`
+  - `CREATE EXTENSION IF NOT EXISTS earthdistance;`
+- Shared Redis ACL for user `immich` required `+info` to pass Immich ready checks
+  when using a restricted policy with `-@dangerous`.
+- Runtime env source-of-truth for Immich now lives in:
+  - `../synology-services-private/nas-host/immich/.env.sops`
+- Post-cutover validation:
+  - `nas-host-immich-server`: `healthy`
+  - `nas-host-immich-machine-learning`: `healthy`
+  - `curl http://127.0.0.1:2283`: `HTTP/1.1 200`
+- Reverse-proxy routing verification:
+  - `https://immich.<homelab-domain>/` on port `443` serves Immich as expected.
+  - `https://immich.<homelab-domain>:5001/` is DSM management and will show DSM.
+  - Synology default `http://` landing page can redirect to `:5000/:5001`; add
+    an HTTP reverse-proxy source rule for the Immich host if you want to avoid
+    accidental DSM redirects from plain-HTTP requests.
+- Observed warning after shared Postgres image change:
+  - database `immich` reports collation version mismatch warning (`2.41` -> `2.36`).
+  - Immich currently starts and serves successfully despite this warning.
   - Outline regressed to `502` after restarts and the UI again behaved
     inconsistently
   - earlier app logs had shown intermittent `ENOTFOUND
