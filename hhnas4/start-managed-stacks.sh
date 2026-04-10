@@ -43,9 +43,9 @@ else
 	exit 1
 fi
 
-if "${DOCKER_BIN}" info >/dev/null 2>&1; then
+if "${DOCKER_BIN}" compose version >/dev/null 2>&1; then
 	DOCKER_PREFIX=()
-elif sudo -n "${DOCKER_BIN}" info >/dev/null 2>&1; then
+elif sudo -n "${DOCKER_BIN}" compose version >/dev/null 2>&1; then
 	DOCKER_PREFIX=(sudo -n)
 else
 	DOCKER_PREFIX=(sudo)

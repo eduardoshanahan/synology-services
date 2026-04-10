@@ -3,6 +3,10 @@
 Use this when a reboot leaves many `nas-host` containers stopped despite
 `restart: unless-stopped`.
 
+On `hhnas4`, the helper detects Docker access with `docker compose version`
+rather than `docker info`, because the NAS sudo policy allows the compose path
+but not the info probe.
+
 ## Why This Exists
 
 On `2026-04-08`, all managed `nas-host` containers were found stopped after host
