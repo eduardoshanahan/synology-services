@@ -73,10 +73,14 @@ If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.so
 - Set strong ACL credentials before first production start:
   - `REDIS_ADMIN_USERNAME` / `REDIS_ADMIN_PASSWORD` for operator/admin access
   - `REDIS_OUTLINE_USERNAME` / `REDIS_OUTLINE_PASSWORD` for Outline
+  - `REDIS_IMMICH_USERNAME` / `REDIS_IMMICH_PASSWORD` for Immich when that app
+    shares this Redis service
 - ACL policy:
   - Admin user: full access (`+@all`)
   - Outline user: app access with restricted risk surface
     (`+@all -@admin -@dangerous +keys`)
+  - Immich user: app access with the same restricted surface as Outline
+    plus `+info` for startup readiness checks
   - `+keys` stays enabled for the Outline user because the app uses Redis key
     lookups for collaborative editing/session state.
 - Keep this endpoint internal-only; do not expose Redis through DSM reverse proxy.

@@ -16,6 +16,10 @@ services:
         user $${REDIS_ADMIN_USERNAME:?set in .env} on >$${REDIS_ADMIN_PASSWORD:?set in .env} ~* &* +@all
         user $${REDIS_OUTLINE_USERNAME:?set in .env} on >$${REDIS_OUTLINE_PASSWORD:?set in .env} ~* &* +@all -@admin -@dangerous +keys
         EOF
+        if [ -n "$${REDIS_IMMICH_USERNAME:-}" ] && [ -n "$${REDIS_IMMICH_PASSWORD:-}" ]; then
+          printf 'user %s on >%s ~* &* +@all -@admin -@dangerous +keys +info\n' \
+            "$${REDIS_IMMICH_USERNAME}" "$${REDIS_IMMICH_PASSWORD}" >> /tmp/redis-users.acl
+        fi
         exec redis-server \
           --appendonly yes \
           --bind "$${REDIS_BIND:-0.0.0.0}" \

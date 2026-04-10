@@ -106,9 +106,9 @@ if [[ -z "${DOCKER_BIN}" ]]; then
 	exit 1
 fi
 
-if ssh "${TARGET_HOST}" "${DOCKER_BIN} info >/dev/null 2>&1"; then
+if ssh "${TARGET_HOST}" "${DOCKER_BIN} ps >/dev/null 2>&1"; then
 	DOCKER_PREFIX=""
-elif ssh "${TARGET_HOST}" "sudo -n ${DOCKER_BIN} info >/dev/null 2>&1"; then
+elif ssh "${TARGET_HOST}" "sudo -n ${DOCKER_BIN} ps >/dev/null 2>&1"; then
 	DOCKER_PREFIX="sudo -n "
 else
 	DOCKER_PREFIX="sudo "
