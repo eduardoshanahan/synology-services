@@ -221,10 +221,8 @@ When working here:
 - if you are going to commit or push, enter `nix develop` first so the repo's
   pre-hook tools are available (`prek`, `gitleaks`, `markdownlint-cli2`,
   `shellcheck`, `shfmt`, `sops`)
-- if a doc-only commit still fails solely because `markdownlint-cli2` is
-  missing from the current environment, it is acceptable to use
-  `git commit --no-verify` instead of retrying the same failing hook path;
-  record that this was the reason for the bypass
+- do not use `--no-verify` to work around missing local tools; if commit or
+  hook tooling fails, enter `nix develop` and rerun the normal workflow
 - at the start of a session, use that dev shell to run `git fetch origin`, then
   `git pull --rebase origin main`, and inspect `git status --short --branch`
   before editing
