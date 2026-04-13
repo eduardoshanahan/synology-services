@@ -4,8 +4,8 @@ WireGuard VPN client to connect nas-host to the homelab WireGuard network.
 
 ## Network Configuration
 
-- **nas-host WireGuard IP**: 10.0.0.10/24
-- **VPS WireGuard IP**: 10.0.0.10/24
+- **nas-host WireGuard IP**: 10.100.0.4/24
+- **VPS WireGuard IP**: 10.100.0.1/24
 - **VPS Endpoint**: vpn.example.net:51820
 
 ## Deployment
@@ -32,10 +32,10 @@ The `wg0.conf` is generated from `wg0.conf.template` with the private key inject
 ssh nas-host 'docker exec nas-host-wireguard wg show'
 
 # Test connectivity to VPS
-ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.0.0.10'
+ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.100.0.1'
 
-# Test connectivity to pi-node-a
-ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.0.0.10'
+# Test connectivity to rpi-box-01
+ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.100.0.2'
 ```
 
 ## VPS Configuration
@@ -43,13 +43,13 @@ ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.0.0.10'
 After deploying WireGuard on nas-host, you must add nas-host as a peer on the VPS:
 
 1. Get nas-host's public key (derived from private key)
-2. Add to VPS WireGuard configuration in `nix-vps-private/modules/vps-host.nix`:
+2. Add to VPS WireGuard configuration in `nix-vps-private/modules/vps-01.nix`:
 
 ```nix
 {
   # nas-host
   publicKey = "<nas-host-public-key>";
-  allowedIPs = [ "10.0.0.10/32" ];
+  allowedIPs = [ "10.100.0.4/32" ];
 }
 ```
 
