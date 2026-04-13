@@ -144,7 +144,7 @@ resume without rediscovery.
   - HTTP `302` from `/` to login path
 - Network note:
   - Paperless now runs on Docker network `paperless-net` with subnet
-    `172.23.0.0/16` to avoid conflicting bridge ranges.
+    `<paperless-docker-subnet>` to avoid conflicting bridge ranges.
 - Current Redis auth uses the shared Redis admin credential in
   `PAPERLESS_REDIS`. Plan a follow-up to introduce a dedicated Redis ACL user
   for Paperless and rotate to that account.
@@ -156,7 +156,7 @@ resume without rediscovery.
   - Symptom: intermittent HTTP `500` on login.
   - Error in logs: `Temporary failure in name resolution` for Postgres/Redis.
   - Root cause: Synology firewall chain `FORWARD_FIREWALL` was dropping Docker
-    bridge egress (`172.16.0.0/12`).
+    bridge egress (`<docker-bridge-egress-cidr>`).
   - Remediation:
     - applied `nas-host/ensure-docker-bridge-lan-egress.sh` on host.
     - added `dns` to Paperless compose (`PAPERLESS_DNS`, default
@@ -276,14 +276,14 @@ resume without rediscovery.
 - Permanent host-level fix applied on `2026-03-22`:
   - updated `/var/packages/ContainerManager/etc/dockerd.json` on `nas-host` to
     keep:
-    - `bip: 10.254.0.1/24`
-    - `default-address-pools: 10.253.0.0/16 size 24`
+    - `bip: <docker-default-bridge-gateway-cidr>`
+    - `default-address-pools: <docker-bridge-pool-cidr> size 24`
   - and add:
     - `dns: [<primary-lan-dns-ip>, <secondary-lan-dns-ip>]`
   - restarted `pkg-ContainerManager-dockerd.service`
   - recreated the Outline container so it picked up the new daemon DNS policy
 - Validation after host-level fix:
-  - `docker info` still reported the reserved `10.253.0.0/16` address pool
+  - `docker info` still reported the reserved `<docker-bridge-pool-cidr>` address pool
   - Outline container returned to `healthy`
   - `https://outline.internal.example/` returned `HTTP/2 200`
   - `https://outline.internal.example/realtime/?EIO=4&transport=polling`

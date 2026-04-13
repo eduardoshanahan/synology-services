@@ -1,11 +1,11 @@
 [Interface]
 PrivateKey = ${WG_PRIVATE_KEY}
-Address = 10.100.0.4/24
+Address = 10.200.0.4/24
 # DNS = 1.1.1.1
 
 [Peer]
 # VPS-01 (vpn.example.net)
 PublicKey = <vps-wireguard-public-key>
 Endpoint = vpn.example.net:51820
-AllowedIPs = 10.100.0.0/24
+AllowedIPs = 10.200.0.0/24
 PersistentKeepalive = 25

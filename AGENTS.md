@@ -40,6 +40,16 @@ High-level layout under `nas-host/`:
 
 `nas-host-template/` is a template/reference area, not the main live stack.
 
+## Public Vs Private References
+
+Public repos in this workspace may intentionally use anonymized placeholders
+such as `*.internal.example` for Git remotes, service URLs, hostnames, and
+other environment-specific identifiers.
+
+Treat those values as sanitized public-side references, not as the canonical
+live endpoints. The real Synology hostnames, URLs, and private wiring live in
+the matching private sibling repo.
+
 ## Standard Stack Contract
 
 Most service directories follow this shape:

@@ -4,9 +4,12 @@ WireGuard VPN client to connect nas-host to the homelab WireGuard network.
 
 ## Network Configuration
 
-- **nas-host WireGuard IP**: 10.100.0.4/24
-- **VPS WireGuard IP**: 10.100.0.1/24
+- **nas-host WireGuard IP**: 10.200.0.4/24
+- **VPS WireGuard IP**: 10.200.0.1/24
 - **VPS Endpoint**: vpn.example.net:51820
+
+These addresses are sanitized public examples. Keep the real peer IPs and live
+peer wiring in the private companion repo.
 
 ## Deployment
 
@@ -21,6 +24,7 @@ WireGuard VPN client to connect nas-host to the homelab WireGuard network.
 ## Configuration
 
 The deployment requires `.env.sops` in the private repo with:
+
 - `WG_PRIVATE_KEY`: nas-host's WireGuard private key
 
 The `wg0.conf` is generated from `wg0.conf.template` with the private key injected.
@@ -32,10 +36,10 @@ The `wg0.conf` is generated from `wg0.conf.template` with the private key inject
 ssh nas-host 'docker exec nas-host-wireguard wg show'
 
 # Test connectivity to VPS
-ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.100.0.1'
+ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.200.0.1'
 
 # Test connectivity to rpi-box-01
-ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.100.0.2'
+ssh nas-host 'docker exec nas-host-wireguard ping -c 3 10.200.0.2'
 ```
 
 ## VPS Configuration
@@ -49,20 +53,22 @@ After deploying WireGuard on nas-host, you must add nas-host as a peer on the VP
 {
   # nas-host
   publicKey = "<nas-host-public-key>";
-  allowedIPs = [ "10.100.0.4/32" ];
+  allowedIPs = [ "10.200.0.4/32" ];
 }
 ```
 
-3. Redeploy VPS to activate the peer configuration
+1. Redeploy VPS to activate the peer configuration
 
 ## Troubleshooting
 
 ### Container won't start
+
 - Check kernel modules: `lsmod | grep wireguard`
 - Synology may require installing WireGuard kernel module
 - Check container logs: `docker logs nas-host-wireguard`
 
 ### Connection not working
+
 - Verify firewall on VPS allows UDP 51820
 - Check peer configuration on VPS: `ssh vps-host 'sudo wg show'`
 - Verify endpoint is reachable: `nc -zvu vpn.example.net 51820`

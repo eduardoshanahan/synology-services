@@ -47,4 +47,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: ${PAPERLESS_DOCKER_SUBNET:-172.23.0.0/16}
+        - subnet: ${PAPERLESS_DOCKER_SUBNET:-172.30.0.0/24}

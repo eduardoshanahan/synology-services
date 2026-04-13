@@ -3,13 +3,18 @@
 Goal: stop Compose-created Docker bridge networks on `nas-host` from drifting
 across arbitrary subnets and make DSM firewall policy stable.
 
+This public runbook uses sanitized placeholders for the live Docker bridge
+pool, bridge gateway, and resolver IPs. Keep the real current values in the
+private companion repo.
+
 ## Target shape
 
-- Reserve `10.253.0.0/16` for Docker user-defined bridge networks on `nas-host`.
-- Keep Docker's default `bridge` network on `10.254.0.0/24`.
+- Reserve `<docker-bridge-pool-cidr>` for Docker user-defined bridge networks
+  on `nas-host`.
+- Keep Docker's default `bridge` network on `<docker-default-bridge-cidr>`.
 - Configure Docker daemon DNS globally on `nas-host` so bridge-mode containers
   resolve FQDN dependencies through the intended LAN resolvers.
-- Add one DSM firewall allow rule for source `10.253.0.0/16`.
+- Add one DSM firewall allow rule for source `<docker-bridge-pool-cidr>`.
 - Recreate bridge-mode stacks so they receive addresses from that pool.
 - Remove older ad-hoc Docker bridge firewall rules once the new pool is in use
   and validated.
@@ -20,7 +25,7 @@ Without a reserved address pool, Synology Container Manager / Docker may create
 Compose bridge networks on ranges such as:
 
 - `172.18.0.0/16`
-- `172.23.0.0/16`
+- `172.30.0.0/24`
 - `198.18.64.0/20`
 - `198.19.224.0/20`
 
@@ -33,23 +38,24 @@ Use this Docker daemon config:
 
 ```json
 {
-  "bip": "10.254.0.1/24",
+  "bip": "<docker-default-bridge-gateway-cidr>",
   "dns": [
     "<primary-lan-dns-ip>",
     "<secondary-lan-dns-ip>"
   ],
   "default-address-pools": [
     {
-      "base": "10.253.0.0/16",
+      "base": "<docker-bridge-pool-cidr>",
       "size": 24
     }
   ]
 }
 ```
 
-This keeps Docker's default `bridge` network on `10.254.0.0/24` and lets
+This keeps Docker's default `bridge` network on
+`<docker-default-bridge-cidr>` and lets
 Docker allocate user-defined bridge networks as `/24` subnets inside
-`10.253.0.0/16`.
+`<docker-bridge-pool-cidr>`.
 
 The `dns` setting is host-wide and intentionally keeps application configs
 using FQDNs such as `postgres.<domain>` and `redis.<domain>` instead of pinned
@@ -59,15 +65,15 @@ that embedded Docker resolver forwards to.
 
 Example future networks:
 
-- `10.253.0.0/24`
-- `10.253.1.0/24`
-- `10.253.2.0/24`
+- `<docker-bridge-subnet-a>`
+- `<docker-bridge-subnet-b>`
+- `<docker-bridge-subnet-c>`
 
 ## DSM firewall rule
 
 Add one allow rule in DSM firewall policy for:
 
-- Source IP: `10.253.0.0/16`
+- Source IP: `<docker-bridge-pool-cidr>`
 
 Place it before the final drop rule, alongside your existing LAN allow rules.
 
@@ -83,9 +89,10 @@ destinations such as:
 ## Migration steps
 
 1. Configure the Docker / Container Manager default address pool on `nas-host`
-   to `10.253.0.0/16`, set `bip` to `10.254.0.1/24`, and set the daemon `dns`
-   list to the intended LAN resolvers.
-1. Add the DSM firewall allow rule for source `10.253.0.0/16`.
+   to `<docker-bridge-pool-cidr>`, set `bip` to
+   `<docker-default-bridge-gateway-cidr>`, and set the daemon `dns` list to
+   the intended LAN resolvers.
+1. Add the DSM firewall allow rule for source `<docker-bridge-pool-cidr>`.
 1. Restart `pkg-ContainerManager-dockerd.service`.
 1. Recreate bridge-mode Compose stacks so their containers pick up the new
    daemon DNS settings and their networks are recreated from the new pool when
@@ -144,7 +151,7 @@ sudo /usr/local/bin/docker info | sed -n '1,120p'
 
 Expected:
 
-- `Default Address Pools` includes `10.253.0.0/16`
+- `Default Address Pools` includes `<docker-bridge-pool-cidr>`
 - containerized apps resolve shared dependency FQDNs successfully
 - reverse-proxied apps that depend on DNS-backed shared services recover after
   container recreation
