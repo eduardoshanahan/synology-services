@@ -7,13 +7,13 @@ Usage:
   deploy.sh [target-host] [target-dir]
 
 Examples:
-  ./deploy.sh nas-host
-  ./deploy.sh nas-host /volume1/docker/homelab/nas-host/archivebox
+  ./deploy.sh hhnas4
+  ./deploy.sh hhnas4 /volume1/docker/homelab/hhnas4/archivebox
 USAGE
 }
 
-TARGET_HOST="nas-host.internal.example"
-TARGET_DIR="/volume1/docker/homelab/nas-host/archivebox"
+TARGET_HOST="hhnas4.internal.example"
+TARGET_DIR="/volume1/docker/homelab/hhnas4/archivebox"
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
 	usage

@@ -23,6 +23,8 @@ Promtail ships Synology container logs from `nas-host` to Loki.
 - Set `LOKI_PUSH_URL` in the NAS-side `.env`
 - Set `PROMTAIL_HOST_LABEL` to the hostname label you want attached to log
   streams
+- Keep `PROMTAIL_BIND=127.0.0.1` unless you intentionally need off-box access
+  to the readiness/metrics endpoint
 - The stack bind-mounts:
   - `./config.yml` to `/etc/promtail/config.yml`
   - `./data` for positions state

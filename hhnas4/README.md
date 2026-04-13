@@ -1,6 +1,6 @@
-# nas-host Synology Services
+# hhnas4 Synology Services
 
-Reproducible, sanitized deployment artifacts for host `nas-host`.
+Reproducible, sanitized deployment artifacts for host `hhnas4`.
 
 ## Included Stack
 
@@ -33,14 +33,14 @@ Reproducible, sanitized deployment artifacts for host `nas-host`.
 From this repository:
 
 ```bash
-cd nas-host
-./gitea-deploy.sh nas-host.internal.example
+cd hhnas4
+./gitea-deploy.sh hhnas4.internal.example
 ```
 
 Optional target directory override:
 
 ```bash
-./gitea-deploy.sh nas-host.internal.example /volume1/docker/homelab/nas-host
+./gitea-deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4
 ```
 
 ## Non-UI Bootstrap
@@ -85,49 +85,49 @@ Use this redirect URI in Authentik:
 - Promtail:
 
 ```bash
-./promtail-deploy.sh nas-host.internal.example
+./promtail-deploy.sh hhnas4.internal.example
 ```
 
 - Docker socket proxy:
 
 ```bash
-./docker-socket-proxy/deploy.sh nas-host.internal.example
+./docker-socket-proxy/deploy.sh hhnas4.internal.example
 ```
 
 - Woodpecker agent:
 
 ```bash
-./woodpecker-agent/deploy.sh nas-host.internal.example
+./woodpecker-agent/deploy.sh hhnas4.internal.example
 ```
 
 - MinIO:
 
 ```bash
-./minio/deploy.sh nas-host.internal.example
+./minio/deploy.sh hhnas4.internal.example
 ```
 
 - Jellyfin:
 
 ```bash
-./jellyfin/deploy.sh nas-host.internal.example
+./jellyfin/deploy.sh hhnas4.internal.example
 ```
 
 - Immich:
 
 ```bash
-./immich/deploy.sh nas-host.internal.example
+./immich/deploy.sh hhnas4.internal.example
 ```
 
 - qBittorrent:
 
 ```bash
-./qbittorrent/deploy.sh nas-host.internal.example
+./qbittorrent/deploy.sh hhnas4.internal.example
 ```
 
 - Managed stack auto-start helper (for reboot recovery):
 
 ```bash
-./deploy-start-managed-stacks.sh nas-host /volume1/docker/homelab/nas-host --run-now
+./deploy-start-managed-stacks.sh hhnas4 /volume1/docker/homelab/hhnas4 --run-now
 ```
 
 ## Shared Infra Backups
@@ -135,7 +135,7 @@ Use this redirect URI in Authentik:
 Centralized backup orchestration for shared Postgres/MySQL/Redis state:
 
 ```bash
-./backup-shared-infra.sh nas-host
+./backup-shared-infra.sh hhnas4
 ```
 
 The full workflow lives in

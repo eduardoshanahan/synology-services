@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     ports:
-      - "${MINIO_API_BIND:-0.0.0.0}:${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_API_BIND:-127.0.0.1}:${MINIO_API_PORT:-9000}:9000"
       - "${MINIO_CONSOLE_BIND:-127.0.0.1}:${MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - minio_data:/data

@@ -10,18 +10,20 @@ Shared S3-compatible object storage service for internal workloads on `nas-host`
 
 ## Service endpoint
 
-- DNS name: choose a shared internal FQDN such as `minio.<internal-domain>`
-- Default S3 API port in this stack: `9000`
-- Default admin console port in this stack: `9001`
+- S3 API FQDN: `minio.<internal-domain>`
+- Admin console FQDN: `minio-console.<internal-domain>`
+- Default S3 API port on the NAS: `9000` (loopback-only by default)
+- Default admin console port on the NAS: `9001` (loopback-only by default)
 - Public API URL is configured with `MINIO_SERVER_URL`
 - Public console URL is configured with `MINIO_BROWSER_REDIRECT_URL`
 - Prometheus metrics auth mode is configured with `MINIO_PROMETHEUS_AUTH_TYPE`
 
 ## DNS prerequisite
 
-Create an internal DNS A record before switching clients:
+Create internal DNS A records before switching clients:
 
 - `minio.<internal-domain> -> <nas-host-lan-reachable-address>`
+- `minio-console.<internal-domain> -> <nas-host-lan-reachable-address>`
 
 Quick check from a client:
 
@@ -74,8 +76,10 @@ If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.so
 ## First-start rules
 
 - Set a strong `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD` before first production start.
-- Keep the S3 API internal-only unless there is an explicit ingress plan.
-- The admin console binds to `127.0.0.1` by default. Keep that shape unless you intentionally want direct LAN access.
+- Keep both the S3 API and the admin console loopback-only on the NAS.
+- Terminate TLS in the DSM reverse proxy and forward:
+  - `https://minio.<internal-domain>` -> `http://127.0.0.1:9000`
+  - `https://minio-console.<internal-domain>` -> `http://127.0.0.1:9001`
 - Create dedicated access credentials and buckets per consuming app instead of sharing the root credential.
 - If you reverse-proxy MinIO, set both public URLs explicitly:
   - `MINIO_SERVER_URL=https://minio.<internal-domain>`
@@ -91,7 +95,10 @@ If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.so
 - From NAS:
   - `curl -sS -m 6 -i http://127.0.0.1:9000/minio/health/live | sed -n '1,8p'`
   returns `HTTP/1.1 200 OK`.
-- Internal clients can connect to the S3 endpoint at your chosen internal FQDN on port `9000`.
+- Through DSM reverse proxy:
+  - `curl -skI https://minio.<internal-domain>/minio/health/live`
+  - `curl -skI https://minio-console.<internal-domain>/`
+- Internal clients should use the HTTPS S3 endpoint at `https://minio.<internal-domain>`.
 
 ## Backup note
 

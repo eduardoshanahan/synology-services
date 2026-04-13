@@ -18,7 +18,7 @@ Shared PHP Adminer UI for the homelab databases that live on `nas-host`.
   into the Synology LAN address. Adminer listens on **port 8080** inside the
   container, but the NAS publishes it on port **8070** so DSM can proxy HTTPS
   traffic from `adminer.internal.example -> 127.0.0.1:8070`. Keep the service on
-  the shared database bridge and avoid additional published ports.
+  the shared database bridge and leave the NAS-side bind on loopback.
 
 ## Supported databases
 
@@ -40,7 +40,7 @@ credentials without exposing any new ports on the Pis.
 Customize the web UI binding, port, and design in the `.env` on the NAS:
 
 ```dotenv
-ADMINER_BIND=0.0.0.0
+ADMINER_BIND=127.0.0.1
 ADMINER_PORT=8070
 ADMINER_DESIGN=nette
 SHARED_DB_NETWORK=shared-db
@@ -70,12 +70,12 @@ After deploy:
 
 ```bash
 ssh nas-host "cd /volume1/docker/homelab/nas-host/adminer && docker compose ps"
-curl -sk http://adminer.internal.example:8070/ || true
+curl -skI https://adminer.internal.example/
 ```
 
-Ensure the container reports `healthy` and the DSM firewall allows the chosen
-`ADMINER_PORT`. If you expose the UI through a reverse proxy, confirm the proxy
-logs no TLS errors.
+Ensure the container reports `healthy` and DSM reverse proxy forwards
+`https://adminer.internal.example` to `http://127.0.0.1:8070` without TLS
+errors.
 
 ## Notes
 

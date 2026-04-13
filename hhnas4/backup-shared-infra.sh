@@ -8,14 +8,14 @@ Usage:
   backup-shared-infra.sh [target-host] [remote-base-dir] [--retention-days N]
 
 Examples:
-  ./backup-shared-infra.sh nas-host
-  ./backup-shared-infra.sh nas-host /volume1/docker/homelab/nas-host
-  ./backup-shared-infra.sh nas-host --retention-days 21
+  ./backup-shared-infra.sh hhnas4
+  ./backup-shared-infra.sh hhnas4 /volume1/docker/homelab/hhnas4
+  ./backup-shared-infra.sh hhnas4 --retention-days 21
 USAGE
 }
 
-TARGET_HOST="nas-host"
-REMOTE_BASE_DIR="/volume1/docker/homelab/nas-host"
+TARGET_HOST="hhnas4"
+REMOTE_BASE_DIR="/volume1/docker/homelab/hhnas4"
 RETENTION_DAYS=14
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then

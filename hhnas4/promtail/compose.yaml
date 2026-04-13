@@ -10,7 +10,7 @@ services:
       - LOKI_PUSH_URL=${LOKI_PUSH_URL}
       - PROMTAIL_HOST_LABEL=${PROMTAIL_HOST_LABEL}
     ports:
-      - "${PROMTAIL_BIND:-0.0.0.0}:9080:9080/tcp"
+      - "${PROMTAIL_BIND:-127.0.0.1}:9080:9080/tcp"
     volumes:
       - "./config.yml:/etc/promtail/config.yml:ro"
       - "./data:/var/lib/promtail"

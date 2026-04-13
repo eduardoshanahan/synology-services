@@ -7,14 +7,14 @@ Usage:
   ./deploy.sh [target-host] [target-dir] [--update-env]
 
 Examples:
-  ./deploy.sh nas-host.internal.example
-  ./deploy.sh nas-host.internal.example /volume1/docker/homelab/nas-host/immich
-  ./deploy.sh nas-host.internal.example --update-env
+  ./deploy.sh hhnas4.internal.example
+  ./deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4/immich
+  ./deploy.sh hhnas4.internal.example --update-env
 USAGE
 }
 
-TARGET_HOST="nas-host.internal.example"
-TARGET_DIR="/volume1/docker/homelab/nas-host/immich"
+TARGET_HOST="hhnas4.internal.example"
+TARGET_DIR="/volume1/docker/homelab/hhnas4/immich"
 UPDATE_ENV=0
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then

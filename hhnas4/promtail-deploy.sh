@@ -7,13 +7,13 @@ Usage:
   promtail-deploy.sh [target-host] [target-base]
 
 Examples:
-  ./promtail-deploy.sh nas-host
-  ./promtail-deploy.sh nas-host /volume1/docker/homelab/nas-host
+  ./promtail-deploy.sh hhnas4
+  ./promtail-deploy.sh hhnas4 /volume1/docker/homelab/hhnas4
 USAGE
 }
 
-TARGET_HOST="nas-host.internal.example"
-TARGET_BASE="/volume1/docker/homelab/nas-host"
+TARGET_HOST="hhnas4.internal.example"
+TARGET_BASE="/volume1/docker/homelab/hhnas4"
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
 	usage

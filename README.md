@@ -28,7 +28,7 @@ nix develop --no-write-lock-file
 
 ## Layout
 
-- `nas-host/`
+- `hhnas4/`
   - shared infra stacks:
     - `mysql/`
     - `minio/`
@@ -70,10 +70,10 @@ nix develop --no-write-lock-file
 
 - Top-level repo overview, scope, and layout:
   - `README.md`
-- Active `nas-host` host overview and deploy entrypoint:
-  - `nas-host/README.md`
-- Active `nas-host` local documentation index:
-  - `nas-host/docs/DOCUMENTATION_INDEX.md`
+- Active `hhnas4` host overview and deploy entrypoint:
+  - `hhnas4/README.md`
+- Active `hhnas4` local documentation index:
+  - `hhnas4/docs/DOCUMENTATION_INDEX.md`
 - Repo-level background and transition docs:
   - `docs/`
 - Template host bootstrap and manual-step guidance:
@@ -110,4 +110,4 @@ Current transition records:
 
 Host-specific operational notes for continuity across sessions:
 
-- `nas-host/docs/SESSION_NOTES.md`
+- `hhnas4/docs/SESSION_NOTES.md`

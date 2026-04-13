@@ -8,13 +8,13 @@ Usage:
   deploy-start-managed-stacks.sh [target-host] [target-base] [--run-now]
 
 Examples:
-  ./deploy-start-managed-stacks.sh nas-host
-  ./deploy-start-managed-stacks.sh nas-host /volume1/docker/homelab/nas-host --run-now
+  ./deploy-start-managed-stacks.sh hhnas4
+  ./deploy-start-managed-stacks.sh hhnas4 /volume1/docker/homelab/hhnas4 --run-now
 USAGE
 }
 
-TARGET_HOST="nas-host"
-TARGET_BASE="/volume1/docker/homelab/nas-host"
+TARGET_HOST="hhnas4"
+TARGET_BASE="/volume1/docker/homelab/hhnas4"
 RUN_NOW=false
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then

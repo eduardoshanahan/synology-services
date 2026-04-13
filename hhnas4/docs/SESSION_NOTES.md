@@ -339,5 +339,48 @@ resume without rediscovery.
   - host helper: `nas-host/start-managed-stacks.sh`
   - deploy wrapper: `nas-host/deploy-start-managed-stacks.sh`
   - runbook: `nas-host/docs/STACK_AUTOSTART_RUNBOOK.md`
-  - recommended DSM boot task:
-    - `/bin/sh /volume1/docker/homelab/nas-host/start-managed-stacks.sh /volume1/docker/homelab/nas-host >> /volume1/docker/homelab/nas-host/start-managed-stacks.log 2>&1`
+- recommended DSM boot task:
+  - `/bin/sh /volume1/docker/homelab/nas-host/start-managed-stacks.sh /volume1/docker/homelab/nas-host >> /volume1/docker/homelab/nas-host/start-managed-stacks.log 2>&1`
+
+## 2026-04-13 HTTPS exposure hardening defaults
+
+- Default HTTP bind settings were tightened for services that already expect
+  DSM reverse proxy or NAS-local access:
+  - MinIO S3 API: `127.0.0.1:9000`
+  - MinIO console: `127.0.0.1:9001`
+  - Gitea HTTP: `127.0.0.1:3000`
+  - Adminer: `127.0.0.1:8070`
+  - Promtail readiness/metrics: `127.0.0.1:9080`
+- Intended MinIO reverse-proxy split:
+  - `https://minio.<domain>` -> `http://127.0.0.1:9000`
+  - `https://minio-console.<domain>` -> `http://127.0.0.1:9001`
+- Raw published ports still intentionally remain for protocols that DSM HTTPS
+  reverse proxy does not replace cleanly:
+  - Gitea SSH on `2222/tcp`
+  - qBittorrent peer traffic on `6881/tcp` and `6881/udp`
+  - Jellyfin LAN/discovery traffic
+  - shared database ports such as MySQL/Postgres/Redis/Mongo/Dolt
+- Tika and Gotenberg still default to raw internal HTTP ports today because
+  existing service-to-service clients use those endpoints directly; treat HTTPS
+  fronting for those stacks as a separate migration.
+- Live rollout completed on `2026-04-13` for:
+  - MinIO
+  - Gitea
+  - Promtail
+  - Adminer
+- HTTPS validation after rollout:
+  - `https://minio.<domain>/minio/health/live` returned `HTTP 200`
+  - `https://minio-console.<domain>/` returned `HTTP 200`
+  - `https://gitea.<domain>/` returned `HTTP 200`
+  - `https://adminer.<domain>/` returned `HTTP 200`
+- Follow-up correction completed the same day:
+  - Gitea was moved back to `/volume1/docker/homelab/hhnas4/gitea` and again
+    mounts real data from `/volume1/docker/homelab/hhnas4/gitea/data`
+  - Promtail was moved back to `/volume1/docker/homelab/hhnas4/promtail`
+  - Adminer and MinIO deploy defaults were also switched back to
+    `/volume1/docker/homelab/hhnas4/...`
+  - no running containers still mount anything from
+    `/volume1/docker/homelab/nas-host`
+  - deleting the stray `/volume1/docker/homelab/nas-host` tree requires an
+    interactive sudo-capable cleanup on the NAS because the accidental Gitea
+    data files are not removable by the regular SSH user

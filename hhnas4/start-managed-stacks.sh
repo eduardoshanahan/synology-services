@@ -8,7 +8,7 @@ Usage:
 
 Examples:
   ./start-managed-stacks.sh
-  ./start-managed-stacks.sh /volume1/docker/homelab/nas-host
+  ./start-managed-stacks.sh /volume1/docker/homelab/hhnas4
 
 Notes:
   - Intended to run directly on the Synology host.

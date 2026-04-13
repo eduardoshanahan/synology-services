@@ -7,15 +7,15 @@ Usage:
   gitea-deploy.sh [target-host] [target-base] [--update-env] [--admin-user USER --admin-email EMAIL --admin-password PASSWORD]
 
 Examples:
-  ./gitea-deploy.sh nas-host
-  ./gitea-deploy.sh nas-host /volume1/docker/homelab/nas-host
-  ./gitea-deploy.sh nas-host --update-env
-  ./gitea-deploy.sh nas-host --admin-user gitea-admin --admin-email admin@example.com --admin-password 'change-me'
+  ./gitea-deploy.sh hhnas4
+  ./gitea-deploy.sh hhnas4 /volume1/docker/homelab/hhnas4
+  ./gitea-deploy.sh hhnas4 --update-env
+  ./gitea-deploy.sh hhnas4 --admin-user gitea-admin --admin-email admin@example.com --admin-password 'change-me'
 USAGE
 }
 
-TARGET_HOST="nas-host.internal.example"
-TARGET_BASE="/volume1/docker/homelab/nas-host"
+TARGET_HOST="hhnas4.internal.example"
+TARGET_BASE="/volume1/docker/homelab/hhnas4"
 UPDATE_ENV=0
 ADMIN_USER=""
 ADMIN_EMAIL=""

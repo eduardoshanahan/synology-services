@@ -8,6 +8,9 @@ Gitea provides source hosting and the container registry for the homelab NAS.
 - Deployment model: Synology Docker Compose stack deployed via
   `synology-services/nas-host/gitea/deploy.sh` or the wrapper
   `synology-services/nas-host/gitea-deploy.sh`
+- HTTP stays loopback-only on the NAS and is expected to sit behind the DSM
+  reverse proxy for HTTPS
+- SSH remains a direct published port for Git transport on `2222/tcp`
 - Runtime state lives on NAS storage under the configured `GITEA_DATA_DIR`
 
 ## Important files
