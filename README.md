@@ -19,6 +19,17 @@ run:
 nix develop --no-write-lock-file
 ```
 
+## Session Pre-Flight
+
+Before meaningful implementation work, run:
+
+```bash
+nix run .#session-preflight
+```
+
+This checks core repo docs plus KB index availability from `../hhlab-wiki` and
+shows the relevant KB entries for `synology-services`.
+
 ## Scope
 
 - This directory intentionally contains no credentials, private keys, or

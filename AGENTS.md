@@ -278,3 +278,10 @@ When working here:
 
 When unsure, follow the existing stack pattern rather than introducing a new
 one.
+
+Before meaningful implementation work, run:
+
+- `nix run .#session-preflight`
+
+This validates core repo docs plus KB index availability from `../hhlab-wiki`
+and points to the relevant KB records for `synology-services`.
