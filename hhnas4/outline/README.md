@@ -77,6 +77,9 @@ Optional target directory override:
   - `redis.internal.example:6379`
   - `REDIS_URL` should include ACL username + password auth:
     - `redis://outline:<password>@redis.internal.example:6379`
+- Upload size limit is controlled by `FILE_STORAGE_UPLOAD_MAX_SIZE` (bytes).
+  - this stack defaults to `10737418240` (10 GiB) to avoid Outline's low
+    built-in default upload cap
 - This stack intentionally relies on DNS names for shared dependencies
   (`postgres.internal.example`, `redis.internal.example`,
   `smtp-relay.internal.example`) and does not pin service IPs in Compose.
