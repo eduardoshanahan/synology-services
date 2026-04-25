@@ -67,6 +67,14 @@ If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.so
 ./deploy.sh nas-host.internal.example --update-env
 ```
 
+Deploy behavior note:
+
+- The deploy script reconciles the `mongo-metrics` monitoring privilege after
+  `docker compose up -d`.
+- It ensures the custom role `mongodb_exporter_system_version_read` exists and
+  grants `find` on `admin.system.version` so `mongodb-exporter` keeps scraping
+  successfully after redeploys or user recreation.
+
 ## First-start rules
 
 - Set strong credentials in `.env` before production use:
@@ -83,3 +91,5 @@ If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.so
   - `mongosh "mongodb://<user>:<password>@127.0.0.1:27017/?authSource=admin" --quiet --eval 'db.adminCommand({ ping: 1 })'`
   returns `{ ok: 1 }`.
 - Client services can connect using DNS endpoint and auth.
+- If `mongodb-exporter` is enabled on a Pi host, its metrics endpoint should
+  answer without timing out after deploy.

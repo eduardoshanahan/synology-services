@@ -116,6 +116,49 @@ fi
 
 ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose pull && ${DOCKER_PREFIX}${DOCKER_BIN} compose up -d"
 
+read -r -d '' ENSURE_EXPORTER_ROLE_JS <<'EOF' || true
+var admin = db.getSiblingDB("admin");
+if (!admin.getRole("mongodb_exporter_system_version_read")) {
+	admin.createRole({
+		role: "mongodb_exporter_system_version_read",
+		privileges: [
+			{
+				resource: { db: "admin", collection: "system.version" },
+				actions: ["find"]
+			}
+		],
+		roles: []
+	});
+}
+admin.grantRolesToUser("mongo-metrics", [
+	{ role: "mongodb_exporter_system_version_read", db: "admin" }
+]);
+print("ENSURED mongodb_exporter_system_version_read for mongo-metrics");
+EOF
+
+printf '%s\n' "${ENSURE_EXPORTER_ROLE_JS}" | ssh "${TARGET_HOST}" "cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose exec -T mongo sh -lc '
+set -e
+
+cat > /tmp/mongodb-exporter-role.js
+
+for attempt in \$(seq 1 30); do
+	if mongo --quiet --host 127.0.0.1 --port 27017 \
+		--username \"\$MONGO_INITDB_ROOT_USERNAME\" \
+		--password \"\$MONGO_INITDB_ROOT_PASSWORD\" \
+		--authenticationDatabase admin \
+		--eval \"db.adminCommand({ ping: 1 }).ok\" | grep -q 1; then
+		break
+	fi
+	sleep 2
+done
+
+mongo --quiet --host 127.0.0.1 --port 27017 \
+	--username \"\$MONGO_INITDB_ROOT_USERNAME\" \
+	--password \"\$MONGO_INITDB_ROOT_PASSWORD\" \
+	--authenticationDatabase admin \
+	/tmp/mongodb-exporter-role.js
+'"
+
 echo "[deploy] mongo deployed. Verify with:"
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose ps\""
 echo "         ssh ${TARGET_HOST} \"cd '${TARGET_DIR}' && ${DOCKER_PREFIX}${DOCKER_BIN} compose logs --tail 60\""
