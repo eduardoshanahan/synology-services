@@ -1,0 +1,25 @@
+services:
+  scholarsome:
+    image: hwgilbert16/scholarsome:1.2.0
+    container_name: nas-host-scholarsome
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+    ports:
+      - "${SCHOLARSOME_HOST_BIND:-127.0.0.1}:${SCHOLARSOME_HOST_PORT:-3020}:${HTTP_PORT:-3020}"
+    env_file:
+      - .env
+    volumes:
+      - scholarsome_media:/app/media
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget -qO- http://127.0.0.1:${HTTP_PORT:-3020}/ >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  scholarsome_media:

@@ -20,6 +20,10 @@ services:
           printf 'user %s on >%s ~* &* +@all -@admin -@dangerous +keys +info\n' \
             "$${REDIS_IMMICH_USERNAME}" "$${REDIS_IMMICH_PASSWORD}" >> /tmp/redis-users.acl
         fi
+        if [ -n "$${REDIS_SCHOLARSOME_USERNAME:-}" ] && [ -n "$${REDIS_SCHOLARSOME_PASSWORD:-}" ]; then
+          printf 'user %s on >%s ~* &* +@all -@admin -@dangerous +keys\n' \
+            "$${REDIS_SCHOLARSOME_USERNAME}" "$${REDIS_SCHOLARSOME_PASSWORD}" >> /tmp/redis-users.acl
+        fi
         exec redis-server \
           --appendonly yes \
           --bind "$${REDIS_BIND:-0.0.0.0}" \
