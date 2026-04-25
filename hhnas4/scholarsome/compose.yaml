@@ -1,6 +1,6 @@
 services:
   scholarsome:
-    image: hwgilbert16/scholarsome:1.2.0
+    image: hwgilbert16/scholarsome:v1.2.1
     container_name: nas-host-scholarsome
     restart: unless-stopped
     logging:

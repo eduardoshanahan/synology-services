@@ -2,7 +2,7 @@
 
 [Scholarsome](https://github.com/hwgilbert16/scholarsome) — open-source, web-based spaced repetition flashcard app. Deployed as a self-hosted alternative to mochi.cards.
 
-- Image: `hwgilbert16/scholarsome:1.2.0`
+- Image: `hwgilbert16/scholarsome:v1.2.1`
 - Host port: `3020` (loopback only; exposed via DSM reverse proxy)
 - Database: shared `nas-host-mysql` on hhnas4 (database `scholarsome`)
 - Cache: shared `nas-host-redis` on hhnas4 (ACL user `scholarsome`)
