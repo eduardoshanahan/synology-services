@@ -159,8 +159,8 @@ printf '%s' \"\${HARDENED}\"
 
 if [[ "${HARDENED_COUNT}" =~ ^[0-9]+$ ]] && ((HARDENED_COUNT > 0)); then
 	echo "[deploy] hardened ${HARDENED_COUNT} Jellyfin library option file(s) (realtime monitor/LUFS disabled)."
-	echo "[deploy] restarting nas-host-jellyfin to apply updated library options."
-	ssh "${TARGET_HOST}" "${DOCKER_PREFIX}${DOCKER_BIN} restart nas-host-jellyfin >/dev/null"
+	echo "[deploy] restarting hhnas4-jellyfin to apply updated library options."
+	ssh "${TARGET_HOST}" "${DOCKER_PREFIX}${DOCKER_BIN} restart hhnas4-jellyfin >/dev/null"
 fi
 
 echo "[deploy] jellyfin deployed. Verify with:"

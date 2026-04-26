@@ -1,7 +1,7 @@
 services:
   jellyfin:
     image: jellyfin/jellyfin:10.11.8
-    container_name: nas-host-jellyfin
+    container_name: hhnas4-jellyfin
     restart: unless-stopped
     env_file:
       - .env

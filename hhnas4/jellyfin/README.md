@@ -1,6 +1,6 @@
-# Jellyfin (nas-host)
+# Jellyfin (hhnas4)
 
-Media server stack for `nas-host` with bridge networking and LAN discovery
+Media server stack for `hhnas4` with bridge networking and LAN discovery
 enabled for direct TV clients.
 
 ## Purpose
@@ -24,7 +24,7 @@ enabled for direct TV clients.
 Default target directory:
 
 ```text
-/volume1/docker/homelab/nas-host/jellyfin
+/volume1/docker/homelab/hhnas4/jellyfin
 ```
 
 Bind-mounted paths:
@@ -43,7 +43,8 @@ Default media path exposed read-only inside the container:
 ## Layout
 
 - `compose.yaml`
-- sibling private `.env.sops` in `../synology-services-private/` (preferred tracked encrypted source)
+- sibling private `.env.sops` in `../synology-services-private/hhnas4/jellyfin/`
+  (preferred tracked encrypted source of real configuration)
 - `.env.example`
 - `deploy.sh`
 
@@ -52,20 +53,20 @@ Default media path exposed read-only inside the container:
 From this repository:
 
 ```bash
-cd nas-host/jellyfin
-./deploy.sh nas-host.internal.example
+cd hhnas4/jellyfin
+./deploy.sh hhnas4.internal.example
 ```
 
 Optional target directory override:
 
 ```bash
-./deploy.sh nas-host.internal.example /volume1/docker/homelab/nas-host/jellyfin
+./deploy.sh hhnas4.internal.example /volume1/docker/homelab/hhnas4/jellyfin
 ```
 
 If you keep a sibling-private `.env.sops` (or a local fallback `.env` / `.env.sops` during transition), push it explicitly:
 
 ```bash
-./deploy.sh nas-host.internal.example --update-env
+./deploy.sh hhnas4.internal.example --update-env
 ```
 
 ## Deploy hardening
@@ -82,8 +83,8 @@ once so the updated library options take effect.
 
 ## First-start rules
 
-- Set `JELLYFIN_MEDIA_DIR` in `.env` to a real media path on `nas-host` before
-  the first deploy.
+- Set `JELLYFIN_MEDIA_DIR` in the sibling private env source under
+  `../synology-services-private/hhnas4/jellyfin/` before the first deploy.
 - Keep `JELLYFIN_HOST_BIND=0.0.0.0`; `127.0.0.1` prevents direct LAN clients
   from reaching the app port.
 - Keep `JELLYFIN_PUBLISHED_SERVER_URL=https://jellyfin.internal.example`
@@ -93,7 +94,10 @@ once so the updated library options take effect.
   SSDP on the host. If you later free that port on the NAS, you can add it
   back for broader DLNA-style discovery.
 - Ensure the media path is readable by the container runtime user on Synology; if library scans fail, fix NAS ACLs before changing Jellyfin itself.
-- If metadata searches are empty and logs show DNS or `TheMovieDb` errors, re-run `/volume1/docker/homelab/nas-host/ensure-docker-bridge-lan-egress.sh` on the NAS and verify Docker bridge subnets are allowed through Synology firewall chains.
+- If metadata searches are empty and logs show DNS or `TheMovieDb` errors,
+  re-run `/volume1/docker/homelab/hhnas4/ensure-docker-bridge-lan-egress.sh`
+  on the NAS and verify Docker bridge subnets are allowed through Synology
+  firewall chains.
 - Configure "Scan Media Library" schedule from Jellyfin Admin Dashboard ->
   Scheduled Tasks and keep it in a low-traffic window (for example 03:00).
   The task configuration is persisted in the Jellyfin config volume.
@@ -102,25 +106,26 @@ once so the updated library options take effect.
   - `7359/udp`
 - If a router or access point has guest isolation or AP isolation enabled,
   discovery can still fail even when the container is configured correctly.
-- Promtail on `nas-host` is configured to ship Jellyfin container logs to Loki under job label `synology-jellyfin`.
+- Promtail on `hhnas4` is configured to ship Jellyfin container logs to Loki
+  under job label `synology-jellyfin`.
 
 ## Reverse Proxy (DSM)
 
 Recommended public shape:
 
 - Client URL: `https://jellyfin.internal.example/`
-- DSM reverse proxy backend: `http://<nas-host-lan-ip>:8096`
+- DSM reverse proxy backend: `http://<hhnas4-lan-ip>:8096`
 
 Keep TLS termination in DSM. Jellyfin itself should continue serving plain HTTP
 on the LAN endpoint.
 
 ## Validation goals
 
-- `docker compose ps` shows `nas-host-jellyfin` running.
+- `docker compose ps` shows `hhnas4-jellyfin` running.
 - From NAS:
   - `curl -sS -m 6 -i http://127.0.0.1:8096 | sed -n '1,12p'`
   returns an HTTP response.
-- On a LAN client, manual connection to `http://<nas-host-lan-ip>:8096` works.
+- On a LAN client, manual connection to `http://<hhnas4-lan-ip>:8096` works.
 - TV/streaming clients can discover the server after UDP `7359` is opened.
 - Through the reverse proxy:
   - `curl -skI https://jellyfin.internal.example/ | sed -n '1,12p'`
