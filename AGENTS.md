@@ -79,6 +79,13 @@ similar network paths, prefer running it outside the sandbox. Do not change repo
 code just because a sandboxed command reports temporary resolution failure for a
 healthy homelab hostname.
 
+For this repo, make that the default instead of a fallback. Synology-oriented
+work routinely needs real access to `hhnas4`, `gitea.<homelab-domain>`, and
+other homelab endpoints. Do not "try in sandbox first" for normal `git fetch`,
+`git pull`, `git push`, `ssh`, or live validation against Synology services.
+Run those with host networking directly so repeated sandbox DNS drift does not
+slow the session down or trigger avoidable re-triage.
+
 ## Standard Stack Contract
 
 Most service directories follow this shape:
