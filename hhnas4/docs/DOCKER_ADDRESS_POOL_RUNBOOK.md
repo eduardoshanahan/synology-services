@@ -1,7 +1,11 @@
-# nas-host Docker Address Pool Runbook
+# hhnas4 Docker DNS and Address Pool Runbook
 
-Goal: stop Compose-created Docker bridge networks on `nas-host` from drifting
-across arbitrary subnets and make DSM firewall policy stable.
+Goal: keep bridge-mode Docker services on `hhnas4` on one stable networking
+policy:
+
+- one host-wide Docker daemon DNS policy
+- one reserved Docker bridge address pool
+- one predictable DSM firewall posture for bridge egress
 
 This public runbook uses sanitized placeholders for the live Docker bridge
 pool, bridge gateway, and resolver IPs. Keep the real current values in the
@@ -10,14 +14,30 @@ private companion repo.
 ## Target shape
 
 - Reserve `<docker-bridge-pool-cidr>` for Docker user-defined bridge networks
-  on `nas-host`.
+  on `hhnas4`.
 - Keep Docker's default `bridge` network on `<docker-default-bridge-cidr>`.
-- Configure Docker daemon DNS globally on `nas-host` so bridge-mode containers
+- Configure Docker daemon DNS globally on `hhnas4` so bridge-mode containers
   resolve FQDN dependencies through the intended LAN resolvers.
 - Add one DSM firewall allow rule for source `<docker-bridge-pool-cidr>`.
 - Recreate bridge-mode stacks so they receive addresses from that pool.
 - Remove older ad-hoc Docker bridge firewall rules once the new pool is in use
   and validated.
+
+## Canonical DNS policy
+
+For `hhnas4`, daemon DNS is the normal resolver model for all bridge-mode
+services.
+
+- Service configs should keep dependency FQDNs such as `postgres.<domain>` and
+  `redis.<domain>`.
+- Per-stack `dns:` blocks should not be the default fix path.
+- Docker will still write `nameserver 127.0.0.11` inside containers.
+- The daemon `dns` list controls which upstream resolvers Docker's embedded
+  resolver forwards to.
+
+If one service needs a temporary DNS override for incident rollback, treat it
+as an explicit short-lived exception and remove it once host policy is healthy
+again.
 
 ## Why
 
@@ -34,7 +54,7 @@ need its own source allow rule.
 
 ## Recommended Docker pool
 
-Use this Docker daemon config:
+Use this Docker daemon config shape:
 
 ```json
 {
@@ -57,11 +77,16 @@ This keeps Docker's default `bridge` network on
 Docker allocate user-defined bridge networks as `/24` subnets inside
 `<docker-bridge-pool-cidr>`.
 
-The `dns` setting is host-wide and intentionally keeps application configs
-using FQDNs such as `postgres.<domain>` and `redis.<domain>` instead of pinned
-service IPs. Docker still writes `nameserver 127.0.0.11` into container
-`/etc/resolv.conf`; the daemon `dns` setting controls which upstream resolvers
-that embedded Docker resolver forwards to.
+The daemon `dns` setting is host-wide and intentionally keeps application
+configs using FQDNs such as `postgres.<domain>` and `redis.<domain>` instead
+of pinned service IPs.
+
+Current live validation should always confirm the real resolver list from:
+
+- `/var/packages/ContainerManager/etc/dockerd.json`
+
+Keep exact live resolver IPs in the private companion repo rather than in this
+public runbook.
 
 Example future networks:
 
@@ -88,7 +113,7 @@ destinations such as:
 
 ## Migration steps
 
-1. Configure the Docker / Container Manager default address pool on `nas-host`
+1. Configure the Docker / Container Manager default address pool on `hhnas4`
    to `<docker-bridge-pool-cidr>`, set `bip` to
    `<docker-default-bridge-gateway-cidr>`, and set the daemon `dns` list to
    the intended LAN resolvers.
@@ -110,10 +135,10 @@ That means a stack restart is not enough if the backing Docker network is
 reused. The network itself must be recreated for address-pool changes, and
 containers must at least be recreated for daemon-level DNS changes.
 
-Typical pattern per stack:
+Typical recreate pattern per stack:
 
 ```bash
-cd /volume1/docker/homelab/nas-host/<stack>
+cd /volume1/docker/homelab/hhnas4/<stack>
 sudo /usr/local/bin/docker compose down
 sudo /usr/local/bin/docker compose up -d
 ```
@@ -122,7 +147,7 @@ If you only changed daemon DNS and do not need a new network subnet, a focused
 recreate is enough:
 
 ```bash
-cd /volume1/docker/homelab/nas-host/<stack>
+cd /volume1/docker/homelab/hhnas4/<stack>
 sudo /usr/local/bin/docker compose up -d --force-recreate
 ```
 
@@ -137,24 +162,27 @@ After recreating a stack, confirm its network is in the reserved pool:
 sudo /usr/local/bin/docker network inspect <network-name> --format '{{range .IPAM.Config}}{{println .Subnet}}{{end}}'
 ```
 
-Then confirm egress from a container:
+Then confirm a representative container can resolve homelab dependencies:
 
 ```bash
-sudo /usr/local/bin/docker exec <container> sh -lc 'ping -c 1 1.1.1.1; nslookup google.com'
+sudo /usr/local/bin/docker exec <container> sh -lc 'getent hosts postgres.<domain> redis.<domain>'
 ```
 
 Confirm the daemon DNS policy is present:
 
 ```bash
-sudo /usr/local/bin/docker info | sed -n '1,120p'
+sudo cat /var/packages/ContainerManager/etc/dockerd.json
+sudo /usr/local/bin/docker info | sed -n '1,160p'
 ```
 
 Expected:
 
+- `dockerd.json` includes `bip`, `dns`, and `default-address-pools`
 - `Default Address Pools` includes `<docker-bridge-pool-cidr>`
 - containerized apps resolve shared dependency FQDNs successfully
 - reverse-proxied apps that depend on DNS-backed shared services recover after
   container recreation
+- `verify-docker-dns.sh <target-host>` passes from the repo root
 
 ## Temporary bridge-egress helper
 
@@ -162,7 +190,7 @@ Expected:
 diagnostic tool, but it should not be the primary long-term policy mechanism if
 the DSM firewall is updated to a stable reserved Docker range.
 
-## Current exceptions on `nas-host`
+## Current exceptions on `hhnas4`
 
 - `paperless-net` is explicitly pinned in compose and must be migrated by
   changing `PAPERLESS_DOCKER_SUBNET`, not by relying on Docker's default pool.

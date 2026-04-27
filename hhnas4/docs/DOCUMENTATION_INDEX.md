@@ -1,6 +1,6 @@
-# `nas-host` Documentation Index
+# `hhnas4` Documentation Index
 
-Canonical map for host-level documentation under `synology-services/nas-host/docs/`.
+Canonical map for host-level documentation under `synology-services/hhnas4/docs/`.
 
 ## Core Docs
 
@@ -54,6 +54,8 @@ Canonical map for host-level documentation under `synology-services/nas-host/doc
 
 - Long-term bridge-network planning, current exceptions, and migration details
   live in `DOCKER_ADDRESS_POOL_RUNBOOK.md`.
+- `DOCKER_ADDRESS_POOL_RUNBOOK.md` is also the canonical public DNS policy
+  document for bridge-mode `hhnas4` services.
 - Promtail settings live at `promtail/.env` on the NAS. Set `LOKI_PUSH_URL` to
   your Loki endpoint, for example
   `http://loki.<domain>:3100/loki/api/v1/push`.

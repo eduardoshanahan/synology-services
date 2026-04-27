@@ -11,9 +11,6 @@ services:
       - TZ=${QBITTORRENT_TIMEZONE:-UTC}
       - WEBUI_PORT=${QBITTORRENT_WEBUI_PORT:-8080}
       - TORRENTING_PORT=${QBITTORRENT_TORRENT_PORT:-6881}
-    dns:
-      - ${QBITTORRENT_DNS_1:-1.1.1.1}
-      - ${QBITTORRENT_DNS_2:-8.8.8.8}
     volumes:
       - "qbittorrent_config:/config"
       - "${QBITTORRENT_DOWNLOADS_DIR:-/volume1/Media/Downloads/qbittorrent}:/downloads"

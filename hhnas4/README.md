@@ -145,11 +145,14 @@ The full workflow lives in
 
 - Host-local docs index:
   - `docs/DOCUMENTATION_INDEX.md`
+- DNS policy and bridge-network runbook:
+  - `docs/DOCKER_ADDRESS_POOL_RUNBOOK.md`
+- Host verification helper:
+  - `verify-docker-dns.sh`
 - Session continuity notes:
   - `docs/SESSION_NOTES.md`
 - Host runbooks and checklists:
 - `docs/GITEA_OPERATIONS_CHECKLIST.md`
-  - `docs/DOCKER_ADDRESS_POOL_RUNBOOK.md`
   - `docs/STACK_AUTOSTART_RUNBOOK.md`
   - `docs/SHARED_INFRA_BACKUP_RUNBOOK.md`
   - `docs/GITEA_NAS_PLACEMENT_AND_BRIDGE_EGRESS_FIX_2026-03-05.md`
@@ -158,8 +161,9 @@ The full workflow lives in
 
 - The copied `.env` is a template; adjust values on NAS as needed.
 - No credentials or secret values are committed in this directory.
-- Future bridge-mode services on `nas-host` should be planned around a reserved
-  Docker address pool on the NAS.
+- Bridge-mode services on `hhnas4` are expected to use the host-wide Docker
+  daemon DNS policy plus the reserved Docker address pool described in
+  `docs/DOCKER_ADDRESS_POOL_RUNBOOK.md`.
 - `smtp-relay/` is currently an intentional placeholder only; there is no live
   Synology SMTP relay stack in this repository today.
 

@@ -384,3 +384,36 @@ resume without rediscovery.
   - deleting the stray `/volume1/docker/homelab/nas-host` tree requires an
     interactive sudo-capable cleanup on the NAS because the accidental Gitea
     data files are not removable by the regular SSH user
+
+## 2026-04-27 hhnas4 Docker DNS normalization
+
+- Live host verification on `2026-04-27` confirmed:
+  - `/var/packages/ContainerManager/etc/dockerd.json` already includes:
+    - `bip: <docker-default-bridge-gateway-cidr>`
+    - `default-address-pools: <docker-bridge-pool-cidr>`
+    - a non-empty daemon `dns` list
+  - active user-defined bridge networks on `hhnas4` were already allocating
+    from the reserved `10.253.0.0/16` pool
+  - the default bridge remained on `10.254.0.0/24`
+- Important runtime clarification:
+  - host `/etc/resolv.conf` and Docker daemon DNS do not have to be identical
+  - containers still show `nameserver 127.0.0.11`; this is expected
+  - the embedded Docker resolver forwards to the daemon `dns` list from
+    `dockerd.json`
+- Repo normalization completed:
+  - removed qBittorrent's compose-local public resolver override
+  - kept Woodpecker's Docker-backend DNS knob only as a rollback escape hatch,
+    not as the normal path
+  - added `hhnas4/verify-docker-dns.sh` as the public verification helper
+- Operational policy going forward:
+  - bridge-mode `hhnas4` services should use daemon DNS plus bridge-egress
+    policy rather than per-service resolver lists
+  - if a service needs a temporary DNS override during an incident, treat it as
+    short-lived drift and remove it after host policy is healthy again
+- Follow-up discovered during the full recreate:
+  - shared Redis private env had drifted and no longer defined the Immich ACL
+    user/password
+  - recreating Redis exposed that drift and Immich fell back to Redis auth /
+    connect errors unrelated to DNS
+  - source of truth was reconciled in the private repo, Redis was redeployed,
+    and Immich returned to serving `HTTP 200`

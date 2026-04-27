@@ -1,6 +1,6 @@
-# Woodpecker Agent (nas-host)
+# Woodpecker Agent (`hhnas4`)
 
-AMD64 Woodpecker agent for `nas-host`.
+AMD64 Woodpecker agent for `hhnas4`.
 
 ## Purpose
 
@@ -18,17 +18,22 @@ Edit `.env` locally, or update the mirrored file in `../synology-services-privat
 - Optional image override if you want to pin away from `latest`
 - Optional `WOODPECKER_BACKEND_DOCKER_NETWORK`, but leave it blank unless you
   confirm a specific target network is required
+- Leave `WOODPECKER_BACKEND_DOCKER_DNS` blank in the normal path. Build
+  containers should inherit the Docker daemon DNS policy configured on
+  `hhnas4`, not carry a permanent Woodpecker-only resolver override.
 
 ## Deploy
 
 ```bash
-./deploy.sh nas-host
+./deploy.sh hhnas4
 ```
 
 ## Validation
 
 - `docker compose ps` shows the agent running.
 - Agent logs show a successful connection to the server.
+- A representative build that resolves `*.hhlab.home.arpa` works with
+  `WOODPECKER_BACKEND_DOCKER_DNS` unset.
 - Private repos should prefer the SSH deploy-key pattern documented in
   `nix-services/services/woodpecker/README.md` instead of HTTPS clone auth.
 - Start with trusted private repositories only.

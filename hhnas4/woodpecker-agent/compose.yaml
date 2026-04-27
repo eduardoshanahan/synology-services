@@ -23,8 +23,17 @@ services:
       - ${WOODPECKER_CA_CERT_HOST_PATH:-./certs/homelab-root-ca.crt}:/etc/ssl/certs/homelab-root-ca.crt:ro
       - ${WOODPECKER_CA_BUNDLE_HOST_PATH:-./certs/ca-certificates-with-homelab.pem}:/etc/ssl/cert.pem:ro
 
+    networks:
+      - default
+      - woodpecker-pipelines
+
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "5"
+
+networks:
+  woodpecker-pipelines:
+    name: woodpecker-pipelines
+    driver: bridge
