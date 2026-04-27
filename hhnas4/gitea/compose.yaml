@@ -30,6 +30,7 @@ services:
       - GITEA__mailer__USER=${GITEA_SMTP_USER:-}
       - GITEA__mailer__PASSWD=${GITEA_SMTP_PASSWORD:-}
       - GITEA__mailer__PROTOCOL=${GITEA_SMTP_PROTOCOL:-smtp}
+      - GITEA__webhook__ALLOWED_HOST_LIST=loopback,private,external
     command:
       - /bin/sh
       - -ec

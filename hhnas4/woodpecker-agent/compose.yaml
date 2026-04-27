@@ -14,6 +14,7 @@ services:
       - WOODPECKER_HOSTNAME=${WOODPECKER_HOSTNAME:-nas-host}
       - WOODPECKER_HEALTHCHECK_ADDR=${WOODPECKER_HEALTHCHECK_ADDR:-127.0.0.1:3100}
       - WOODPECKER_BACKEND_DOCKER_VOLUMES=${WOODPECKER_BACKEND_DOCKER_VOLUMES:-${WOODPECKER_CA_BUNDLE_HOST_PATH:-/volume1/docker/homelab/nas-host/woodpecker-agent/certs/ca-certificates-with-homelab.pem}:/etc/ssl/cert.pem:ro,${WOODPECKER_CA_CERT_HOST_PATH:-/volume1/docker/homelab/nas-host/woodpecker-agent/certs/homelab-root-ca.crt}:/etc/ssl/certs/homelab-root-ca.crt:ro}
+      - WOODPECKER_BACKEND_DOCKER_DNS=${WOODPECKER_BACKEND_DOCKER_DNS:-}
       - WOODPECKER_BACKEND_DOCKER_NETWORK=${WOODPECKER_BACKEND_DOCKER_NETWORK:-}
       - WOODPECKER_ENVIRONMENT=${WOODPECKER_ENVIRONMENT:-GIT_SSL_CAINFO=/etc/ssl/cert.pem,SSL_CERT_FILE=/etc/ssl/cert.pem,CURL_CA_BUNDLE=/etc/ssl/cert.pem}
 
